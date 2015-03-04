@@ -9,43 +9,37 @@ import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import squares.iesnules.com.squares.R;
 
 /**
  * TODO: document your custom view class.
  */
-public class PlayerView extends View {
+public class PlayerView extends LinearLayout {
+
     public PlayerView(Context context) {
         super(context);
-        init();
+        init(null, 0);
     }
 
     public PlayerView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(attrs, 0);
     }
 
     public PlayerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init();
+        init(attrs, defStyle);
     }
 
-    private void init() {
-        // TODO: Common initialization code here...
-    }
+    private void init(AttributeSet attrs, int defStyle) {
+        // Load attributes
+        final TypedArray a = getContext().obtainStyledAttributes(
+                attrs, R.styleable.PlayerView, defStyle, 0);
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+        // TODO: Process AtributeSet
 
-        // TODO: consider storing these as member variables to reduce
-        // allocations per draw cycle.
-        int paddingLeft = getPaddingLeft();
-        int paddingTop = getPaddingTop();
-        int paddingRight = getPaddingRight();
-        int paddingBottom = getPaddingBottom();
-
-        // TODO: draw components
+        a.recycle();
     }
 }
