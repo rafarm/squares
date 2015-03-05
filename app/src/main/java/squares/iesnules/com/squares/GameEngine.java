@@ -40,6 +40,7 @@ public class GameEngine {
 
     private boolean checkSquareSanity(byte[][] square) {
         // TODO: Check if a square state represented by 3x3 matrix 'square' is valid
+        // get[1] [1]
         return false;
     }
 
