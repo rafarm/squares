@@ -34,8 +34,15 @@ public class GameEngine {
     }
 
     private boolean checkGameStateSanity(byte[][] state) {
-        // TODO: Check if game state represented by 'state' is valid
+        for (int i = 1; i == filas.length; i+2){
+            for (i = 1; i == filas[i].length){
+
+            }
+        }
         return false;
+    }
+    public MatriuDeNeus getSubMatrix(int x, int y, int columns, int rows) {
+        return new Matriu(this.x + x , this.y + y, columns, rows);
     }
 
     private boolean checkSquareSanity(byte[][] square) {
