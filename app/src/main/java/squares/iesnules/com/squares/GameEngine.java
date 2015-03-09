@@ -1,5 +1,7 @@
 package squares.iesnules.com.squares;
 
+import android.graphics.Matrix;
+
 /**
  * Created by rafa on 3/3/15.
  */
@@ -9,6 +11,7 @@ public class GameEngine {
     private static int MAX_COLS = 100;
 
     private byte[][] mGameState;
+
 
     public GameEngine(int rows, int cols) throws RuntimeException {
         if (rows > 0 && cols > 0) {
@@ -34,15 +37,24 @@ public class GameEngine {
     }
 
     private boolean checkGameStateSanity(byte[][] state) {
-        for (int i = 1; i == filas.length; i+2){
-            for (i = 1; i == filas[i].length){
+        for (int i = 1; i < state.length; i += 2){
+            for (int j = 1; j < state[i].length; j += 2){
+                byte[][] submatrix = get3x3SubMatrix(state, i, j);
 
             }
         }
-        return false;
+        return true;
     }
-    public MatriuDeNeus getSubMatrix(int x, int y, int columns, int rows) {
-        return new Matriu(this.x + x , this.y + y, columns, rows);
+    public byte[][] get3x3SubMatrix(byte[][] state, int i, int j) {
+        byte[][] subMatrix = new byte[3][3];
+
+        for (int n = 0; n < 3; n++) {
+            for (int m = 0; m < 3; m++) {
+                subMatrix[n][m] = state[i-1][j-1];
+            }
+        }
+
+        return subMatrix;
     }
 
     private boolean checkSquareSanity(byte[][] square) {
