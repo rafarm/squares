@@ -65,5 +65,17 @@ public class GameEngine {
         return false;
     }
 
+    private boolean squareCaptured(byte[][] square) {
+        // TODO: Check if a square represented by 3x3 matrix 'square' has been captured
+        byte[][] matrix = new byte[3][3];
 
+        if (){
+
+        }
+        else{
+
+        }
+
+        return false;
+    }
 }
