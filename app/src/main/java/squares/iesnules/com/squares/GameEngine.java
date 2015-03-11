@@ -40,9 +40,21 @@ public class GameEngine {
 
     private boolean checkSquareSanity(byte[][] square) {
         // TODO: Check if a square state represented by 3x3 matrix 'square' is valid
-        // get[1] [1]
+        if (square[1][1] != 0) {
+            if(square[0][1] != 0 && square[1][0] != 0 && square[1][2] != 0 && square[2][1] != 0){
+                return true;
+            }
+            else {return false;}
+        }
+        else if (square[1][1] == 0){
+            if(square[0][1] == 0 || square[1][0] == 0 || square[1][2] == 0 || square[2][1] == 0){
+                return true;
+            }
+         }
         return false;
+
+            // get[1] [1]
+
+        }
+
     }
-
-
-}
