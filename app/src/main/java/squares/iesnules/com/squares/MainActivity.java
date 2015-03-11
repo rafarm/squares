@@ -1,9 +1,13 @@
 package squares.iesnules.com.squares;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -35,5 +39,12 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showOfflineOption(View view) {
+        LinearLayout optionsLayout = (LinearLayout)findViewById(R.id.optionsLayout);
+        optionsLayout.setVisibility(View.VISIBLE);
+        Button offline = (Button) findViewById(R.id.offlineButton);
+        offline.setVisibility(View.INVISIBLE);
     }
 }
