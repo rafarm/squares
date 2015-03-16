@@ -75,7 +75,7 @@ public class GameEngine {
         }
 
         //If instead the four sides are not busy the matrix will not be occupied
-        return false;
+       return false;
 
     }
 }
