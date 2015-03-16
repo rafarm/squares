@@ -68,13 +68,13 @@ public class GameEngine {
     private boolean squareCaptured(byte[][] square) {
         // TODO: Check if a square represented by 3x3 matrix 'square' has been captured
 
-        if (square[0][1]==1 && square[1][0]==1 && square[1][2]==1 && square[2][1]==1){
-        //The four sides of the 3x3 matrix are occupied by both the matrix will be captured
+        if (square[0][1]==1 && square[1][0]==1 && square[1][2]==1 && square[2][1]==1) {
+            //The four sides of the 3x3 matrix are occupied by both the matrix will be captured
             return true;
 
         }
 
-        //If instead the four sides are not busy the matrix will not be occupied
+        //If instead the four sides are not busy the matrix will not be captured
        return false;
 
     }
