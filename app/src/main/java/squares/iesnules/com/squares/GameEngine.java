@@ -13,17 +13,15 @@ public class GameEngine {
     public GameEngine(int rows, int cols) throws RuntimeException {
         if (rows > 0 && cols > 0) {
             mGameState = generateGameState(rows, cols);
-        }
-        else {
+        } else {
             throw new RuntimeException("GameEngine: Invalid board dimensions");
         }
     }
 
-    public GameEngine(byte[][] newState ) {
+    public GameEngine(byte[][] newState) {
         if (checkGameStateSanity(newState)) {
             mGameState = newState;
-        }
-        else {
+        } else {
             throw new RuntimeException("GameEngine: Invalid game state");
         }
     }
@@ -33,19 +31,17 @@ public class GameEngine {
 
         byte[][] matrix = new byte[rows][cols];
 
-        for(int j=0;j<100;j++){
-            for(int i=0;i<100;i++){
-                if(j%2!= 0){
+        for (int j = 0; j < 100; j++) {
+            for (int i = 0; i < 100; i++) {
+                if (j % 2 != 0) {
                     matrix[i][j] = 0;
                     //if the result is 0, the player will can press in this
-                }
-                else{
-                    if (i%2!=0){
-                        matrix[i][j]=0;
+                } else {
+                    if (i % 2 != 0) {
+                        matrix[i][j] = 0;
                         //if the result is 0, the player will can press in this
-                    }
-                    else{
-                        matrix[i][j]=-1;
+                    } else {
+                        matrix[i][j] = -1;
                         //if the result is -1,the player won't can press in this.The result -1 is an invalid value
                     }
                 }
@@ -68,14 +64,32 @@ public class GameEngine {
     private boolean squareCaptured(byte[][] square) {
         // TODO: Check if a square represented by 3x3 matrix 'square' has been captured
 
-        if (square[0][1]==1 && square[1][0]==1 && square[1][2]==1 && square[2][1]==1) {
+        if (square[0][1] == 1 && square[1][0] == 1 && square[1][2] == 1 && square[2][1] == 1) {
             //The four sides of the 3x3 matrix are occupied by both the matrix will be captured
             return true;
 
         }
 
         //If instead the four sides are not busy the matrix will not be captured
-       return false;
+        return false;
 
     }
+
+    public int numOfCapturedSquares() {
+        int total = 0;
+
+        for (int i = 1; i < mGameState.length; i += 2) {
+            for (int j = 1; j < mGameState[i].length; j += 2) {
+                if (mGameState=1){
+
+
+
+                }
+
+            }
+        }
+        return
+    }
+
+
 }
