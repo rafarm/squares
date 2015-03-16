@@ -52,28 +52,58 @@ public class GameEngine {
         return false;
     }
 
-    private boolean checkEdge(int i, int j) {
+    private boolean edgeIsChecked(int i, int j) {
         if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0)) {
             if (mGameState[i][j] == 0) {
                 return false;
-            } else {
-                return true;
             }
 
         }
+        return true;
+    }
 
+
+    //Comprueba si es horizontal o vertical
+    private boolean isEdgeVertical(int i, int j){
+        if(i % 2 == 0 && j % 2 != 0){
+            return true; //Vertical
+        }
+        return false;//Horizontal
 
     }
 
-    private boolean
 
-    public int markEdge(int i, int j, int id) {
 
-        if(checkEdge(i,j) == false){
+    public int markEdge(int i, int j, int id,int rows, int cols) {
+        int counter;
+        if(!edgeIsChecked(i,j)){
             mGameState[i][j] = 1;
 
+            if(isEdgeVertical(i,j)){
+                if(i != 0 && i != cols-1){
+                    if(squareCaptured(mGameState[i-1][j])){
+                        mGameState[i-1][j] =  (byte)id;
+                        counter ++;
+
+                    }
+
+
+                    if(squareCaptured(mGameState[i+1][j])){
+                        mGameState[i+1][j] =  (byte)id;
+                        counter ++;
+
+                    }
+                }
+
+
+            }
+
+
+        }
+
+        return counter;
+
     }
-}
 
 
 
