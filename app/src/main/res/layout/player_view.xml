@@ -21,12 +21,25 @@
         android:layout_weight="0"
         android:textSize="10dp" />
 
-    <TextView
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Number"
-        android:id="@+id/playerScore"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.17"
-        android:textSize="12dp" />
+        android:layout_gravity="center_horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/shapeImage"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Number"
+            android:id="@+id/playerScore"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.17"
+            android:textSize="12dp" />
+    </FrameLayout>
+
 </LinearLayout>
