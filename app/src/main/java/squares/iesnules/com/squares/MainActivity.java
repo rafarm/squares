@@ -1,16 +1,18 @@
 package squares.iesnules.com.squares;
 
-import android.content.Intent;
+
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.content.Intent;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
 
 public class MainActivity extends ActionBarActivity {
+    public static String NUMBER_OF_PLAYERS = "NumberOfPlayers";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,5 +48,27 @@ public class MainActivity extends ActionBarActivity {
         optionsLayout.setVisibility(View.VISIBLE);
         Button offline = (Button) findViewById(R.id.offlineButton);
         offline.setVisibility(View.INVISIBLE);
+    }
+
+    public void launchMatchActivity(View view) {
+        Intent intent = new Intent(this, MatchActivity.class);
+
+        int players = 0;
+
+        if (view.getId() == R.id.twoplayersButton) {
+            players = 2;
+        }
+        else if (view.getId()==R.id.threeplayersButton){
+            players = 3;
+        }
+        else if (view.getId()==R.id.fourplayersButton{
+            players = 4;
+        }
+
+
+        intent.putExtra(NUMBER_OF_PLAYERS, 2);
+        intent.putExtra(NUMBER_OF_PLAYERS, 3);
+        intent.putExtra(NUMBER_OF_PLAYERS, 4);
+        startActivity(intent);
     }
 }
