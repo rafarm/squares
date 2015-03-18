@@ -75,21 +75,44 @@ public class GameEngine {
 
     }
 
-    public int numOfCapturedSquares() {
+    /*
+    numOfCapturedSquaresByPlayer(int playerID)
+    playerID: Player identifier
+
+    Returns the number of squares captured by player with playerID
+     */
+    public int numOfCapturedSquaresByPlayer(int playerID) {
         int total = 0;
 
         for (int i = 1; i < mGameState.length; i += 2) {
             for (int j = 1; j < mGameState[i].length; j += 2) {
-                if (mGameState=1){
-
-
+                if (mGameState[i][j] == playerID){
+                    total++;
 
                 }
 
             }
         }
-        return
+        return total;
     }
 
+    /*
+    numOfCapturedSquares()
 
+    Returns the total number of squares captured
+     */
+    public int numOfCapturedSquares() {
+        int total = 0;
+
+        for (int i = 1; i < mGameState.length; i += 2) {
+            for (int j = 1; j < mGameState[i].length; j += 2) {
+                if (mGameState[i][j] > 0){
+                    total++;
+
+                }
+
+            }
+        }
+        return total;
+    }
 }
