@@ -1,5 +1,6 @@
 package squares.iesnules.com.squares;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,6 +12,7 @@ public class MatchActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
         setContentView(R.layout.activity_match);
     }
 
@@ -36,4 +38,5 @@ public class MatchActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }
