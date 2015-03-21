@@ -3,17 +3,56 @@ package squares.iesnules.com.squares;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
+
+import squares.iesnules.com.squares.custom_views.BoardView;
+import squares.iesnules.com.squares.custom_views.PlayerView;
 
 
 public class MatchActivity extends ActionBarActivity {
+
+    private int mNumberOfPlayers;
+    private int mBoardRows = 8;
+    private int mBoardCols = 6;
+    private GameEngine mEngine;
+
+    private PlayerView[] mPlayerViews;
+
+    private LinearLayout mPlayersLayout;
+    private BoardView mBoardView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         setContentView(R.layout.activity_match);
+
+        // Get number of players and create engine
+        mNumberOfPlayers = intent.getIntExtra(MainActivity.NUMBER_OF_PLAYERS, 2);
+        mEngine = new GameEngine(mBoardRows, mBoardCols);
+
+        mPlayersLayout = (LinearLayout)findViewById(R.id.playersLayout);
+        mBoardView = (BoardView)findViewById(R.id.boardView);
+
+        // Create players views
+        mPlayerViews = new PlayerView[mNumberOfPlayers];
+
+        for (int i=0; i<mNumberOfPlayers; i++) {
+            PlayerView player = new PlayerView(this);
+
+            player.setPlayerName("Player "+(i+1));
+            player.setPlayerScore("0");
+            player.setPlayerImage(getResources().getDrawable(R.mipmap.ic_launcher));
+            // TODO: Set player image & shape
+
+            mPlayerViews[i] = player;
+
+            mPlayersLayout.addView(player, i);
+        }
+
     }
 
 

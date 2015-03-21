@@ -6,7 +6,7 @@
     android:weightSum="1">
 
     <ImageView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/playerImage"
         android:layout_gravity="center_horizontal"
@@ -19,7 +19,7 @@
         android:id="@+id/playerName"
         android:layout_gravity="center_horizontal"
         android:layout_weight="0"
-        android:textSize="10dp" />
+        android:textSize="12dp" />
 
     <FrameLayout
         android:layout_width="wrap_content"
@@ -37,9 +37,9 @@
             android:layout_height="wrap_content"
             android:text="Number"
             android:id="@+id/playerScore"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="center"
             android:layout_weight="0.17"
-            android:textSize="12dp" />
+            android:textSize="18dp" />
     </FrameLayout>
 
 </LinearLayout>

@@ -2,26 +2,22 @@ package squares.iesnules.com.squares.custom_views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
-import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.view.View;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import squares.iesnules.com.squares.R;
 
 /**
  * TODO: document your custom view class.
  */
-public class PlayerView extends LinearLayout {
+public class PlayerView extends FrameLayout {
     private ImageView mPlayerImage;
     private TextView mPlayerName;
     private TextView mPlayerScore;
@@ -43,6 +39,9 @@ public class PlayerView extends LinearLayout {
     }
 
     private void init(AttributeSet attrs, int defStyle) {
+        LayoutInflater inflater = LayoutInflater.from(this.getContext());
+        inflater.inflate(R.layout.player_view, this);
+
         // Load attributes
         final TypedArray a = getContext().obtainStyledAttributes(
                 attrs, R.styleable.PlayerView, defStyle, 0);
@@ -56,6 +55,11 @@ public class PlayerView extends LinearLayout {
         mPlayerScore = (TextView) findViewById(R.id.playerScore);
         mShapeImage = (ImageView) findViewById(R.id.shapeImage);
 
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+        params.gravity = Gravity.CENTER;
+        params.weight = 1;
+        params.setMargins(5,5,5,5);
+        setLayoutParams(params);
     }
 
     public Drawable getPlayerImage() {
@@ -68,7 +72,8 @@ public class PlayerView extends LinearLayout {
 
 
     public String getPlayerName() {
-        return mPlayerName.getText().toString();  }
+        return mPlayerName.getText().toString();
+    }
 
     public void setPlayerName(String text) {
         mPlayerName.setText(text);

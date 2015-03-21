@@ -14,10 +14,14 @@ import android.widget.LinearLayout;
 public class MainActivity extends ActionBarActivity {
     public static String NUMBER_OF_PLAYERS = "NumberOfPlayers";
 
+    private LinearLayout mOptionsLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mOptionsLayout = (LinearLayout)findViewById(R.id.optionsLayout);
     }
 
 
@@ -43,32 +47,25 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void showOfflineOption(View view) {
-        LinearLayout optionsLayout = (LinearLayout)findViewById(R.id.optionsLayout);
-        optionsLayout.setVisibility(View.VISIBLE);
-        Button offline = (Button) findViewById(R.id.offlineButton);
-        offline.setVisibility(View.INVISIBLE);
+    public void showOfflineOptions(View view) {
+        mOptionsLayout.setVisibility(View.VISIBLE);
     }
 
     public void launchMatchActivity(View view) {
         Intent intent = new Intent(this, MatchActivity.class);
 
-        int players = 0;
+        int viewId = view.getId();
 
-        if (view.getId() == R.id.twoplayersButton) {
-            players = 2;
+        if (viewId == R.id.twoPlayersButton) {
+            intent.putExtra(NUMBER_OF_PLAYERS, 2);
         }
-        else if (view.getId()==R.id.threeplayersButton){
-            players = 3;
+        else if (viewId == R.id.threePlayersButton) {
+            intent.putExtra(NUMBER_OF_PLAYERS, 3);
         }
-        else if (view.getId()==R.id.fourplayersButton{
-            players = 4;
+        else if (viewId == R.id.fourPlayersButton) {
+            intent.putExtra(NUMBER_OF_PLAYERS, 4);
         }
 
-
-        intent.putExtra(NUMBER_OF_PLAYERS, 2);
-        intent.putExtra(NUMBER_OF_PLAYERS, 3);
-        intent.putExtra(NUMBER_OF_PLAYERS, 4);
         startActivity(intent);
     }
 }

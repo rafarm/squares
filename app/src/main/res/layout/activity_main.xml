@@ -12,15 +12,15 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:id="@+id/linearLayout">
+        android:id="@+id/mainLayout">
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="offline"
+            android:text="@string/play_offline"
             android:id="@+id/offlineButton"
             android:layout_gravity="center_horizontal"
-            android:onClick="showOfflineOption" />
+            android:onClick="showOfflineOptions" />
 
     </LinearLayout>
 
@@ -28,18 +28,19 @@
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_alignTop="@+id/linearLayout"
+        android:layout_alignTop="@+id/mainLayout"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:visibility="gone"
-        android:id="@+id/optionsLayout">
+        android:id="@+id/optionsLayout"
+        android:gravity="center_vertical">
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2 players"
-            android:id="@+id/twoplayersButton"
+            android:text="@string/two_players"
+            android:id="@+id/twoPlayersButton"
             android:layout_gravity="center_horizontal"
             android:visibility="visible"
             android:onClick="launchMatchActivity"
@@ -48,8 +49,8 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="3 players"
-            android:id="@+id/threeplayersButton"
+            android:text="@string/three_players"
+            android:id="@+id/threePlayersButton"
             android:layout_gravity="center_horizontal"
             android:visibility="visible"
             android:onClick="launchMatchActivity" />
@@ -57,8 +58,8 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="4 players"
-            android:id="@+id/fourplayersButton"
+            android:text="@string/four_players"
+            android:id="@+id/fourPlayersButton"
             android:layout_gravity="center_horizontal"
             android:onClick="launchMatchActivity" />
 

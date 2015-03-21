@@ -5,13 +5,13 @@ package squares.iesnules.com.squares;
  */
 public class GameEngine {
 
-    private static int MAX_ROWS = 100;
-    private static int MAX_COLS = 100;
+    private static int MAX_ROWS = 20;
+    private static int MAX_COLS = 20;
 
     private byte[][] mGameState;
 
     public GameEngine(int rows, int cols) throws RuntimeException {
-        if (rows > 0 && cols > 0) {
+        if (rows > 0 && cols > 0 && rows <= MAX_ROWS && cols <= MAX_COLS) {
             mGameState = generateGameState(rows, cols);
         } else {
             throw new RuntimeException("GameEngine: Invalid board dimensions");
@@ -29,10 +29,13 @@ public class GameEngine {
     //This method is executed when a new game is started, showing the initial matrix,the valid and invalid values.
     private byte[][] generateGameState(int rows, int cols) {
 
-        byte[][] matrix = new byte[rows][cols];
+        int realRows = 2*rows + 1;
+        int realCols = 2*cols + 1;
 
-        for (int j = 0; j < 100; j++) {
-            for (int i = 0; i < 100; i++) {
+        byte[][] matrix = new byte[realRows][realCols];
+
+        for (int j = 0; j < realCols; j++) {
+            for (int i = 0; i < realRows; i++) {
                 if (j % 2 != 0) {
                     matrix[i][j] = 0;
                     //if the result is 0, the player will can press in this
