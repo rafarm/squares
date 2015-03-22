@@ -1,9 +1,45 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
 
-    <squares.iesnules.com.squares.custom_views.PlayerView android:background="#ccc"
-        android:layout_width="300dp" android:layout_height="300dp" android:paddingLeft="20dp"
-        android:paddingBottom="40dp" />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/playerImage"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1" />
 
-</FrameLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Player"
+        android:id="@+id/playerName"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0"
+        android:textSize="12dp" />
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/shapeImage"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Number"
+            android:id="@+id/playerScore"
+            android:layout_gravity="center"
+            android:layout_weight="0.17"
+            android:textSize="18dp" />
+    </FrameLayout>
+
+</LinearLayout>
