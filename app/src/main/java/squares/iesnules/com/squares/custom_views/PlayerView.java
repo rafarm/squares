@@ -18,6 +18,8 @@ import squares.iesnules.com.squares.R;
  * TODO: document your custom view class.
  */
 public class PlayerView extends FrameLayout {
+    private final int VIEW_MARGIN = 10;
+
     private ImageView mPlayerImage;
     private TextView mPlayerName;
     private TextView mPlayerScore;
@@ -58,7 +60,7 @@ public class PlayerView extends FrameLayout {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
         params.gravity = Gravity.CENTER;
         params.weight = 1;
-        params.setMargins(5,5,5,5);
+        params.setMargins(VIEW_MARGIN, VIEW_MARGIN, VIEW_MARGIN, VIEW_MARGIN);
         setLayoutParams(params);
     }
 

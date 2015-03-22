@@ -3,38 +3,110 @@ package squares.iesnules.com.squares.custom_views;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
+import android.widget.LinearLayout;
 
 import squares.iesnules.com.squares.R;
+import squares.iesnules.com.squares.custom_views.interfaces.BoardViewDataProvider;
+import squares.iesnules.com.squares.custom_views.interfaces.BoardViewListener;
 
 /**
  * TODO: document your custom view class.
  */
-public class BoardView extends GridLayout {
+public class BoardView extends FrameLayout {
+    private static final String TAG = "BoardView";
+
+    private final int NODE_DIM = 20;
+
+    private GridLayout mGridLayout = null;
+
+    private BoardViewDataProvider mDataProvider = null;
+    private BoardViewListener mListener = null;
+
+    private int mBoardRows;
+    private int mBoardCols;
 
     public BoardView(Context context) {
         super(context);
-        init(null, 0);
     }
 
-    public BoardView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(attrs, 0);
+    public void setDataProvider(BoardViewDataProvider provider) {
+        mDataProvider = provider;
     }
 
-    public BoardView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init(attrs, defStyle);
+    public BoardViewDataProvider getDataProvider() {
+        return mDataProvider;
     }
 
-    private void init(AttributeSet attrs, int defStyle) {
-        // Load attributes
-        final TypedArray a = getContext().obtainStyledAttributes(
-                attrs, R.styleable.BoardView, defStyle, 0);
+    public void setListener(BoardViewListener listener) {
+        mListener = listener;
+    }
 
-        // TODO: Process AttributeSet
+    public BoardViewListener getListener() {
+        return mListener;
+    }
 
-        a.recycle();
+    // Redraw game board
+    public void reloadBoard() {
+        if (mGridLayout != null) {
+            removeView(mGridLayout);
+        }
 
+        mGridLayout = new GridLayout(this.getContext());
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        mGridLayout.setLayoutParams(params);
+
+        if (mDataProvider != null) {
+            // Get board dimensions
+            mBoardRows = mDataProvider.rowsOfBoard(this);
+            mBoardCols = mDataProvider.colsOfBoard(this);
+
+
+        }
+
+        addView(mGridLayout);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        Log.v(TAG, "Width: " + mGridLayout.getWidth() + " Height " + mGridLayout.getHeight());
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        Log.v(TAG, "Width: " + getWidth() + " Height " + getHeight());
+
+        int currentWidth = getWidth();
+        int currentHeight = getHeight();
+
+        // Compute grid margins to get square cells square.
+        if (currentWidth > 0 && currentHeight > 0 && mGridLayout != null) {
+            int squareWidth = (currentWidth - (mBoardCols + 1)*NODE_DIM) / mBoardCols;
+            int squareHeight = (currentHeight - (mBoardRows + 1)*NODE_DIM) / mBoardRows;
+
+            if (squareWidth > squareHeight) {
+                int margin = (squareWidth - squareHeight) / 2;
+
+                FrameLayout.MarginLayoutParams params = (FrameLayout.MarginLayoutParams)getLayoutParams();
+                params.setMargins(margin, 0, margin, 0);
+
+                setLayoutParams((FrameLayout.LayoutParams)params);
+            }
+            else {
+                int margin = (squareHeight - squareWidth) / 2;
+
+                FrameLayout.MarginLayoutParams params = (FrameLayout.MarginLayoutParams)getLayoutParams();
+                params.setMargins(0, margin, 0, margin);
+
+                setLayoutParams((FrameLayout.LayoutParams)params);
+            }
+        }
     }
 }
+

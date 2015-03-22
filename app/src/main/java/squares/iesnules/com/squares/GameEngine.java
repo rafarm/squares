@@ -26,6 +26,10 @@ public class GameEngine {
         }
     }
 
+    public byte[][] getGameState() {
+        return mGameState;
+    }
+
     //This method is executed when a new game is started, showing the initial matrix,the valid and invalid values.
     private byte[][] generateGameState(int rows, int cols) {
 

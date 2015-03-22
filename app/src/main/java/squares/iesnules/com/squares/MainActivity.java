@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 
 
 public class MainActivity extends ActionBarActivity {
-    public static String NUMBER_OF_PLAYERS = "NumberOfPlayers";
+    public static final String NUMBER_OF_PLAYERS = "NumberOfPlayers";
 
     private LinearLayout mOptionsLayout;
 
