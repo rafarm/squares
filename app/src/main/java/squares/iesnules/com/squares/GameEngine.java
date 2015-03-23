@@ -98,9 +98,6 @@ public class GameEngine {
         return false;
     }
 
-    private boolean squareCaptured(byte[][] square) {
-        // TODO: Check if a square represented by 3x3 matrix 'square' has been captured
-
     private boolean edgeIsChecked(int i, int j) {
         if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0)) {
             if (mGameState[i][j] == 0) {
@@ -109,9 +106,10 @@ public class GameEngine {
         }
         return true;
     }
+
+
+
     //Comprueba si es horizontal o vertical
-
-
     private boolean isEdgeVertical(int i, int j) {
         if (i % 2 == 0 && j % 2 != 0) {
             return true; //Vertical
@@ -138,6 +136,15 @@ public class GameEngine {
     }
 
 
+    private boolean squareCaptured(byte[][] square) {
+        if (square[0][1] == 1 && square[1][0] == 1 && square[1][2] == 1 && square[2][1] == 1 ){
+            return true;
+        }
+        return false;
+    }
+
+
+
     public int markEdge(int i, int j, int id, int rows, int cols) {
         int counter = 0;
 
@@ -145,7 +152,7 @@ public class GameEngine {
             mGameState[i][j] = 1;
             if (isEdgeVertical(i, j)) {
 
-                if (i != 0 && i != cols - 1) {
+                if (i != 0 && i != cols - 1) {              // comprueba las casillas que no estan en los laterales
                     int n = i -1;
                     int m = j;
 
@@ -161,26 +168,69 @@ public class GameEngine {
                         mGameState[n][m] = (byte) id;
                         counter++;
                     }
-                else if
                 }
+                else if(i == 0){                             // comprueba la casilla del lateral izquierdo
+                    int n = i + 1;
+                    int m = j;
+
+                        if (squareCaptured(generateSquare(n,m))) {
+                        mGameState[n][m] = (byte) id;
+                        counter++;
+                        }
+
+                    }
+                else if(i == cols - 1){                      // comprueba la casilla del lateral derecho
+                    int n = i - 1;
+                    int m = j;
+
+                    if (squareCaptured(generateSquare(n,m))) {
+                        mGameState[n][m] = (byte) id;
+                        counter++;
+                    }
+
+                }
+
+
             }
 
             else{
-                if (j != rows - 1 && j != 0){
-                    int n = i;
-                    int m = j - 1;
-                    if(squareCaptured(generateSquare(n,m))){
+                if (j != 0 && j != rows - 1) {              // comprueba las casillas que no estan en los laterales
+                    int n = i ;
+                    int m = j-1;
+
+                    if (squareCaptured(generateSquare(n,m))){
                         mGameState[n][m] = (byte) id;
                         counter++;
                     }
 
                     n = i;
-                    m = j + 1;
+                    m = j+1;
 
-                    if(squareCaptured(generateSquare(n,m))){
+                    if (squareCaptured(generateSquare(n,m))) {
                         mGameState[n][m] = (byte) id;
                         counter++;
                     }
+                }
+                else if(j == 0){                             // comprueba la casilla del lateral superior
+                    int n = i;
+                    int m = j + 1;
+
+                    if (squareCaptured(generateSquare(n,m))) {
+                        mGameState[n][m] = (byte) id;
+                        counter++;
+                    }
+
+                }
+                else if(j == rows -1 ){                      // comprueba la casilla del lateral inferior
+                    int n = i ;
+                    int m = j-1;
+
+                    if (squareCaptured(generateSquare(n,m))) {
+                        mGameState[n][m] = (byte) id;
+                        counter++;
+                    }
+
+                }
 
 
 
@@ -192,10 +242,10 @@ public class GameEngine {
 
 
             }
-        }
+
         return counter;
     }
-        if (square[0][1] == 1 && square[1][0] == 1 && square[1][2] == 1 && square[2][1] == 1) {
+    /*    if (square[0][1] == 1 && square[1][0] == 1 && square[1][2] == 1 && square[2][1] == 1) {
             //The four sides of the 3x3 matrix are occupied by both the matrix will be captured
             return true;
 
@@ -204,7 +254,7 @@ public class GameEngine {
         //If instead the four sides are not busy the matrix will not be captured
         return false;
 
-    }
+    }*/
 
     /*
     numOfCapturedSquaresByPlayer(int playerID)
