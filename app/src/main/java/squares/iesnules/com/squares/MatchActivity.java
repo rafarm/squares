@@ -103,14 +103,14 @@ public class MatchActivity extends ActionBarActivity implements BoardViewListene
 
     @Override
     public byte stateOfEdgeWithCoordinates(int row, int col, BoardView boardView) {
-        // TODO: Return the state of board's edge with coordinates (row, col) as represented in the engine's state
-        return 0;
+        return mEngine.getGameState()[row][col];
     }
 
     @Override
     public byte stateOfSquareWithCoordinates(int row, int col, BoardView boardView) {
         // TODO: Return the state of board's square with coordinates (row, col) as represented in the engine's state
         return 0;
+       return mEngine.
     }
 
     @Override
