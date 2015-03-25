@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
@@ -67,6 +68,14 @@ public class MatchActivity extends ActionBarActivity implements BoardViewListene
         mBoardView.reloadBoard();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION /*| View.SYSTEM_UI_FLAG_FULLSCREEN*/;
+        decorView.setSystemUiVisibility(uiOptions);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

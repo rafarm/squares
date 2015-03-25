@@ -25,7 +25,7 @@ import squares.iesnules.com.squares.custom_views.interfaces.BoardViewListener;
 public class BoardView extends FrameLayout {
     private static final String TAG = "BoardView";
 
-    private final int NODE_DIM = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 22, getResources().getDisplayMetrics());
+    private final int NODE_DIM = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
 
     private GridLayout mGridLayout = null;
 
@@ -154,7 +154,7 @@ public class BoardView extends FrameLayout {
     private ImageView getSquare(int row, int col) {
         ImageView square = new ImageView(this.getContext());
 
-        square.setBackgroundDrawable(getResources().getDrawable(R.mipmap.ic_launcher));
+        //square.setBackgroundDrawable(getResources().getDrawable(R.mipmap.ic_launcher));
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams(GridLayout.spec(row), GridLayout.spec(col));
         //params.setGravity(Gravity.FILL);

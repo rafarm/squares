@@ -20,6 +20,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_weight="1"
-        android:id="@+id/boardLayout"></FrameLayout>
+        android:id="@+id/boardLayout"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"></FrameLayout>
 
 </LinearLayout>

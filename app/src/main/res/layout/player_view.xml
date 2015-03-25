@@ -6,11 +6,10 @@
     android:weightSum="1">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
         android:id="@+id/playerImage"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1" />
+        android:layout_gravity="center_horizontal" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -18,8 +17,7 @@
         android:text="Player"
         android:id="@+id/playerName"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0"
-        android:textSize="12dp" />
+        android:textSize="10sp" />
 
     <FrameLayout
         android:layout_width="wrap_content"
@@ -39,7 +37,7 @@
             android:id="@+id/playerScore"
             android:layout_gravity="center"
             android:layout_weight="0.17"
-            android:textSize="18dp" />
+            android:textSize="14sp" />
     </FrameLayout>
 
 </LinearLayout>
