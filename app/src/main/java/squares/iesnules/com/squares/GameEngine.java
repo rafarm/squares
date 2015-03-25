@@ -62,14 +62,21 @@ public class GameEngine {
     }
 
     private boolean checkGameStateSanity(byte[][] state) {
-        for (int i = 1; i < state.length; i += 2){
-            for (int j = 1; j < state[i].length; j += 2){
-                byte[][] submatrix = get3x3SubMatrix(state, i, j);
+        for (int i = 1; i < state.length; i += 2) {
+            for (int j = 1; j < state[i].length; j += 2) {
+                if(checkSquareSanity( get3x3SubMatrix(state, i, j))==false){
+                    return false;
+                }
 
             }
-        }
+
+         }
+
+
+
         return true;
     }
+
     public byte[][] get3x3SubMatrix(byte[][] state, int i, int j) {
         byte[][] subMatrix = new byte[3][3];
 
@@ -85,10 +92,8 @@ public class GameEngine {
     private boolean checkSquareSanity(byte[][] square) {
 // TODO: Check if a square state represented by 3x3 matrix 'square' is valid
         if (square[1][1] != 0) {
-            if (square[0][1] != 0 && square[1][0] != 0 && square[1][2] != 0 && square[2][1] != 0) {
+            if (square[0][1] == 1 && square[1][0] == 1 && square[1][2] == 1 && square[2][1] == 1) {
                 return true;
-            } else {
-                return false;
             }
         } else if (square[1][1] == 0) {
             if (square[0][1] == 0 || square[1][0] == 0 || square[1][2] == 0 || square[2][1] == 0) {
