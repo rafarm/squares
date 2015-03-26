@@ -116,14 +116,13 @@ public class MatchActivity extends ActionBarActivity implements BoardViewListene
 
     @Override
     public Drawable shapeForPlayerNumber(int playerNumber, BoardView boardView) {
-        // TODO: Return the shape assigned to the player with number 'playerNumber'
         return mPlayerViews[playerNumber].getShapeImage();
     }
 
     // BoardView listener methods
     @Override
     public void edgeClickedWithCoordinates(int row, int col, BoardView boardView) {
-        if
+        int stateOfEdgeWithCoordinates() [row ][col];
 
         // TODO: Process player turn
     }
