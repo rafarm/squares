@@ -20,8 +20,8 @@ import squares.iesnules.com.squares.custom_views.interfaces.BoardViewListener;
 public class MatchActivity extends ActionBarActivity implements BoardViewListener, BoardViewDataProvider {
 
     private int mNumberOfPlayers;
-    private int mBoardRows = 8;
-    private int mBoardCols = 6;
+    private int mBoardRows = 10;
+    private int mBoardCols = 8;
     private GameEngine mEngine;
 
     private PlayerView[] mPlayerViews;
@@ -60,7 +60,7 @@ public class MatchActivity extends ActionBarActivity implements BoardViewListene
         }
 
         // Create board view
-        mBoardView = new BoardView(this);
+        mBoardView = new BoardView(mBoardRows, mBoardRows, this);
         mBoardView.setDataProvider(this);
         mBoardView.setListener(this);
 
@@ -73,10 +73,16 @@ public class MatchActivity extends ActionBarActivity implements BoardViewListene
         super.onResume();
 
         View decorView = getWindow().getDecorView();
-        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION /*| View.SYSTEM_UI_FLAG_FULLSCREEN*/;
+        int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         decorView.setSystemUiVisibility(uiOptions);
     }
 
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -98,7 +104,9 @@ public class MatchActivity extends ActionBarActivity implements BoardViewListene
 
         return super.onOptionsItemSelected(item);
     }
+    */
 
+    /*
     // BoardView data provider methods
     @Override
     public int rowsOfBoard(BoardView boardView) {
@@ -109,6 +117,7 @@ public class MatchActivity extends ActionBarActivity implements BoardViewListene
     public int colsOfBoard(BoardView boardView) {
         return mBoardCols;
     }
+    */
 
     @Override
     public byte stateOfEdgeWithCoordinates(int row, int col, BoardView boardView) {

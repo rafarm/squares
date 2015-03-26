@@ -6,10 +6,11 @@
     android:weightSum="1">
 
     <ImageView
-        android:layout_width="22dp"
-        android:layout_height="22dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:id="@+id/playerImage"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:adjustViewBounds="true" />
 
     <TextView
         android:layout_width="wrap_content"

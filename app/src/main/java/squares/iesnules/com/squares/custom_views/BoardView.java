@@ -22,23 +22,34 @@ import squares.iesnules.com.squares.custom_views.interfaces.BoardViewListener;
 /**
  * TODO: document your custom view class.
  */
-public class BoardView extends FrameLayout {
+public class BoardView extends View {
     private static final String TAG = "BoardView";
 
     private final int NODE_DIM = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
-
-    private GridLayout mGridLayout = null;
+    private int mSquareDim = NODE_DIM;
 
     private BoardViewDataProvider mDataProvider = null;
     private BoardViewListener mListener = null;
 
-    private int mBoardRows;
-    private int mBoardCols;
+    private int mBoardRows = 1;
+    private int mBoardCols = 1;
 
-    private int mSquareDim = NODE_DIM;
+    public BoardView(int rows, int cols, Context context) {
+        this(context);
+
+        mBoardRows = rows;
+        mBoardCols = cols;
+    }
 
     public BoardView(Context context) {
         super(context);
+
+        mGridLayout = new GridLayout(this.getContext());
+        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        mGridLayout.setLayoutParams(params);
+        mGridLayout.setBackgroundColor(Color.BLUE);
+
+        addView(mGridLayout);
     }
 
     public void setDataProvider(BoardViewDataProvider provider) {
@@ -59,20 +70,7 @@ public class BoardView extends FrameLayout {
 
     // Redraw game board
     public void reloadBoard() {
-        if (mGridLayout != null) {
-            removeView(mGridLayout);
-        }
-
-        mGridLayout = new GridLayout(this.getContext());
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        mGridLayout.setLayoutParams(params);
-        mGridLayout.setBackgroundColor(Color.BLUE);
-
         if (mDataProvider != null) {
-            // Get board dimensions
-            mBoardRows = mDataProvider.rowsOfBoard(this);
-            mBoardCols = mDataProvider.colsOfBoard(this);
-
             ImageView node = null;
             Button edge = null;
             ImageView square = null;
@@ -98,8 +96,6 @@ public class BoardView extends FrameLayout {
                 }
             }
         }
-
-        addView(mGridLayout);
     }
 
     private ImageView getNode(int row, int col) {
