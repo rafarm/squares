@@ -64,7 +64,7 @@ public class GameEngine {
     private boolean checkGameStateSanity(byte[][] state) {
         for (int i = 1; i < state.length; i += 2) {
             for (int j = 1; j < state[i].length; j += 2) {
-                if(checkSquareSanity( get3x3SubMatrix(state, i, j))==false){
+                if(checkSquareSanity( get3x3SubMatrix(i, j))==false){
                     return false;
                 }
 
@@ -77,7 +77,7 @@ public class GameEngine {
         return true;
     }
 
-    public byte[][] get3x3SubMatrix(byte[][] state, int i, int j) {
+   /* public byte[][] get3x3SubMatrix(byte[][] state, int i, int j) {
         byte[][] subMatrix = new byte[3][3];
 
         for (int n = 0; n < 3; n++) {
@@ -87,7 +87,9 @@ public class GameEngine {
         }
 
         return subMatrix;
-    }
+    }*/
+
+
 
     private boolean checkSquareSanity(byte[][] square) {
 // TODO: Check if a square state represented by 3x3 matrix 'square' is valid
@@ -122,21 +124,21 @@ public class GameEngine {
         return false;//Horizontal
     }
 
-    private byte[][] generateSquare(int n, int m){
+    private byte[][] get3x3SubMatrix(int n, int m){
 
-        byte[][] matrix = new byte[3][3];
-        matrix[0][0]= mGameState[n-1][m-1];
-        matrix[1][0]= mGameState[n][m-1];
-        matrix[2][0]= mGameState[n+1][m-1];
-        matrix[0][1]= mGameState[n-1][m];
-        matrix[1][1]= mGameState[n][m];
-        matrix[2][1]= mGameState[n+1][m];
-        matrix[0][2]= mGameState[n-1][m+1];
-        matrix[1][2]= mGameState[n][m+1];
-        matrix[2][2]= mGameState[n+1][m+1];
+        byte[][] subMatrix = new byte[3][3];
+        subMatrix[0][0]= mGameState[n-1][m-1];
+        subMatrix[1][0]= mGameState[n-1][m];
+        subMatrix[2][0]= mGameState[n-1][m+1];
+        subMatrix[0][1]= mGameState[n][m-1];
+        subMatrix[1][1]= mGameState[n][m];
+        subMatrix[2][1]= mGameState[n][m+1];
+        subMatrix[0][2]= mGameState[n+1][m-1];
+        subMatrix[1][2]= mGameState[n+1][m];
+        subMatrix[2][2]= mGameState[n+1][m+1];
 
 
-        return matrix;
+        return subMatrix;
 
     }
 
@@ -161,7 +163,7 @@ public class GameEngine {
                     int n = i -1;
                     int m = j;
 
-                    if (squareCaptured(generateSquare(n,m))){
+                    if (squareCaptured(get3x3SubMatrix(n,m))){
                         mGameState[n][m] = (byte) id;
                         counter++;
                     }
@@ -169,7 +171,7 @@ public class GameEngine {
                     n = i +1;
                     m = j;
 
-                    if (squareCaptured(generateSquare(n,m))) {
+                    if (squareCaptured(get3x3SubMatrix(n,m))) {
                         mGameState[n][m] = (byte) id;
                         counter++;
                     }
@@ -178,7 +180,7 @@ public class GameEngine {
                     int n = i + 1;
                     int m = j;
 
-                        if (squareCaptured(generateSquare(n,m))) {
+                        if (squareCaptured(get3x3SubMatrix(n,m))) {
                         mGameState[n][m] = (byte) id;
                         counter++;
                         }
@@ -188,7 +190,7 @@ public class GameEngine {
                     int n = i - 1;
                     int m = j;
 
-                    if (squareCaptured(generateSquare(n,m))) {
+                    if (squareCaptured(get3x3SubMatrix(n,m))) {
                         mGameState[n][m] = (byte) id;
                         counter++;
                     }
@@ -203,7 +205,7 @@ public class GameEngine {
                     int n = i ;
                     int m = j-1;
 
-                    if (squareCaptured(generateSquare(n,m))){
+                    if (squareCaptured(get3x3SubMatrix(n,m))){
                         mGameState[n][m] = (byte) id;
                         counter++;
                     }
@@ -211,7 +213,7 @@ public class GameEngine {
                     n = i;
                     m = j+1;
 
-                    if (squareCaptured(generateSquare(n,m))) {
+                    if (squareCaptured(get3x3SubMatrix(n,m))) {
                         mGameState[n][m] = (byte) id;
                         counter++;
                     }
@@ -220,7 +222,7 @@ public class GameEngine {
                     int n = i;
                     int m = j + 1;
 
-                    if (squareCaptured(generateSquare(n,m))) {
+                    if (squareCaptured(get3x3SubMatrix(n,m))) {
                         mGameState[n][m] = (byte) id;
                         counter++;
                     }
@@ -230,7 +232,7 @@ public class GameEngine {
                     int n = i ;
                     int m = j-1;
 
-                    if (squareCaptured(generateSquare(n,m))) {
+                    if (squareCaptured(get3x3SubMatrix(n,m))) {
                         mGameState[n][m] = (byte) id;
                         counter++;
                     }
