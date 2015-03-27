@@ -1,8 +1,10 @@
 <LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:background="@color/general_background_color">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -11,18 +13,22 @@
         android:layout_gravity="center_horizontal"
         android:layout_weight="0"
         android:id="@+id/playersLayout"
-        android:baselineAligned="false">
+        android:baselineAligned="false"
+        android:layout_margin="10dp">
 
     </LinearLayout>
 
-    <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+    <squares.iesnules.com.squares.custom_views.BoardView
+        custom:boardRows="8"
+        custom:boardCols="6"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/boardView"
         android:layout_gravity="center"
         android:layout_weight="1"
-        android:id="@+id/boardLayout"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp"></FrameLayout>
+        android:background="@color/overlay_color"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp" />
 
 </LinearLayout>

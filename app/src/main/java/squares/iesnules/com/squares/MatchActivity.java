@@ -5,12 +5,14 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+
+import java.util.logging.Logger;
 
 import squares.iesnules.com.squares.custom_views.BoardView;
 import squares.iesnules.com.squares.custom_views.PlayerView;
@@ -19,17 +21,17 @@ import squares.iesnules.com.squares.custom_views.interfaces.BoardViewListener;
 
 
 public class MatchActivity extends ActionBarActivity implements BoardViewListener, BoardViewDataProvider {
+    private static final String TAG = "MatchActivity";
 
     private int mNumberOfPlayers;
-    private int mBoardRows = 10;
-    private int mBoardCols = 8;
+    //private int mBoardRows = 10;
+    //private int mBoardCols = 8;
     private GameEngine mEngine;
 
 
     private PlayerView[] mPlayerViews;
 
     private LinearLayout mPlayersLayout;
-    private FrameLayout mBoardLayout;
     private BoardView mBoardView;
 
     @Override
@@ -40,10 +42,11 @@ public class MatchActivity extends ActionBarActivity implements BoardViewListene
 
         // Get number of players and create engine
         mNumberOfPlayers = intent.getIntExtra(MainActivity.NUMBER_OF_PLAYERS, 2);
-        mEngine = new GameEngine(mBoardRows, mBoardCols);
 
         mPlayersLayout = (LinearLayout)findViewById(R.id.playersLayout);
-        mBoardLayout = (FrameLayout)findViewById(R.id.boardLayout);
+        mBoardView = (BoardView)findViewById(R.id.boardView);
+
+        mEngine = new GameEngine(mBoardView.getBoardRows(), mBoardView.getBoardCols());
 
         // Create players views
         mPlayerViews = new PlayerView[mNumberOfPlayers];
@@ -62,30 +65,12 @@ public class MatchActivity extends ActionBarActivity implements BoardViewListene
             mPlayersLayout.addView(player, i);
         }
 
-        // Create board view
-        mBoardView = new BoardView(mBoardRows, mBoardRows, this);
         mBoardView.setDataProvider(this);
         mBoardView.setListener(this);
-
-        mBoardLayout.addView(mBoardView);
         mBoardView.reloadBoard();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
 
-        View decorView = getWindow().getDecorView();
-        int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        decorView.setSystemUiVisibility(uiOptions);
-    }
-
-    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -107,20 +92,6 @@ public class MatchActivity extends ActionBarActivity implements BoardViewListene
 
         return super.onOptionsItemSelected(item);
     }
-    */
-
-    /*
-    // BoardView data provider methods
-    @Override
-    public int rowsOfBoard(BoardView boardView) {
-        return mBoardRows;
-    }
-
-    @Override
-    public int colsOfBoard(BoardView boardView) {
-        return mBoardCols;
-    }
-    */
 
     @Override
     public byte stateOfEdgeWithCoordinates(int row, int col, BoardView boardView) {
@@ -140,8 +111,8 @@ public class MatchActivity extends ActionBarActivity implements BoardViewListene
     // BoardView listener methods
     @Override
     public void edgeClickedWithCoordinates(int row, int col, BoardView boardView) {
-        int stateOfEdgeWithCoordinates() [row ][col];
-
         // TODO: Process player turn
+
+        Log.d("Edge touched at ("+row+","+col+").", TAG);
     }
 }

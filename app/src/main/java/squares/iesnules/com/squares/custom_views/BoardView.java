@@ -1,5 +1,6 @@
 package squares.iesnules.com.squares.custom_views;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -22,10 +23,11 @@ import squares.iesnules.com.squares.custom_views.interfaces.BoardViewListener;
 /**
  * TODO: document your custom view class.
  */
-public class BoardView extends View {
+public class BoardView extends ViewGroup implements View.OnClickListener {
     private static final String TAG = "BoardView";
 
-    private final int NODE_DIM = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
+    private final int NODE_DIM = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 14, getResources().getDisplayMetrics());
+
     private int mSquareDim = NODE_DIM;
 
     private BoardViewDataProvider mDataProvider = null;
@@ -34,22 +36,83 @@ public class BoardView extends View {
     private int mBoardRows = 1;
     private int mBoardCols = 1;
 
-    public BoardView(int rows, int cols, Context context) {
-        this(context);
-
-        mBoardRows = rows;
-        mBoardCols = cols;
+    public BoardView(Context context) {
+        this(context, null);
     }
 
-    public BoardView(Context context) {
+    public BoardView(Context context, AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public BoardView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+
+        applyAttributes(attrs);
+    }
+
+    public BoardView(Context context, int rows, int cols) {
         super(context);
 
-        mGridLayout = new GridLayout(this.getContext());
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        mGridLayout.setLayoutParams(params);
-        mGridLayout.setBackgroundColor(Color.BLUE);
+        mBoardRows = Math.max(rows, 1);
+        mBoardCols = Math.max(cols, 1);
 
-        addView(mGridLayout);
+        createAllSubviews();
+    }
+
+    private void applyAttributes(AttributeSet attrs) {
+        TypedArray a = getContext().getTheme().obtainStyledAttributes(
+                attrs,
+                R.styleable.BoardView,
+                0, 0);
+
+        try {
+            mBoardRows = a.getInt(R.styleable.BoardView_boardRows, 1);
+            mBoardCols = a.getInt(R.styleable.BoardView_boardCols, 1);
+        } finally {
+            a.recycle();
+        }
+
+        createAllSubviews();
+    }
+
+    private void createAllSubviews() {
+        removeAllViews();
+
+        ImageView node = null;
+        Button edge = null;
+        ImageView square = null;
+
+        int rows = 2*mBoardRows + 1;
+        int cols = 2*mBoardCols + 1;
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (i%2 == 0) { // Even rows have nodes and horizontal edges
+                    if (j%2 == 0) {
+                        addView(getNode());
+                    }
+                    else {
+                        addView(getEdge());
+                    }
+                }
+                else { // Odd rows have vertical edges and squares
+                    if (j%2 == 0) {
+                        addView(getEdge());
+                    }
+                    else {
+                        addView(getSquare());
+                    }
+                }
+            }
+        }
+    }
+
+    public int getBoardRows() {
+        return mBoardRows;
+    }
+
+    public int getBoardCols() {
+        return mBoardCols;
     }
 
     public void setDataProvider(BoardViewDataProvider provider) {
@@ -70,27 +133,38 @@ public class BoardView extends View {
 
     // Redraw game board
     public void reloadBoard() {
-        if (mDataProvider != null) {
-            ImageView node = null;
-            Button edge = null;
-            ImageView square = null;
 
-            for (int i = 0; i < (2*mBoardRows + 1); i++) {
-                for (int j = 0; j < (2*mBoardCols + 1); j++) {
+        if (mDataProvider != null) {
+            int rows = 2*mBoardRows + 1;
+            int cols = 2*mBoardCols + 1;
+
+            int uncheckedEdgeColor = getResources().getColor(R.color.general_background_color);
+            int checkedEdgeColor = getResources().getColor(R.color.overlay_color);
+
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
                     if (i%2 == 0) { // Even rows have nodes and horizontal edges
-                        if (j%2 == 0) {
-                            mGridLayout.addView(getNode(i, j));
-                        }
-                        else {
-                            mGridLayout.addView(getHorizontalEdge(i, j));
+                        if (j%2 != 0) {
+                            Button edge = (Button)getChildAt(i * cols + j);
+                            int color = mDataProvider.stateOfEdgeWithCoordinates(i, j, this) == 0 ? uncheckedEdgeColor : checkedEdgeColor;
+                            edge.setBackgroundColor(color);
                         }
                     }
                     else { // Odd rows have vertical edges and squares
                         if (j%2 == 0) {
-                            mGridLayout.addView(getVerticalEdge(i, j));
+                            Button edge = (Button)getChildAt(i * cols + j);
+                            int color = mDataProvider.stateOfEdgeWithCoordinates(i, j, this) == 0 ? uncheckedEdgeColor : checkedEdgeColor;
+                            edge.setBackgroundColor(color);
                         }
                         else {
-                            mGridLayout.addView(getSquare(i, j));
+                            ImageView square = (ImageView)getChildAt(i * cols + j);
+                            byte state = mDataProvider.stateOfSquareWithCoordinates(i, j, this);
+                            if (state == 0) {
+                                square.setBackground(null);
+                            }
+                            else {
+                                square.setBackground(mDataProvider.shapeForPlayerNumber(state, this));
+                            }
                         }
                     }
                 }
@@ -98,28 +172,23 @@ public class BoardView extends View {
         }
     }
 
-    private ImageView getNode(int row, int col) {
+    private ImageView getNode() {
         ImageView node = new ImageView(this.getContext());
 
-        node.setBackgroundDrawable(getResources().getDrawable(R.mipmap.node));
-
-        GridLayout.LayoutParams params = new GridLayout.LayoutParams(GridLayout.spec(row), GridLayout.spec(col));
-        //params.setGravity(Gravity.CENTER);
-        params.height = NODE_DIM;
-        params.width = NODE_DIM;
-        node.setLayoutParams(params);
+        node.setBackground(getResources().getDrawable(R.mipmap.node));
 
         return node;
     }
 
+    /*
     private Button getHorizontalEdge(int row, int col) {
         Button edge = getEdge(row, col);
 
-        GridLayout.LayoutParams params = (GridLayout.LayoutParams)edge.getLayoutParams();
+        //GridLayout.LayoutParams params = (GridLayout.LayoutParams)edge.getLayoutParams();
         //params.setGravity(Gravity.FILL_HORIZONTAL);
-        params.width = mSquareDim;
-        params.height = NODE_DIM;
-        edge.setLayoutParams(params);
+        //params.width = mSquareDim;
+        //params.height = NODE_DIM;
+        //edge.setLayoutParams(params);
 
         return edge;
     }
@@ -135,108 +204,99 @@ public class BoardView extends View {
 
         return edge;
     }
+    */
 
-    private Button getEdge(int row, int col) {
+    private Button getEdge() {
         Button edge = new Button(this.getContext());
 
-        edge.setBackgroundDrawable(getResources().getDrawable(R.mipmap.node));
+        edge.setBackgroundColor(getResources().getColor(R.color.overlay_color));
 
-        GridLayout.LayoutParams params = new GridLayout.LayoutParams(GridLayout.spec(row), GridLayout.spec(col));
-        edge.setLayoutParams(params);
+        edge.setOnClickListener(this);
 
         return edge;
     }
 
-    private ImageView getSquare(int row, int col) {
+    private ImageView getSquare() {
         ImageView square = new ImageView(this.getContext());
-
-        //square.setBackgroundDrawable(getResources().getDrawable(R.mipmap.ic_launcher));
-
-        GridLayout.LayoutParams params = new GridLayout.LayoutParams(GridLayout.spec(row), GridLayout.spec(col));
-        //params.setGravity(Gravity.FILL);
-        params.width = mSquareDim;
-        params.height = mSquareDim;
-        square.setLayoutParams(params);
 
         return square;
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        if (changed) {
+            int count = getChildCount();
 
+            int vLeft;
+            int vTop;
+            int vRight;
+            int vBottom;
 
-        super.onLayout(changed, left, top, right, bottom);
-        //Log.v(TAG, "Width: " + mGridLayout.getWidth() + " Height " + mGridLayout.getHeight());
+            int rows = 2 * mBoardRows + 1;
+            int cols = 2 * mBoardCols + 1;
+
+            vTop = getPaddingTop();
+
+            for (int i = 0; i < rows; i++) {
+
+                vLeft = getPaddingLeft();
+                vBottom = vTop + (i % 2 == 0 ? NODE_DIM : mSquareDim);
+
+                for (int j = 0; j < cols; j++) {
+                    View view = getChildAt(i * cols + j);
+                    vRight = vLeft + (j % 2 == 0 ? NODE_DIM : mSquareDim);
+                    view.layout(vLeft, vTop, vRight, vBottom);
+
+                    vLeft = vRight;
+                }
+
+                vTop = vBottom;
+            }
+        }
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        //Log.v(TAG, "Width: " + getWidth() + " Height " + getHeight());
+        int minW = getPaddingLeft() + getPaddingRight() + getSuggestedMinimumWidth();
+        int w = resolveSize(minW, widthMeasureSpec);
 
-        int currentWidth = getWidth();
-        int currentHeight = getHeight();
+        int minH = getPaddingTop() + getPaddingBottom() + getSuggestedMinimumHeight();
+        int h = resolveSize(minH, heightMeasureSpec);
 
-        // Compute grid margins to get square cells square.
-        if (currentWidth > 0 && currentHeight > 0 && mGridLayout != null) {
-            int squareWidth = (currentWidth - (mBoardCols + 1)*NODE_DIM) / mBoardCols;
-            int squareHeight = (currentHeight - (mBoardRows + 1)*NODE_DIM) / mBoardRows;
+        // Compute squareDim & desired width&height
+        int targetW = View.MeasureSpec.getSize(w);
+        int targetH = View.MeasureSpec.getSize(h);
 
-            if (squareWidth > squareHeight) {
-                int margin = (squareWidth - squareHeight)*mBoardCols / 2;
+        int squareWidth = (targetW - (mBoardCols + 1)*NODE_DIM) / mBoardCols;
+        int squareHeight = (targetH - (mBoardRows + 1)*NODE_DIM) / mBoardRows;
 
-                FrameLayout.MarginLayoutParams params = (FrameLayout.MarginLayoutParams)getLayoutParams();
-                params.setMargins(margin, 0, margin, 0);
+        if (squareWidth > squareHeight) {
+            targetW -= (squareWidth - squareHeight)*mBoardCols;
 
-                setLayoutParams((FrameLayout.LayoutParams)params);
+            mSquareDim = squareHeight;
+        }
+        else {
+            targetH -= (squareHeight - squareWidth)*mBoardRows;
 
-                mSquareDim = squareHeight;
-            }
-            else {
-                int margin = (squareHeight - squareWidth)*mBoardRows / 2;
+            mSquareDim = squareWidth;
+        }
 
-                FrameLayout.MarginLayoutParams params = (FrameLayout.MarginLayoutParams)getLayoutParams();
-                params.setMargins(0, margin, 0, margin);
+        int finalW = View.MeasureSpec.makeMeasureSpec(targetW, MeasureSpec.EXACTLY);
+        int finalH = View.MeasureSpec.makeMeasureSpec(targetH, MeasureSpec.EXACTLY);
 
-                mSquareDim = squareWidth;
+        setMeasuredDimension(finalW, finalH);
+    }
 
-                setLayoutParams((FrameLayout.LayoutParams)params);
-            }
+    @Override
+    public void onClick(View v) {
+        if (mListener != null) {
+            int index = indexOfChild(v);
 
-            int count = mGridLayout.getChildCount();
+            int realCols = 2 * mBoardCols + 1;
+            int row = index / realCols;
+            int col = index % realCols;
 
-            Log.v(TAG, "onLayout >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            for (int i = 0; i < count; i++) {
-                View view = mGridLayout.getChildAt(i);
-                GridLayout.LayoutParams params = (GridLayout.LayoutParams)view.getLayoutParams();
-
-                int row = i/(2*mBoardCols + 1);
-                int col = i%(2*mBoardCols + 1);
-
-                if (row%2 == 0) { // Even rows have nodes and horizontal edges
-                    if (col%2 != 0) {
-                        params.width = mSquareDim;
-                        Log.v(TAG, "Horizontal Edge width: " + params.width);
-                        Log.v(TAG, "Horizontal Edge height: " + params.height);
-                    }
-                }
-                else { // Odd rows have vertical edges and squares
-                    if (col%2 == 0) {
-                        params.height = mSquareDim;
-                        Log.v(TAG, "Vertical Edge width: " + params.width);
-                        Log.v(TAG, "Vertical Edge height: " + params.height);
-                    }
-                    else {
-                        params.width = mSquareDim;
-                        params.height = mSquareDim;
-                        Log.v(TAG, "Square width: " + params.width);
-                        Log.v(TAG, "Square height: " + params.height);
-                    }
-                }
-
-                view.setLayoutParams(params);
-            }
-            Log.v(TAG, "onLayout <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+            mListener.edgeClickedWithCoordinates(row, col, this);
         }
     }
 }

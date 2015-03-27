@@ -32,23 +32,27 @@
             android:layout_height="40dp"
             android:text="@string/play_offline"
             android:id="@+id/offlineButton"
-            android:layout_gravity="center_horizontal"
-            android:onClick="showOfflineOptions"
-            android:layout_weight="0.22" />
+            android:layout_gravity="center"
+            android:onClick="showOfflineOptions" />
 
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignTop="@+id/mainLayout"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentEnd="false"
         android:visibility="gone"
         android:id="@+id/optionsLayout"
-        android:gravity="center_vertical">
+        android:background="@color/overlay_color"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentLeft="false"
+        android:layout_alignWithParentIfMissing="false"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:layout_alignParentStart="false"
+        android:padding="30dp">
 
         <Button
             android:layout_width="wrap_content"

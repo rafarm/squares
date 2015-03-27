@@ -1,5 +1,6 @@
 <resources>
     <declare-styleable name="BoardView">
-
+        <attr name="boardRows" format="integer" />
+        <attr name="boardCols" format="integer" />
     </declare-styleable>
 </resources>
