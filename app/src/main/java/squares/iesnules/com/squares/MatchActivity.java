@@ -2,6 +2,7 @@ package squares.iesnules.com.squares;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,6 +24,7 @@ public class MatchActivity extends ActionBarActivity implements BoardViewListene
     private int mBoardRows = 10;
     private int mBoardCols = 8;
     private GameEngine mEngine;
+
 
     private PlayerView[] mPlayerViews;
 
@@ -52,7 +54,8 @@ public class MatchActivity extends ActionBarActivity implements BoardViewListene
             player.setPlayerName("Player "+(i+1));
             player.setPlayerScore("0");
             player.setPlayerImage(getResources().getDrawable(R.mipmap.ic_launcher));
-            // TODO: Set player image & shape
+            player.setShapeImage(getResources().getDrawable(R.mipmap.ic_launcher));
+
 
             mPlayerViews[i] = player;
 
@@ -121,25 +124,24 @@ public class MatchActivity extends ActionBarActivity implements BoardViewListene
 
     @Override
     public byte stateOfEdgeWithCoordinates(int row, int col, BoardView boardView) {
-        // TODO: Return the state of board's edge with coordinates (row, col) as represented in the engine's state
-        return 0;
+        return mEngine.getGameState()[row][col];
     }
 
     @Override
     public byte stateOfSquareWithCoordinates(int row, int col, BoardView boardView) {
-        // TODO: Return the state of board's square with coordinates (row, col) as represented in the engine's state
-        return 0;
+       return mEngine.getGameState()[row][col];
     }
 
     @Override
     public Drawable shapeForPlayerNumber(int playerNumber, BoardView boardView) {
-        // TODO: Return the shape assigned to the player with number 'playerNumber'
-        return null;
+        return mPlayerViews[playerNumber].getShapeImage();
     }
 
     // BoardView listener methods
     @Override
     public void edgeClickedWithCoordinates(int row, int col, BoardView boardView) {
+        int stateOfEdgeWithCoordinates() [row ][col];
+
         // TODO: Process player turn
     }
 }
