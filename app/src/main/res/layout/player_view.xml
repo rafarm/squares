@@ -1,46 +1,58 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:weightSum="1"
-    android:background="@color/overlay_color">
-
-    <ImageView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:id="@+id/playerImage"
-        android:layout_gravity="center_horizontal"
-        android:adjustViewBounds="true"
-        android:layout_marginBottom="5dp" />
-
-    <TextView
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Player"
-        android:id="@+id/playerName"
+        android:weightSum="1"
+        android:background="@mipmap/parent_button_bg"
         android:layout_gravity="center_horizontal"
-        android:textSize="10sp" />
-
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
+        android:baselineAligned="true"
+        android:paddingLeft="10dp"
+        android:paddingTop="4dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="4dp">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/shapeImage"
-            android:layout_gravity="center" />
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/playerImage"
+            android:layout_gravity="center_horizontal"
+            android:adjustViewBounds="false" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Number"
-            android:id="@+id/playerScore"
-            android:layout_gravity="center"
-            android:layout_weight="0.17"
-            android:textSize="14sp" />
-    </FrameLayout>
+            android:text="Player"
+            android:id="@+id/playerName"
+            android:layout_gravity="center_horizontal"
+            android:textSize="10sp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:textAlignment="center" />
 
-</LinearLayout>
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:id="@+id/shapeImage"
+                android:layout_gravity="center" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Number"
+                android:id="@+id/playerScore"
+                android:layout_gravity="center"
+                android:textSize="20sp"
+                android:textColor="#DDD" />
+        </FrameLayout>
+
+    </LinearLayout>
+</FrameLayout>

@@ -1,10 +1,21 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
-    android:background="@color/general_background_color">
+    android:background="@color/general_background_color"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_alignTop="@+id/optionsLayout"
+        android:layout_centerHorizontal="true"
+        android:background="@mipmap/logo_main"
+        android:layout_gravity="center"
+        android:layout_margin="20dp" />
 
     <LinearLayout
         android:orientation="vertical"
@@ -14,18 +25,9 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:id="@+id/mainLayout"
-        android:weightSum="1">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageView"
-            android:layout_alignTop="@+id/optionsLayout"
-            android:layout_centerHorizontal="true"
-            android:background="@mipmap/logo_main"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="40dp" />
+        android:weightSum="1"
+        android:gravity="center"
+        android:animateLayoutChanges="true">
 
         <Button
             android:layout_width="230dp"
@@ -33,54 +35,61 @@
             android:text="@string/play_offline"
             android:id="@+id/offlineButton"
             android:layout_gravity="center"
-            android:onClick="showOfflineOptions" />
+            android:onClick="showOfflineOptions"
+            android:background="@mipmap/parent_button_bg" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="false"
+            android:layout_alignParentRight="false"
+            android:layout_alignParentEnd="false"
+            android:visibility="gone"
+            android:id="@+id/optionsLayout"
+            android:layout_alignParentTop="false"
+            android:layout_alignParentLeft="false"
+            android:layout_alignWithParentIfMissing="false"
+            android:orientation="vertical"
+            android:layout_alignParentStart="false"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp">
+
+            <Button
+                android:layout_width="200dp"
+                android:layout_height="40dp"
+                android:text="@string/two_players"
+                android:id="@+id/twoPlayersButton"
+                android:layout_gravity="center"
+                android:visibility="visible"
+                android:onClick="launchMatchActivity"
+                android:enabled="true"
+                android:background="@mipmap/child_button_bg"
+                android:layout_margin="5dp" />
+
+            <Button
+                android:layout_width="200dp"
+                android:layout_height="40dp"
+                android:text="@string/three_players"
+                android:id="@+id/threePlayersButton"
+                android:layout_gravity="center"
+                android:visibility="visible"
+                android:onClick="launchMatchActivity"
+                android:background="@mipmap/child_button_bg"
+                android:layout_margin="5dp" />
+
+            <Button
+                android:layout_width="200dp"
+                android:layout_height="40dp"
+                android:text="@string/four_players"
+                android:id="@+id/fourPlayersButton"
+                android:layout_gravity="center"
+                android:onClick="launchMatchActivity"
+                android:background="@mipmap/child_button_bg"
+                android:layout_margin="5dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="false"
-        android:layout_alignParentRight="false"
-        android:layout_alignParentEnd="false"
-        android:visibility="gone"
-        android:id="@+id/optionsLayout"
-        android:background="@color/overlay_color"
-        android:layout_alignParentTop="false"
-        android:layout_alignParentLeft="false"
-        android:layout_alignWithParentIfMissing="false"
-        android:layout_centerInParent="true"
-        android:orientation="vertical"
-        android:layout_alignParentStart="false"
-        android:padding="30dp">
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/two_players"
-            android:id="@+id/twoPlayersButton"
-            android:layout_gravity="center_horizontal"
-            android:visibility="visible"
-            android:onClick="launchMatchActivity"
-            android:enabled="true" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/three_players"
-            android:id="@+id/threePlayersButton"
-            android:layout_gravity="center_horizontal"
-            android:visibility="visible"
-            android:onClick="launchMatchActivity" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/four_players"
-            android:id="@+id/fourPlayersButton"
-            android:layout_gravity="center_horizontal"
-            android:onClick="launchMatchActivity" />
-
-    </LinearLayout>
-
-</RelativeLayout>
+</LinearLayout>

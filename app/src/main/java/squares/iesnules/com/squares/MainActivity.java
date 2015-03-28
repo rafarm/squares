@@ -1,6 +1,7 @@
 package squares.iesnules.com.squares;
 
 
+import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,10 +12,11 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
     public static final String NUMBER_OF_PLAYERS = "NumberOfPlayers";
 
     private LinearLayout mOptionsLayout;
+    private Button mOfflineButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +24,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         mOptionsLayout = (LinearLayout)findViewById(R.id.optionsLayout);
+        mOfflineButton = (Button)findViewById(R.id.offlineButton);
     }
 
     @Override
@@ -36,6 +39,9 @@ public class MainActivity extends ActionBarActivity {
                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         decorView.setSystemUiVisibility(uiOptions);
+
+        mOptionsLayout.setVisibility(View.GONE);
+        mOfflineButton.setEnabled(true);
     }
 
     /*
@@ -63,6 +69,7 @@ public class MainActivity extends ActionBarActivity {
     */
 
     public void showOfflineOptions(View view) {
+        mOfflineButton.setEnabled(false);
         mOptionsLayout.setVisibility(View.VISIBLE);
     }
 

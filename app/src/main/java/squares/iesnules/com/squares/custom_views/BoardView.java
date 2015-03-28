@@ -138,8 +138,9 @@ public class BoardView extends ViewGroup implements View.OnClickListener {
             int rows = 2*mBoardRows + 1;
             int cols = 2*mBoardCols + 1;
 
-            int uncheckedEdgeColor = getResources().getColor(R.color.general_background_color);
-            int checkedEdgeColor = getResources().getColor(R.color.overlay_color);
+            int checkedEdgeColor = getResources().getColor(R.color.checked_edge_color);
+            //int uncheckedEdgeColor = getResources().getColor(R.color.overlay_color);
+            int uncheckedEdgeColor = Color.TRANSPARENT;
 
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
@@ -258,33 +259,25 @@ public class BoardView extends ViewGroup implements View.OnClickListener {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int minW = getPaddingLeft() + getPaddingRight() + getSuggestedMinimumWidth();
-        int w = resolveSize(minW, widthMeasureSpec);
+        int wSpec = resolveSize(minW, widthMeasureSpec);
 
         int minH = getPaddingTop() + getPaddingBottom() + getSuggestedMinimumHeight();
-        int h = resolveSize(minH, heightMeasureSpec);
+        int hSpec = resolveSize(minH, heightMeasureSpec);
 
         // Compute squareDim & desired width&height
-        int targetW = View.MeasureSpec.getSize(w);
-        int targetH = View.MeasureSpec.getSize(h);
+        int w = View.MeasureSpec.getSize(wSpec);
+        int h = View.MeasureSpec.getSize(hSpec);
 
-        int squareWidth = (targetW - (mBoardCols + 1)*NODE_DIM) / mBoardCols;
-        int squareHeight = (targetH - (mBoardRows + 1)*NODE_DIM) / mBoardRows;
+        int squareWidth = (w - (mBoardCols + 1)*NODE_DIM) / mBoardCols;
+        int squareHeight = (h - (mBoardRows + 1)*NODE_DIM) / mBoardRows;
 
-        if (squareWidth > squareHeight) {
-            targetW -= (squareWidth - squareHeight)*mBoardCols;
+        mSquareDim = squareWidth > squareHeight ? squareHeight : squareWidth;
 
-            mSquareDim = squareHeight;
-        }
-        else {
-            targetH -= (squareHeight - squareWidth)*mBoardRows;
+        int finalW = mBoardCols * mSquareDim + (mBoardCols + 1) * NODE_DIM;
+        int finalH = mBoardRows * mSquareDim + (mBoardRows + 1) * NODE_DIM;
 
-            mSquareDim = squareWidth;
-        }
-
-        int finalW = View.MeasureSpec.makeMeasureSpec(targetW, MeasureSpec.EXACTLY);
-        int finalH = View.MeasureSpec.makeMeasureSpec(targetH, MeasureSpec.EXACTLY);
-
-        setMeasuredDimension(finalW, finalH);
+        setMeasuredDimension(View.MeasureSpec.makeMeasureSpec(finalW, MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(finalH, MeasureSpec.EXACTLY));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package squares.iesnules.com.squares;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
@@ -20,7 +21,7 @@ import squares.iesnules.com.squares.custom_views.interfaces.BoardViewDataProvide
 import squares.iesnules.com.squares.custom_views.interfaces.BoardViewListener;
 
 
-public class MatchActivity extends ActionBarActivity implements BoardViewListener, BoardViewDataProvider {
+public class MatchActivity extends Activity implements BoardViewListener, BoardViewDataProvider {
     private static final String TAG = "MatchActivity";
 
     private int mNumberOfPlayers;
@@ -70,7 +71,7 @@ public class MatchActivity extends ActionBarActivity implements BoardViewListene
         mBoardView.reloadBoard();
     }
 
-
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -92,6 +93,7 @@ public class MatchActivity extends ActionBarActivity implements BoardViewListene
 
         return super.onOptionsItemSelected(item);
     }
+    */
 
     @Override
     public byte stateOfEdgeWithCoordinates(int row, int col, BoardView boardView) {
@@ -113,6 +115,6 @@ public class MatchActivity extends ActionBarActivity implements BoardViewListene
     public void edgeClickedWithCoordinates(int row, int col, BoardView boardView) {
         // TODO: Process player turn
 
-        Log.d("Edge touched at ("+row+","+col+").", TAG);
+        Log.d("Edge touched at ("+row+","+col+")", TAG);
     }
 }

@@ -18,17 +18,30 @@
 
     </LinearLayout>
 
-    <squares.iesnules.com.squares.custom_views.BoardView
-        custom:boardRows="8"
-        custom:boardCols="6"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/boardView"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        android:background="@color/overlay_color"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp" />
+        android:layout_marginBottom="10dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView2"
+            android:background="@mipmap/logo_main"
+            android:layout_gravity="center" />
+
+        <squares.iesnules.com.squares.custom_views.BoardView
+            custom:boardRows="8"
+            custom:boardCols="6"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/boardView"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@color/overlay_color" />
+
+    </FrameLayout>
 
 </LinearLayout>
