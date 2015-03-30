@@ -1,20 +1,50 @@
 package squares.iesnules.com.squares;
 
+
+import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.content.Intent;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
+    public static final String NUMBER_OF_PLAYERS = "NumberOfPlayers";
+
+    private LinearLayout mOptionsLayout;
+    private Button mOfflineButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mOptionsLayout = (LinearLayout)findViewById(R.id.optionsLayout);
+        mOfflineButton = (Button)findViewById(R.id.offlineButton);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        decorView.setSystemUiVisibility(uiOptions);
+
+        mOptionsLayout.setVisibility(View.GONE);
+        mOfflineButton.setEnabled(true);
+    }
+
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -35,5 +65,29 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    */
+
+    public void showOfflineOptions(View view) {
+        mOfflineButton.setEnabled(false);
+        mOptionsLayout.setVisibility(View.VISIBLE);
+    }
+
+    public void launchMatchActivity(View view) {
+        Intent intent = new Intent(this, MatchActivity.class);
+
+        int viewId = view.getId();
+
+        if (viewId == R.id.twoPlayersButton) {
+            intent.putExtra(NUMBER_OF_PLAYERS, 2);
+        }
+        else if (viewId == R.id.threePlayersButton) {
+            intent.putExtra(NUMBER_OF_PLAYERS, 3);
+        }
+        else if (viewId == R.id.fourPlayersButton) {
+            intent.putExtra(NUMBER_OF_PLAYERS, 4);
+        }
+
+        startActivity(intent);
     }
 }

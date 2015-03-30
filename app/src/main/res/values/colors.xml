@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="general_background_color">#FF333333</color>
+    <color name="overlay_color">#DD333333</color>
+    <color name="checked_edge_color">#FFEEEEEE</color>
+</resources>
