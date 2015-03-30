@@ -64,7 +64,7 @@ public class GameEngine {
     private boolean checkGameStateSanity(byte[][] state) {
         for (int i = 1; i < state.length; i += 2) {
             for (int j = 1; j < state[i].length; j += 2) {
-                if(checkSquareSanity( get3x3SubMatrix(i, j))==false){
+                if(!checkSquareSanity( get3x3SubMatrix(i, j, state))){
                     return false;
                 }
 
@@ -124,18 +124,18 @@ public class GameEngine {
         return false;//Horizontal
     }
 
-    private byte[][] get3x3SubMatrix(int n, int m){
+    private byte[][] get3x3SubMatrix(int n, int m, byte[][] state){
 
         byte[][] subMatrix = new byte[3][3];
-        subMatrix[0][0]= mGameState[n-1][m-1];
-        subMatrix[1][0]= mGameState[n-1][m];
-        subMatrix[2][0]= mGameState[n-1][m+1];
-        subMatrix[0][1]= mGameState[n][m-1];
-        subMatrix[1][1]= mGameState[n][m];
-        subMatrix[2][1]= mGameState[n][m+1];
-        subMatrix[0][2]= mGameState[n+1][m-1];
-        subMatrix[1][2]= mGameState[n+1][m];
-        subMatrix[2][2]= mGameState[n+1][m+1];
+        subMatrix[0][0]= state[n-1][m-1];
+        subMatrix[1][0]= state[n-1][m];
+        subMatrix[2][0]= state[n-1][m+1];
+        subMatrix[0][1]= state[n][m-1];
+        subMatrix[1][1]= state[n][m];
+        subMatrix[2][1]= state[n][m+1];
+        subMatrix[0][2]= state[n+1][m-1];
+        subMatrix[1][2]= state[n+1][m];
+        subMatrix[2][2]= state[n+1][m+1];
 
 
         return subMatrix;
@@ -152,46 +152,46 @@ public class GameEngine {
 
 
 
-    public int markEdge(int i, int j, int id, int rows, int cols) {
+    public int markEdge(int edgeRow, int edgeCol, byte playerID) {
         int counter = 0;
 
-        if (!edgeIsChecked(i, j)) {
-            mGameState[i][j] = 1;
-            if (isEdgeVertical(i, j)) {
+        if (!edgeIsChecked(edgeRow, edgeCol)) {
+            mGameState[edgeRow][edgeCol] = 1;
+            if (isEdgeVertical(edgeRow, edgeCol)) {
 
-                if (i != 0 && i != cols - 1) {              // comprueba las casillas que no estan en los laterales
-                    int n = i -1;
-                    int m = j;
+                if (edgeRow != 0 && edgeRow != cols - 1) {              // comprueba las casillas que no estan en los laterales
+                    int n = edgeRow -1;
+                    int m = edgeCol;
 
-                    if (squareCaptured(get3x3SubMatrix(n,m))){
-                        mGameState[n][m] = (byte) id;
+                    if (squareCaptured(get3x3SubMatrix(n,m, state))){
+                        mGameState[n][m] = (byte) playerID;
                         counter++;
                     }
 
-                    n = i +1;
-                    m = j;
+                    n = edgeRow +1;
+                    m = edgeCol;
 
-                    if (squareCaptured(get3x3SubMatrix(n,m))) {
-                        mGameState[n][m] = (byte) id;
+                    if (squareCaptured(get3x3SubMatrix(n,m, state))) {
+                        mGameState[n][m] = (byte) playerID;
                         counter++;
                     }
                 }
-                else if(i == 0){                             // comprueba la casilla del lateral izquierdo
-                    int n = i + 1;
-                    int m = j;
+                else if(edgeRow == 0){                             // comprueba la casilla del lateral izquierdo
+                    int n = edgeRow + 1;
+                    int m = edgeCol;
 
-                        if (squareCaptured(get3x3SubMatrix(n,m))) {
-                        mGameState[n][m] = (byte) id;
+                        if (squareCaptured(get3x3SubMatrix(n,m, state))) {
+                        mGameState[n][m] = (byte) playerID;
                         counter++;
                         }
 
                     }
-                else if(i == cols - 1){                      // comprueba la casilla del lateral derecho
-                    int n = i - 1;
-                    int m = j;
+                else if(edgeRow == cols - 1){                      // comprueba la casilla del lateral derecho
+                    int n = edgeRow - 1;
+                    int m = edgeCol;
 
-                    if (squareCaptured(get3x3SubMatrix(n,m))) {
-                        mGameState[n][m] = (byte) id;
+                    if (squareCaptured(get3x3SubMatrix(n,m, state))) {
+                        mGameState[n][m] = (byte) playerID;
                         counter++;
                     }
 
@@ -201,39 +201,39 @@ public class GameEngine {
             }
 
             else{
-                if (j != 0 && j != rows - 1) {              // comprueba las casillas que no estan en los laterales
-                    int n = i ;
-                    int m = j-1;
+                if (edgeCol != 0 && edgeCol != rows - 1) {              // comprueba las casillas que no estan en los laterales
+                    int n = edgeRow ;
+                    int m = edgeCol - 1;
 
-                    if (squareCaptured(get3x3SubMatrix(n,m))){
-                        mGameState[n][m] = (byte) id;
+                    if (squareCaptured(get3x3SubMatrix(n,m, state))){
+                        mGameState[n][m] = (byte) playerID;
                         counter++;
                     }
 
-                    n = i;
-                    m = j+1;
+                    n = edgeRow;
+                    m = edgeCol + 1;
 
-                    if (squareCaptured(get3x3SubMatrix(n,m))) {
-                        mGameState[n][m] = (byte) id;
+                    if (squareCaptured(get3x3SubMatrix(n,m, state))) {
+                        mGameState[n][m] = (byte) playerID;
                         counter++;
                     }
                 }
-                else if(j == 0){                             // comprueba la casilla del lateral superior
-                    int n = i;
-                    int m = j + 1;
+                else if(edgeCol == 0){                             // comprueba la casilla del lateral superior
+                    int n = edgeRow;
+                    int m = edgeCol + 1;
 
-                    if (squareCaptured(get3x3SubMatrix(n,m))) {
-                        mGameState[n][m] = (byte) id;
+                    if (squareCaptured(get3x3SubMatrix(n,m, state))) {
+                        mGameState[n][m] = (byte) playerID;
                         counter++;
                     }
 
                 }
-                else if(j == rows -1 ){                      // comprueba la casilla del lateral inferior
-                    int n = i ;
-                    int m = j-1;
+                else if(edgeCol == rows -1 ){                      // comprueba la casilla del lateral inferior
+                    int n = edgeRow;
+                    int m = edgeCol-1;
 
-                    if (squareCaptured(get3x3SubMatrix(n,m))) {
-                        mGameState[n][m] = (byte) id;
+                    if (squareCaptured(get3x3SubMatrix(n,m, state))) {
+                        mGameState[n][m] = (byte) playerID;
                         counter++;
                     }
 
