@@ -42,7 +42,8 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:id="@+id/shapeImage"
-                android:layout_gravity="center" />
+                android:layout_gravity="center"
+                android:baselineAlignBottom="false" />
 
             <TextView
                 android:layout_width="wrap_content"
