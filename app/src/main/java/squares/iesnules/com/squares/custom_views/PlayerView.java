@@ -1,5 +1,6 @@
 package squares.iesnules.com.squares.custom_views;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -7,6 +8,8 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,6 +27,10 @@ public class PlayerView extends FrameLayout {
     private TextView mPlayerName;
     private TextView mPlayerScore;
     private  ImageView mShapeImage;
+
+    private ObjectAnimator mAccelerateAnimation;
+    private ObjectAnimator mRotateAnimation;
+    private ObjectAnimator mBrakeAnimation;
 
     public PlayerView(Context context) {
         super(context);
@@ -62,6 +69,7 @@ public class PlayerView extends FrameLayout {
         params.weight = 1;
         params.setMargins(VIEW_MARGIN, VIEW_MARGIN, VIEW_MARGIN, VIEW_MARGIN);
         setLayoutParams(params);
+
     }
 
     public Drawable getPlayerImage() {
@@ -97,6 +105,17 @@ public class PlayerView extends FrameLayout {
 
     public void setShapeImage(Drawable image){
         mShapeImage.setImageDrawable(image);
+    }
+
+    public void setPlayerInTurn(Boolean turn) {
+        if (turn) {
+
+
+
+        }
+        else {
+
+        }
     }
 
 }
