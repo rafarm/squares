@@ -11,7 +11,8 @@ public class GameEngine {
     private static int MAX_COLS = 20;
 
     private byte[][] mGameState;
-
+    private int mRealRows;
+    private int mRealCols;
 
     public GameEngine(int rows, int cols) throws RuntimeException {
         if (rows > 0 && cols > 0 && rows <= MAX_ROWS && cols <= MAX_COLS) {
@@ -24,6 +25,8 @@ public class GameEngine {
     public GameEngine(byte[][] newState) {
         if (checkGameStateSanity(newState)) {
             mGameState = newState;
+            mRealRows = mGameState.length;
+            mRealCols = mGameState[0].length;
         } else {
             throw new RuntimeException("GameEngine: Invalid game state");
         }
@@ -36,13 +39,13 @@ public class GameEngine {
     //This method is executed when a new game is started, showing the initial matrix,the valid and invalid values.
     private byte[][] generateGameState(int rows, int cols) {
 
-        int realRows = 2*rows + 1;
-        int realCols = 2*cols + 1;
+        mRealRows = 2*rows + 1;
+        mRealCols = 2*cols + 1;
 
-        byte[][] matrix = new byte[realRows][realCols];
+        byte[][] matrix = new byte[mRealRows][mRealCols];
 
-        for (int j = 0; j < realCols; j++) {
-            for (int i = 0; i < realRows; i++) {
+        for (int j = 0; j < mRealCols; j++) {
+            for (int i = 0; i < mRealRows; i++) {
                 if (j % 2 != 0) {
                     matrix[i][j] = 0;
                     //if the result is 0, the player will can press in this
@@ -77,17 +80,6 @@ public class GameEngine {
         return true;
     }
 
-   /* public byte[][] get3x3SubMatrix(byte[][] state, int i, int j) {
-        byte[][] subMatrix = new byte[3][3];
-
-        for (int n = 0; n < 3; n++) {
-            for (int m = 0; m < 3; m++) {
-                subMatrix[n][m] = state[i-1][j-1];
-            }
-        }
-
-        return subMatrix;
-    }*/
 
 
 
@@ -152,18 +144,18 @@ public class GameEngine {
 
 
 
-    public int markEdge(int edgeRow, int edgeCol, byte playerID) {
+    public int markEdge(int edgeRow, int edgeCol, int playerID) {
         int counter = 0;
 
         if (!edgeIsChecked(edgeRow, edgeCol)) {
             mGameState[edgeRow][edgeCol] = 1;
             if (isEdgeVertical(edgeRow, edgeCol)) {
 
-                if (edgeRow != 0 && edgeRow != cols - 1) {              // comprueba las casillas que no estan en los laterales
+                if (edgeRow != 0 && edgeRow !=  - 1) {              // comprueba las casillas que no estan en los laterales
                     int n = edgeRow -1;
                     int m = edgeCol;
 
-                    if (squareCaptured(get3x3SubMatrix(n,m, state))){
+                    if (squareCaptured(get3x3SubMatrix(n,m, mGameState))){
                         mGameState[n][m] = (byte) playerID;
                         counter++;
                     }
@@ -171,7 +163,7 @@ public class GameEngine {
                     n = edgeRow +1;
                     m = edgeCol;
 
-                    if (squareCaptured(get3x3SubMatrix(n,m, state))) {
+                    if (squareCaptured(get3x3SubMatrix(n,m, mGameState))) {
                         mGameState[n][m] = (byte) playerID;
                         counter++;
                     }
@@ -180,17 +172,17 @@ public class GameEngine {
                     int n = edgeRow + 1;
                     int m = edgeCol;
 
-                        if (squareCaptured(get3x3SubMatrix(n,m, state))) {
+                        if (squareCaptured(get3x3SubMatrix(n,m, mGameState))) {
                         mGameState[n][m] = (byte) playerID;
                         counter++;
                         }
 
                     }
-                else if(edgeRow == cols - 1){                      // comprueba la casilla del lateral derecho
+                else if(edgeRow == mRealCols - 1){                      // comprueba la casilla del lateral derecho
                     int n = edgeRow - 1;
                     int m = edgeCol;
 
-                    if (squareCaptured(get3x3SubMatrix(n,m, state))) {
+                    if (squareCaptured(get3x3SubMatrix(n,m, mGameState))) {
                         mGameState[n][m] = (byte) playerID;
                         counter++;
                     }
@@ -201,11 +193,11 @@ public class GameEngine {
             }
 
             else{
-                if (edgeCol != 0 && edgeCol != rows - 1) {              // comprueba las casillas que no estan en los laterales
+                if (edgeCol != 0 && edgeCol != mRealRows - 1) {              // comprueba las casillas que no estan en los laterales
                     int n = edgeRow ;
                     int m = edgeCol - 1;
 
-                    if (squareCaptured(get3x3SubMatrix(n,m, state))){
+                    if (squareCaptured(get3x3SubMatrix(n,m, mGameState))){
                         mGameState[n][m] = (byte) playerID;
                         counter++;
                     }
@@ -213,7 +205,7 @@ public class GameEngine {
                     n = edgeRow;
                     m = edgeCol + 1;
 
-                    if (squareCaptured(get3x3SubMatrix(n,m, state))) {
+                    if (squareCaptured(get3x3SubMatrix(n,m, mGameState))) {
                         mGameState[n][m] = (byte) playerID;
                         counter++;
                     }
@@ -222,17 +214,17 @@ public class GameEngine {
                     int n = edgeRow;
                     int m = edgeCol + 1;
 
-                    if (squareCaptured(get3x3SubMatrix(n,m, state))) {
+                    if (squareCaptured(get3x3SubMatrix(n,m, mGameState))) {
                         mGameState[n][m] = (byte) playerID;
                         counter++;
                     }
 
                 }
-                else if(edgeCol == rows -1 ){                      // comprueba la casilla del lateral inferior
+                else if(edgeCol == mRealRows -1 ){                      // comprueba la casilla del lateral inferior
                     int n = edgeRow;
                     int m = edgeCol-1;
 
-                    if (squareCaptured(get3x3SubMatrix(n,m, state))) {
+                    if (squareCaptured(get3x3SubMatrix(n,m, mGameState))) {
                         mGameState[n][m] = (byte) playerID;
                         counter++;
                     }
