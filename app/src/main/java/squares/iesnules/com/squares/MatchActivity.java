@@ -53,13 +53,16 @@ public class MatchActivity extends Activity implements BoardViewListener, BoardV
         // Create players views
         mPlayerViews = new PlayerView[mNumberOfPlayers];
 
+        // Create shapes
+        int[] shapes = {R.mipmap.triangle_player, R.mipmap.square_player, R.mipmap.star_player, R.mipmap.pentagon_player};
+
         for (int i=0; i<mNumberOfPlayers; i++) {
             PlayerView player = new PlayerView(this);
 
             player.setPlayerName("Player "+(i+1));
             player.setPlayerScore("0");
-            player.setPlayerImage(getResources().getDrawable(R.mipmap.ic_launcher));
-            player.setShapeImage(getResources().getDrawable(R.mipmap.ic_launcher));
+            player.setPlayerImage(getResources().getDrawable(R.mipmap.player_image));
+            player.setShapeImage(getResources().getDrawable(shapes[i]));
 
 
             mPlayerViews[i] = player;
@@ -72,6 +75,13 @@ public class MatchActivity extends Activity implements BoardViewListener, BoardV
         mBoardView.setDataProvider(this);
         mBoardView.setListener(this);
         mBoardView.reloadBoard();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        ((PlayerView)mPlayerViews[mCurrentPlayer]).setPlayerInTurn(true);
     }
 
     /*
@@ -120,6 +130,5 @@ public class MatchActivity extends Activity implements BoardViewListener, BoardV
         ((PlayerView)mPlayerViews[mCurrentPlayer]).setPlayerInTurn(false);
         mCurrentPlayer = ++mCurrentPlayer % mNumberOfPlayers;
         ((PlayerView)mPlayerViews[mCurrentPlayer]).setPlayerInTurn(true);
-        Log.d("Edge touched at ("+row+","+col+")", TAG);
     }
 }

@@ -291,6 +291,9 @@ public class BoardView extends ViewGroup implements View.OnClickListener {
 
             mListener.edgeClickedWithCoordinates(row, col, this);
         }
+
+        v.setEnabled(false);
+        v.setBackgroundColor(getResources().getColor(R.color.checked_edge_color));
     }
 }
 
