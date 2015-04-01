@@ -25,6 +25,7 @@ public class MatchActivity extends Activity implements BoardViewListener, BoardV
     private static final String TAG = "MatchActivity";
 
     private int mNumberOfPlayers;
+    private int mCurrentPlayer;
     //private int mBoardRows = 10;
     //private int mBoardCols = 8;
     private GameEngine mEngine;
@@ -65,6 +66,8 @@ public class MatchActivity extends Activity implements BoardViewListener, BoardV
 
             mPlayersLayout.addView(player, i);
         }
+
+        mCurrentPlayer = 0;
 
         mBoardView.setDataProvider(this);
         mBoardView.setListener(this);
@@ -114,7 +117,9 @@ public class MatchActivity extends Activity implements BoardViewListener, BoardV
     @Override
     public void edgeClickedWithCoordinates(int row, int col, BoardView boardView) {
         // TODO: Process player turn
-
+        ((PlayerView)mPlayerViews[mCurrentPlayer]).setPlayerInTurn(false);
+        mCurrentPlayer = ++mCurrentPlayer % mNumberOfPlayers;
+        ((PlayerView)mPlayerViews[mCurrentPlayer]).setPlayerInTurn(true);
         Log.d("Edge touched at ("+row+","+col+")", TAG);
     }
 }
