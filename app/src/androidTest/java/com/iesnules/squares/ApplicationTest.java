@@ -1,4 +1,4 @@
-package squares.iesnules.com.squares;
+package com.iesnules.squares;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
@@ -6,7 +6,8 @@ import android.test.ApplicationTestCase;
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
-public class ApplicationTest extends ApplicationTestCase<Application> {
+public class
+        ApplicationTest extends ApplicationTestCase<Application> {
     // For game engine tests
     protected byte[][] mValidGameState;
     protected byte[][] mInvalidGameState;

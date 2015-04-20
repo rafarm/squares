@@ -1,4 +1,4 @@
-package squares.iesnules.com.squares;
+package com.iesnules.squares;
 
 /**
  * Created by rafa on 3/3/15.

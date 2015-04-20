@@ -1,15 +1,18 @@
-package squares.iesnules.com.squares;
+package com.iesnules.squares;
 
 
 import android.app.Activity;
-import android.support.v7.app.ActionBarActivity;
+import android.app.Dialog;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.content.Intent;
 import android.widget.Button;
 import android.widget.LinearLayout;
+
+import com.google.android.gms.common.ConnectionResult;
+
+import static com.google.android.gms.common.GooglePlayServicesUtil.getErrorDialog;
+import static com.google.android.gms.common.GooglePlayServicesUtil.isGooglePlayServicesAvailable;
 
 
 public class MainActivity extends Activity {
@@ -17,6 +20,8 @@ public class MainActivity extends Activity {
 
     private LinearLayout mOptionsLayout;
     private Button mOfflineButton;
+
+    private int mPlayServicesAvailability;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +47,15 @@ public class MainActivity extends Activity {
 
         mOptionsLayout.setVisibility(View.GONE);
         mOfflineButton.setEnabled(true);
+
+        mPlayServicesAvailability = isGooglePlayServicesAvailable(this);
+        if (mPlayServicesAvailability == ConnectionResult.SUCCESS) {
+
+        }
+        else {
+            Dialog errorDialog = getErrorDialog(mPlayServicesAvailability,this,1001);
+            errorDialog.show();
+        }
     }
 
     /*

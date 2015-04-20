@@ -1,24 +1,15 @@
-package squares.iesnules.com.squares;
+package com.iesnules.squares;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import java.util.logging.Logger;
-
-import squares.iesnules.com.squares.custom_views.BoardView;
-import squares.iesnules.com.squares.custom_views.PlayerView;
-import squares.iesnules.com.squares.custom_views.interfaces.BoardViewDataProvider;
-import squares.iesnules.com.squares.custom_views.interfaces.BoardViewListener;
+import com.iesnules.squares.custom_views.BoardView;
+import com.iesnules.squares.custom_views.PlayerView;
+import com.iesnules.squares.custom_views.interfaces.BoardViewDataProvider;
+import com.iesnules.squares.custom_views.interfaces.BoardViewListener;
 
 
 public class MatchActivity extends Activity implements BoardViewListener, BoardViewDataProvider {
