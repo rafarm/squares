@@ -2,15 +2,16 @@ package squares.iesnules.com.squares;
 
 
 import android.app.Activity;
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.plus.Plus;
+
+//http://stackoverflow.com/questions/23751905/error-implementing-googleapiclient-builder-for-android-development
 
 public class MainActivity extends Activity {
     public static final String NUMBER_OF_PLAYERS = "NumberOfPlayers";
@@ -25,6 +26,14 @@ public class MainActivity extends Activity {
 
         mOptionsLayout = (LinearLayout)findViewById(R.id.optionsLayout);
         mOfflineButton = (Button)findViewById(R.id.offlineButton);
+
+        GoogleApiClient client = new GoogleApiClient.Builder(this)
+                .addApi(Plus.API)
+                .addScope(Plus.SCOPE_PLUS_LOGIN)
+                .setAccountName("users.account.name@gmail.com")
+                .build();
+        client.connect();
+
     }
 
     @Override
