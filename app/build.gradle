@@ -1,9 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        debug {
+            keyAlias 'squaresdebugkey'
+            keyPassword 'squaresdebug'
+            storeFile file('/Users/rafa/AndroidStudioProjects/squares/squaresdebug.jks')
+            storePassword 'squaresdebug'
+        }
+    }
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
-
     defaultConfig {
         applicationId "com.iesnules.squares"
         minSdkVersion 16
@@ -16,11 +23,14 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            signingConfig signingConfigs.debug
+        }
     }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.0.3'
-    compile 'com.google.android.gms:play-services-games:7.0.0'
+    compile project(':BaseGameUtils')
 }
