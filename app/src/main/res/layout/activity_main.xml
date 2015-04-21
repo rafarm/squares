@@ -89,6 +89,21 @@
 
         </LinearLayout>
 
+        <!-- sign-in button -->
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button"
+            android:layout_width="238dp"
+            android:layout_height="44dp" />
+
+        <!-- sign-out button -->
+        <Button
+            android:id="@+id/sign_out_button"
+            android:layout_width="238dp"
+            android:layout_height="44dp"
+            android:text="Sign Out"
+            android:visibility="gone"
+            android:onClick="signOutClicked" />
+
     </LinearLayout>
 
 </LinearLayout>
