@@ -1,11 +1,13 @@
 package com.iesnules.squares;
 
 import android.graphics.Matrix;
+import android.util.Log;
 
 /**
  * Created by rafa on 3/3/15.
  */
 public class GameEngine {
+    private static String TAG = "com.iesnules.squares.GameEngine";
 
     private static int MAX_ROWS = 20;
     private static int MAX_COLS = 20;
@@ -23,11 +25,11 @@ public class GameEngine {
     }
 
     public GameEngine(byte[][] newState) {
-        if (checkGameStateSanity(newState)) {
-            mGameState = newState;
-            mRealRows = mGameState.length;
-            mRealCols = mGameState[0].length;
-        } else {
+        mGameState = newState;
+        mRealRows = mGameState.length;
+        mRealCols = mGameState[0].length;
+
+        if (!checkGameStateSanity()) {
             throw new RuntimeException("GameEngine: Invalid game state");
         }
     }
@@ -64,180 +66,121 @@ public class GameEngine {
         return matrix;
     }
 
-    private boolean checkGameStateSanity(byte[][] state) {
-        for (int i = 1; i < state.length; i += 2) {
-            for (int j = 1; j < state[i].length; j += 2) {
-                if (!checkSquareSanity(get3x3SubMatrix(i, j, state))) {
-                    return false;
-                }
-
-            }
-
-        }
-
-
-        return true;
+    public boolean isGameStateValid() {
+        return checkGameStateSanity();
     }
 
-
-    private boolean checkSquareSanity(byte[][] square) {
-// TODO: Check if a square state represented by 3x3 matrix 'square' is valid
-        if (square[1][1] != 0) {
-            if (square[0][1] == 1 && square[1][0] == 1 && square[1][2] == 1 && square[2][1] == 1) {
-                return true;
-            }
-        } else if (square[1][1] == 0) {
-            if (square[0][1] == 0 || square[1][0] == 0 || square[1][2] == 0 || square[2][1] == 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean edgeIsChecked(int i, int j) {
-        if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0)) {
-            if (mGameState[i][j] == 0) {
+    private boolean checkGameStateSanity() {
+        // Check matrix dimensions uniformity
+        for (int i = 0; i < mRealRows; i++) {
+            if (mGameState[i].length != mRealCols) {
                 return false;
             }
         }
+
+        for (int i = 1; i < mRealRows; i += 2) {
+            for (int j = 1; j < mRealCols; j += 2) {
+                if (!checkSquareSanity(i, j)) {
+                    return false;
+                }
+            }
+        }
+
         return true;
+    }
+
+
+    private boolean checkSquareSanity(int squareRow, int squareCol) {
+
+        // Get a reference to submatrix elements
+        byte s01 = mGameState[squareRow - 1][squareCol];
+        byte s10 = mGameState[squareRow][squareCol - 1];
+        byte s11 = mGameState[squareRow][squareCol];
+        byte s12 = mGameState[squareRow][squareCol + 1];
+        byte s21 = mGameState[squareRow + 1][squareCol];
+
+        return (s11 != 0 && (s01 == 1 && s10 == 1 && s12 == 1 && s21 == 1)) ||
+                (s11 == 0 && (s01 == 0 || s10 == 0 || s12 == 0 || s21 == 0));
+    }
+
+    private boolean edgeIsMarked(int i, int j) {
+        if ((i % 2 == 0 && j % 2 != 0) || (i % 2 != 0 && j % 2 == 0)) {
+            return mGameState[i][j] != 0;
+        }
+
+        /*
+        Log.w(TAG, "Coordinates passed don't correspond to an edge.");
+        return true;
+        */
+        throw new RuntimeException("GameEngine: Invalid coordinates for an edge.");
     }
 
 
     //Comprueba si es horizontal o vertical
     private boolean isEdgeVertical(int i, int j) {
         if (i % 2 == 0 && j % 2 != 0) {
+            return false; //Horizontal
+        }
+        else if (i % 2 != 0 && j % 2 == 0) {
             return true; //Vertical
         }
-        return false;//Horizontal
+
+        throw new RuntimeException("GameEngine: Invalid coordinates for an edge.");
     }
 
-    private byte[][] get3x3SubMatrix(int n, int m, byte[][] state) {
+    private boolean shouldSquareBeCaptured(int squareRow, int squareCol) {
 
-        byte[][] subMatrix = new byte[3][3];
-        subMatrix[0][0] = state[n - 1][m - 1];
-        subMatrix[1][0] = state[n - 1][m];
-        subMatrix[2][0] = state[n - 1][m + 1];
-        subMatrix[0][1] = state[n][m - 1];
-        subMatrix[1][1] = state[n][m];
-        subMatrix[2][1] = state[n][m + 1];
-        subMatrix[0][2] = state[n + 1][m - 1];
-        subMatrix[1][2] = state[n + 1][m];
-        subMatrix[2][2] = state[n + 1][m + 1];
+        // Get a reference to submatrix elements
+        byte s01 = mGameState[squareRow - 1][squareCol];
+        byte s10 = mGameState[squareRow][squareCol - 1];
+        byte s12 = mGameState[squareRow][squareCol + 1];
+        byte s21 = mGameState[squareRow + 1][squareCol];
 
-
-        return subMatrix;
-
-    }
-
-
-    private boolean squareCaptured(byte[][] square) {
-        if (square[0][1] == 1 && square[1][0] == 1 && square[1][2] == 1 && square[2][1] == 1) {
-            return true;
-        }
-        return false;
+        return s01 == 1 && s10 == 1 && s12 == 1 && s21 == 1;
     }
 
 
     public int markEdge(int edgeRow, int edgeCol, int playerID) {
         int counter = 0;
 
-        if (!edgeIsChecked(edgeRow, edgeCol)) {
-            mGameState[edgeRow][edgeCol] = 1;
+        if (!edgeIsMarked(edgeRow, edgeCol)) {
+            mGameState[edgeRow][edgeCol] = 1; // Mark edge
+
             if (isEdgeVertical(edgeRow, edgeCol)) {
 
-                if (edgeRow != 0 && edgeRow != -1) {              // comprueba las casillas que no estan en los laterales
-                    int n = edgeRow - 1;
-                    int m = edgeCol;
-
-                    if (squareCaptured(get3x3SubMatrix(n, m, mGameState))) {
-                        mGameState[n][m] = (byte) playerID;
+                if (edgeCol > 0) { // Check left square
+                    if (shouldSquareBeCaptured(edgeRow, edgeCol - 1)) {
+                        mGameState[edgeRow][edgeCol - 1] = (byte) playerID;
                         counter++;
                     }
-
-                    n = edgeRow + 1;
-                    m = edgeCol;
-
-                    if (squareCaptured(get3x3SubMatrix(n, m, mGameState))) {
-                        mGameState[n][m] = (byte) playerID;
-                        counter++;
-                    }
-                } else if (edgeRow == 0) {                             // comprueba la casilla del lateral izquierdo
-                    int n = edgeRow + 1;
-                    int m = edgeCol;
-
-                    if (squareCaptured(get3x3SubMatrix(n, m, mGameState))) {
-                        mGameState[n][m] = (byte) playerID;
-                        counter++;
-                    }
-
-                } else if (edgeRow == mRealCols - 1) {                      // comprueba la casilla del lateral derecho
-                    int n = edgeRow - 1;
-                    int m = edgeCol;
-
-                    if (squareCaptured(get3x3SubMatrix(n, m, mGameState))) {
-                        mGameState[n][m] = (byte) playerID;
-                        counter++;
-                    }
-
                 }
 
-
-            } else {
-                if (edgeCol != 0 && edgeCol != mRealRows - 1) {              // comprueba las casillas que no estan en los laterales
-                    int n = edgeRow;
-                    int m = edgeCol - 1;
-
-                    if (squareCaptured(get3x3SubMatrix(n, m, mGameState))) {
-                        mGameState[n][m] = (byte) playerID;
+                if (edgeCol < (mRealCols - 1)) { // Check right square
+                    if (shouldSquareBeCaptured(edgeRow, edgeCol + 1)) {
+                        mGameState[edgeRow][edgeCol + 1] = (byte) playerID;
                         counter++;
                     }
+                }
+            } else { // Horizontal edge
 
-                    n = edgeRow;
-                    m = edgeCol + 1;
-
-                    if (squareCaptured(get3x3SubMatrix(n, m, mGameState))) {
-                        mGameState[n][m] = (byte) playerID;
+                if (edgeRow > 0) { // Check upper square
+                    if (shouldSquareBeCaptured(edgeRow - 1, edgeCol)) {
+                        mGameState[edgeRow - 1][edgeCol] = (byte) playerID;
                         counter++;
                     }
-                } else if (edgeCol == 0) {                             // comprueba la casilla del lateral superior
-                    int n = edgeRow;
-                    int m = edgeCol + 1;
-
-                    if (squareCaptured(get3x3SubMatrix(n, m, mGameState))) {
-                        mGameState[n][m] = (byte) playerID;
-                        counter++;
-                    }
-
-                } else if (edgeCol == mRealRows - 1) {                      // comprueba la casilla del lateral inferior
-                    int n = edgeRow;
-                    int m = edgeCol - 1;
-
-                    if (squareCaptured(get3x3SubMatrix(n, m, mGameState))) {
-                        mGameState[n][m] = (byte) playerID;
-                        counter++;
-                    }
-
                 }
 
-
+                if (edgeRow < (mRealRows - 1)) { // Check lower square
+                    if (shouldSquareBeCaptured(edgeRow + 1, edgeCol)) {
+                        mGameState[edgeRow + 1][edgeCol] = (byte) playerID;
+                        counter++;
+                    }
+                }
             }
-
-
         }
 
         return counter;
     }
-    /*    if (square[0][1] == 1 && square[1][0] == 1 && square[1][2] == 1 && square[2][1] == 1) {
-            //The four sides of the 3x3 matrix are occupied by both the matrix will be captured
-            return true;
-
-        }
-
-        //If instead the four sides are not busy the matrix will not be captured
-        return false;
-
-    }*/
 
     /*
     numOfCapturedSquaresByPlayer(int playerID)
@@ -248,15 +191,14 @@ public class GameEngine {
     public int numOfCapturedSquaresByPlayer(int playerID) {
         int total = 0;
 
-        for (int i = 1; i < mGameState.length; i += 2) {
-            for (int j = 1; j < mGameState[i].length; j += 2) {
+        for (int i = 1; i < mRealRows; i += 2) {
+            for (int j = 1; j < mRealCols; j += 2) {
                 if (mGameState[i][j] == playerID) {
                     total++;
-
                 }
-
             }
         }
+
         return total;
     }
 
@@ -268,24 +210,18 @@ public class GameEngine {
     public int numOfCapturedSquares() {
         int total = 0;
 
-        for (int i = 1; i < mGameState.length; i += 2) {
-            for (int j = 1; j < mGameState[i].length; j += 2) {
-                if (mGameState[i][j] > 0) {
+        for (int i = 1; i < mRealRows; i += 2) {
+            for (int j = 1; j < mRealCols; j += 2) {
+                if (mGameState[i][j] != 0) {
                     total++;
-
                 }
-
             }
         }
         return total;
     }
 
     public boolean gameFinished(){
-        int numSquares = ((mRealRows-1)/2)*((mRealCols-1)/2);
-        if(!(numOfCapturedSquares() == (numSquares))){
-            return false;
-        }
-        return true;
+        return numOfCapturedSquares() == ((mRealRows - 1) / 2) * ((mRealCols - 1) / 2);
     }
 
 }

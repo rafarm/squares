@@ -111,15 +111,24 @@ public class MatchActivity extends Activity implements BoardViewListener, BoardV
 
     @Override
     public Drawable shapeForPlayerNumber(int playerNumber, BoardView boardView) {
-        return mPlayerViews[playerNumber].getShapeImage();
+        return mPlayerViews[playerNumber - 1].getShapeImage();
     }
 
     // BoardView listener methods
     @Override
     public void edgeClickedWithCoordinates(int row, int col, BoardView boardView) {
-        // TODO: Process player turn
-        ((PlayerView)mPlayerViews[mCurrentPlayer]).setPlayerInTurn(false);
-        mCurrentPlayer = ++mCurrentPlayer % mNumberOfPlayers;
-        ((PlayerView)mPlayerViews[mCurrentPlayer]).setPlayerInTurn(true);
+        int newCapturedSquares = mEngine.markEdge(row, col, mCurrentPlayer + 1);
+
+        if (newCapturedSquares > 0) { // Update score for player and repeat turn
+            ((PlayerView)mPlayerViews[mCurrentPlayer]).setPlayerScore(""+mEngine.numOfCapturedSquaresByPlayer(mCurrentPlayer + 1));
+            mBoardView.reloadBoard();
+
+            // TODO: Check if match has finished
+        }
+        else {
+            ((PlayerView)mPlayerViews[mCurrentPlayer]).setPlayerInTurn(false);
+            mCurrentPlayer = ++mCurrentPlayer % mNumberOfPlayers;
+            ((PlayerView)mPlayerViews[mCurrentPlayer]).setPlayerInTurn(true);
+        }
     }
 }

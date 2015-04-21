@@ -90,9 +90,14 @@ public class
         assertEquals("New game board should have 0 squares captured.", 0, engine.numOfCapturedSquares());
     }
 
+    public void testGameEngineNewBoardIsValid() {
+        GameEngine engine = new GameEngine(10,10);
+        assertTrue("New game board should have a valid state", engine.isGameStateValid());
+    }
+
     public void testGameEngineRightNumberOfCaptureSquares() {
         GameEngine engine = new GameEngine(mValidGameState);
-        assertEquals("Right number of captured images.", 6, engine.numOfCapturedSquares());
+        assertEquals("Right number of captured squares.", 6, engine.numOfCapturedSquares());
     }
 
     public void testGameEngineMarkEdge() {
