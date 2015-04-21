@@ -95,4 +95,13 @@ public class
         assertEquals("Right number of captured images.", 6, engine.numOfCapturedSquares());
     }
 
+    public void testGameEngineMarkEdge() {
+        GameEngine engine = new GameEngine(mValidGameState);
+        assertEquals("Right number of captured squares for edge marked.", 1, engine.markEdge(2, 3, 1));
+    }
+
+    public void testGameEngineGameFinished() {
+        GameEngine engine = new GameEngine(mValidGameState);
+        assertFalse("Match is not finished.", engine.gameFinished());
+    }
 }
