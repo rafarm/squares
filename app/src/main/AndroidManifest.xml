@@ -23,7 +23,9 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="squares.iesnules.com.squares.MainActivity" />
-        </activity>
+
+        </activity
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
