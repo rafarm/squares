@@ -1,4 +1,4 @@
-package squares.iesnules.com.squares;
+package com.iesnules.squares;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
@@ -6,7 +6,8 @@ import android.test.ApplicationTestCase;
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
-public class ApplicationTest extends ApplicationTestCase<Application> {
+public class
+        ApplicationTest extends ApplicationTestCase<Application> {
     // For game engine tests
     protected byte[][] mValidGameState;
     protected byte[][] mInvalidGameState;
@@ -89,9 +90,23 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         assertEquals("New game board should have 0 squares captured.", 0, engine.numOfCapturedSquares());
     }
 
-    public void testGameEngineRightNumberOfCaptureSquares() {
-        GameEngine engine = new GameEngine(mValidGameState);
-        assertEquals("Right number of captured images.", 6, engine.numOfCapturedSquares());
+    public void testGameEngineNewBoardIsValid() {
+        GameEngine engine = new GameEngine(10,10);
+        assertTrue("New game board should have a valid state", engine.isGameStateValid());
     }
 
+    public void testGameEngineRightNumberOfCaptureSquares() {
+        GameEngine engine = new GameEngine(mValidGameState);
+        assertEquals("Right number of captured squares.", 6, engine.numOfCapturedSquares());
+    }
+
+    public void testGameEngineMarkEdge() {
+        GameEngine engine = new GameEngine(mValidGameState);
+        assertEquals("Right number of captured squares for edge marked.", 1, engine.markEdge(2, 3, 1));
+    }
+
+    public void testGameEngineGameFinished() {
+        GameEngine engine = new GameEngine(mValidGameState);
+        assertFalse("Match is not finished.", engine.gameFinished());
+    }
 }

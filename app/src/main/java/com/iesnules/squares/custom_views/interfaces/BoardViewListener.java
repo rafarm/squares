@@ -1,6 +1,6 @@
-package squares.iesnules.com.squares.custom_views.interfaces;
+package com.iesnules.squares.custom_views.interfaces;
 
-import squares.iesnules.com.squares.custom_views.BoardView;
+import com.iesnules.squares.custom_views.BoardView;
 
 /**
  * Created by rafa on 22/3/15.

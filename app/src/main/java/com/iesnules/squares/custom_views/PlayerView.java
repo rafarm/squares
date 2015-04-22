@@ -1,8 +1,7 @@
-package squares.iesnules.com.squares.custom_views;
+package com.iesnules.squares.custom_views;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
-import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -10,18 +9,15 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import squares.iesnules.com.squares.R;
+import com.iesnules.squares.R;
 
 /**
  * TODO: document your custom view class.
