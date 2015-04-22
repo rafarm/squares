@@ -12,7 +12,13 @@ import android.widget.LinearLayout;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.multiplayer.Multiplayer;
+import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
+import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
+import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.example.games.basegameutils.BaseGameUtils;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks,
@@ -20,6 +26,7 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         View.OnClickListener {
 
     private static int RC_SIGN_IN = 9001;
+    private static int RC_SELECT_PLAYERS = 9002;
     public static final String NUMBER_OF_PLAYERS = "NumberOfPlayers";
 
     private boolean mResolvingConnectionFailure = false;
@@ -155,6 +162,8 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == RC_SIGN_IN) {
             mSignInClicked = false;
             mResolvingConnectionFailure = false;
@@ -168,8 +177,43 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
                 BaseGameUtils.showActivityResultError(this,
                         requestCode, resultCode, R.string.signin_failure);
             }
+
+        }
+        if (requestCode == RC_SELECT_PLAYERS) {
+            if (resultCode != Activity.RESULT_OK) {
+                // user canceled
+                return;
+            }
+
+            // Get the invitee list.
+            final ArrayList<String> invitees =
+                    data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
+
+            // Get auto-match criteria.
+            Bundle autoMatchCriteria = null;
+            int minAutoMatchPlayers = data.getIntExtra(
+                    Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
+            int maxAutoMatchPlayers = data.getIntExtra(
+                    Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
+            if (minAutoMatchPlayers > 0) {
+                autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
+                        minAutoMatchPlayers, maxAutoMatchPlayers, 0);
+            } else {
+                autoMatchCriteria = null;
+            }
+
+            TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
+                    .addInvitedPlayers(invitees)
+                    .setAutoMatchCriteria(autoMatchCriteria)
+                    .build();
+
+            // Create and start the match.
+            Games.TurnBasedMultiplayer
+                    .createMatch(mGoogleApiClient, tbmc)
+                    .setResultCallback(new MatchInitiatedCallback());
         }
     }
+
 
     /*
     @Override
@@ -194,6 +238,14 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         return super.onOptionsItemSelected(item);
     }
     */
+
+    public void onStartMatchClicked(View view) {
+        Intent intent =
+                Games.TurnBasedMultiplayer.getSelectOpponentsIntent(mGoogleApiClient, 1, 7, true);
+        startActivityForResult(intent, RC_SELECT_PLAYERS);
+    }
+
+
 
     public void showOfflineOptions(View view) {
         mOfflineButton.setEnabled(false);
