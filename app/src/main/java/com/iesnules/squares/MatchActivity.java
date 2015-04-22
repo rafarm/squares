@@ -120,8 +120,7 @@ public class MatchActivity extends Activity implements BoardViewListener, BoardV
         int newCapturedSquares = mEngine.markEdge(row, col, mCurrentPlayer + 1);
 
         if (newCapturedSquares > 0) { // Update score for player and repeat turn
-            ((PlayerView)mPlayerViews[mCurrentPlayer]).setPlayerScore(""+mEngine.numOfCapturedSquaresByPlayer(mCurrentPlayer + 1));
-            mBoardView.reloadBoard();
+            ((PlayerView)mPlayerViews[mCurrentPlayer]).setPlayerScore("" + mEngine.numOfCapturedSquaresByPlayer(mCurrentPlayer + 1));
 
             // TODO: Check if match has finished
         }
@@ -130,5 +129,7 @@ public class MatchActivity extends Activity implements BoardViewListener, BoardV
             mCurrentPlayer = ++mCurrentPlayer % mNumberOfPlayers;
             ((PlayerView)mPlayerViews[mCurrentPlayer]).setPlayerInTurn(true);
         }
+
+        mBoardView.reloadBoard();
     }
 }
