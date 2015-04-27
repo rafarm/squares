@@ -8,6 +8,9 @@
     <string name="two_players">Two Players</string>
     <string name="three_players">Three Players</string>
     <string name="four_players">Four Players</string>
+    <string name="new_match">New Match</string>
+    <string name="list_all_matches">All Matches</string>
+    <string name="automatched_player_name">Waiting...</string>
 
     <string name="signin_other_error">There was an issue with sign in, please try again later.</string>
     <string name="signin_failure">Unable to sign in.</string>
