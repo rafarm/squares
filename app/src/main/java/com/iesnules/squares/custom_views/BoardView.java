@@ -192,43 +192,6 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
         return node;
     }
 
-    /*
-    private Button getHorizontalEdge(int row, int col) {
-        Button edge = getEdge(row, col);
-
-        //GridLayout.LayoutParams params = (GridLayout.LayoutParams)edge.getLayoutParams();
-        //params.setGravity(Gravity.FILL_HORIZONTAL);
-        //params.width = mSquareDim;
-        //params.height = NODE_DIM;
-        //edge.setLayoutParams(params);
-
-        return edge;
-    }
-
-    private Button getVerticalEdge(int row, int col) {
-        Button edge = getEdge(row, col);
-
-        GridLayout.LayoutParams params = (GridLayout.LayoutParams)edge.getLayoutParams();
-        //params.setGravity(Gravity.FILL_VERTICAL);
-        params.width = NODE_DIM;
-        params.height = mSquareDim;
-        edge.setLayoutParams(params);
-
-        return edge;
-    }
-    */
-
-    /*
-    private Button getEdge() {
-        Button edge = new Button(this.getContext());
-
-        edge.setBackgroundColor(getResources().getColor(R.color.overlay_color));
-
-        edge.setOnClickListener(this);
-
-        return edge;
-    }
-    */
     private ImageView getEdge() {
         ImageView edge = new ImageView(this.getContext());
 
@@ -323,61 +286,63 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        int action = event.getActionMasked();
-        int index = event.getActionIndex();
+        if (isEnabled()) {
+            int action = event.getActionMasked();
+            int index = event.getActionIndex();
 
-        if (action == MotionEvent.ACTION_DOWN) {
-            if (!mTouchStarted) { // Only manage first finger contact...
-                mTouchStarted = true;
-                mPointerID = event.getPointerId(index);
+            if (action == MotionEvent.ACTION_DOWN) {
+                if (!mTouchStarted) { // Only manage first finger contact...
+                    mTouchStarted = true;
+                    mPointerID = event.getPointerId(index);
 
-                mTouchedNode_J = nodeCoord(event.getX(index));
-                mTouchedNode_I = nodeCoord(event.getY(index));
+                    mTouchedNode_J = nodeCoord(event.getX(index));
+                    mTouchedNode_I = nodeCoord(event.getY(index));
+                }
             }
-        }
-        else if (action == MotionEvent.ACTION_UP) {
-            if (mPointerID == event.getPointerId(index)) {
-                int newNode_J = nodeCoord(event.getX(index));
-                int newNode_I = nodeCoord(event.getY(index));
+            else if (action == MotionEvent.ACTION_UP) {
+                if (mPointerID == event.getPointerId(index)) {
+                    int newNode_J = nodeCoord(event.getX(index));
+                    int newNode_I = nodeCoord(event.getY(index));
 
-                if ((mTouchedNode_I - newNode_I) == 0 && (mTouchedNode_J - newNode_J == 1)) { // West edge...
-                    int edge_I = 2 * mTouchedNode_I;
-                    int edge_J = 2 * mTouchedNode_J - 1;
+                    if ((mTouchedNode_I - newNode_I) == 0 && (mTouchedNode_J - newNode_J == 1)) { // West edge...
+                        int edge_I = 2 * mTouchedNode_I;
+                        int edge_J = 2 * mTouchedNode_J - 1;
 
-                    if (mDataProvider.stateOfEdgeWithCoordinates(edge_I, edge_J, this) == 0) {
-                        mListener.edgeClickedWithCoordinates(edge_I, edge_J, this);
+                        if (mDataProvider.stateOfEdgeWithCoordinates(edge_I, edge_J, this) == 0) {
+                            mListener.edgeClickedWithCoordinates(edge_I, edge_J, this);
+                        }
                     }
-                }
-                else if ((mTouchedNode_I - newNode_I) == 0 && (mTouchedNode_J - newNode_J == -1)) { // East edge...
-                    int edge_I = 2 * mTouchedNode_I;
-                    int edge_J = 2 * mTouchedNode_J + 1;
+                    else if ((mTouchedNode_I - newNode_I) == 0 && (mTouchedNode_J - newNode_J == -1)) { // East edge...
+                        int edge_I = 2 * mTouchedNode_I;
+                        int edge_J = 2 * mTouchedNode_J + 1;
 
-                    if (mDataProvider.stateOfEdgeWithCoordinates(edge_I, edge_J, this) == 0) {
-                        mListener.edgeClickedWithCoordinates(edge_I, edge_J, this);
+                        if (mDataProvider.stateOfEdgeWithCoordinates(edge_I, edge_J, this) == 0) {
+                            mListener.edgeClickedWithCoordinates(edge_I, edge_J, this);
+                        }
                     }
-                }
-                else if ((mTouchedNode_I - newNode_I) == 1 && (mTouchedNode_J - newNode_J == 0)) { // North edge...
-                    int edge_I = 2 * mTouchedNode_I - 1;
-                    int edge_J = 2 * mTouchedNode_J;
+                    else if ((mTouchedNode_I - newNode_I) == 1 && (mTouchedNode_J - newNode_J == 0)) { // North edge...
+                        int edge_I = 2 * mTouchedNode_I - 1;
+                        int edge_J = 2 * mTouchedNode_J;
 
-                    if (mDataProvider.stateOfEdgeWithCoordinates(edge_I, edge_J, this) == 0) {
-                        mListener.edgeClickedWithCoordinates(edge_I, edge_J, this);
+                        if (mDataProvider.stateOfEdgeWithCoordinates(edge_I, edge_J, this) == 0) {
+                            mListener.edgeClickedWithCoordinates(edge_I, edge_J, this);
+                        }
                     }
-                }
-                else if ((mTouchedNode_I - newNode_I) == -1 && (mTouchedNode_J - newNode_J == 0)) { // South edge...
-                    int edge_I = 2 * mTouchedNode_I + 1;
-                    int edge_J = 2 * mTouchedNode_J;
+                    else if ((mTouchedNode_I - newNode_I) == -1 && (mTouchedNode_J - newNode_J == 0)) { // South edge...
+                        int edge_I = 2 * mTouchedNode_I + 1;
+                        int edge_J = 2 * mTouchedNode_J;
 
-                    if (mDataProvider.stateOfEdgeWithCoordinates(edge_I, edge_J, this) == 0) {
-                        mListener.edgeClickedWithCoordinates(edge_I, edge_J, this);
+                        if (mDataProvider.stateOfEdgeWithCoordinates(edge_I, edge_J, this) == 0) {
+                            mListener.edgeClickedWithCoordinates(edge_I, edge_J, this);
+                        }
                     }
-                }
 
+                    mTouchStarted = false;
+                }
+            }
+            else if (action == MotionEvent.ACTION_CANCEL) {
                 mTouchStarted = false;
             }
-        }
-        else if (action == MotionEvent.ACTION_CANCEL) {
-            mTouchStarted = false;
         }
 
         return true;

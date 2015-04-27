@@ -34,13 +34,21 @@ public class GameEngine {
         mGameState = new byte[mRealRows][mRealCols];
         for (int i = 0; i < mRealRows; i++) {
             int start = i * mRealCols + 1;
-            int end = (i + 1) * mRealCols;
+            int end = (i + 1) * mRealCols + 1;
             mGameState[i] = Arrays.copyOfRange(data, start, end);
         }
 
         if (!checkGameStateSanity()) {
             throw new RuntimeException("GameEngine: Invalid game state");
         }
+    }
+
+    public int getRows() {
+        return (mRealRows - 1) / 2;
+    }
+
+    public int getCols() {
+        return (mRealCols - 1) / 2;
     }
 
     public byte[] getData() {
@@ -52,7 +60,7 @@ public class GameEngine {
         // Store matrix
         for (int i = 0; i < mRealRows; i++) {
             for (int j = 0; j < mRealCols; j++) {
-                int pos = i * mRealRows + mRealCols + 1;
+                int pos = i * mRealCols + j + 1;
                 data[pos] = mGameState[i][j];
             }
         }
