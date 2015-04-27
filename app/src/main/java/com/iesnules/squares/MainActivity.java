@@ -7,69 +7,70 @@ import android.os.Bundle;
 import android.view.View;
 import android.content.Intent;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.GamesActivityResultCodes;
+import com.google.android.gms.games.multiplayer.Multiplayer;
+import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
+import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
+import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
+import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
 import com.google.example.games.basegameutils.BaseGameUtils;
 
+import java.util.ArrayList;
 
-public class MainActivity extends Activity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener {
 
-    private static int RC_SIGN_IN = 9001;
-    public static final String NUMBER_OF_PLAYERS = "NumberOfPlayers";
+public class MainActivity extends BaseGameActivity implements
+        View.OnClickListener,
+        ResultCallback<TurnBasedMultiplayer.InitiateMatchResult> {
 
-    private boolean mResolvingConnectionFailure = false;
-    private boolean mAutoStartSignInFlow;
-    private boolean mSignInClicked = false;
-    boolean mExplicitSignOut = false;
-    boolean mInSignInFlow = false;
+    private static int RC_SELECT_PLAYERS = 9002;
 
-    private GoogleApiClient mGoogleApiClient;
+    public static String NUMBER_OF_PLAYERS = "NumberOfPlayers";
+    public static String MATCH_ID = "MatchID";
+    //public static String EXPLICIT_SIGN_OUT = "ExplicitSignOut";
+
+
+
+    //private boolean mSignInClicked = false;
+    //boolean mExplicitSignOut = false;
 
     private LinearLayout mOptionsLayout;
+    private FrameLayout mOverlayLayout;
     private Button mOfflineButton;
+    private Button mNewMatchButton;
 
     private int mPlayServicesAvailability;
-
-    public MainActivity() {
-        mAutoStartSignInFlow = true;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         mOptionsLayout = (LinearLayout)findViewById(R.id.optionsLayout);
+        mOverlayLayout = (FrameLayout)findViewById(R.id.overlayLayout);
         mOfflineButton = (Button)findViewById(R.id.offlineButton);
+        mNewMatchButton = (Button)findViewById(R.id.newMatchButton);
 
         findViewById(R.id.sign_in_button).setOnClickListener(this);
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(Games.API).addScope(Games.SCOPE_GAMES)
-                .build();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        if (!mInSignInFlow && !mExplicitSignOut) {
+        if (!mInSignInFlow) {
             // auto sign in
+            mInSignInFlow = true;
             mGoogleApiClient.connect();
         }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mGoogleApiClient.disconnect();
     }
 
     @Override
@@ -91,54 +92,33 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
 
     @Override
     public void onConnected(Bundle bundle) {
+        super.onConnected(bundle);
+
         // show sign-out button, hide the sign-in button
         findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-        findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
+        //findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
 
-        // (your code here: update UI, enable functionality that depends on sign in, etc)
+        mNewMatchButton.setVisibility(View.VISIBLE);
+        mOverlayLayout.setVisibility(View.GONE);
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        if (mResolvingConnectionFailure) {
-            // Already resolving
-            return;
-        }
+        super.onConnectionFailed(connectionResult);
 
-        // If the sign in button was clicked or if auto sign-in is enabled,
-        // launch the sign-in flow
-        if (mSignInClicked || mAutoStartSignInFlow) {
-            mAutoStartSignInFlow = false;
-            mSignInClicked = false;
-            mResolvingConnectionFailure = true;
-
-            // Attempt to resolve the connection failure using BaseGameUtils.
-            // The R.string.signin_other_error value should reference a generic
-            // error string in your strings.xml file, such as "There was
-            // an issue with sign in, please try again later."
-            if (!BaseGameUtils.resolveConnectionFailure(this,
-                    mGoogleApiClient, connectionResult,
-                    RC_SIGN_IN, R.string.signin_other_error)) {
-                mResolvingConnectionFailure = false;
-            }
-        }
-
-        // Put code here to display the sign-in button
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        mGoogleApiClient.connect();
+        findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+        mOverlayLayout.setVisibility(View.GONE);
     }
 
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.sign_in_button) {
-            mSignInClicked = true;
+            //mSignInClicked = true;
             mGoogleApiClient.connect();
         }
     }
 
+    /*
     public void signOutClicked(View view) {
         mSignInClicked = false;
 
@@ -152,21 +132,50 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
         findViewById(R.id.sign_out_button).setVisibility(View.GONE);
     }
+    */
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == RC_SIGN_IN) {
-            mSignInClicked = false;
-            mResolvingConnectionFailure = false;
-            if (resultCode == RESULT_OK) {
-                mGoogleApiClient.connect();
-            } else {
-                // Bring up an error dialog to alert the user that sign-in
-                // failed. The R.string.signin_failure should reference an error
-                // string in your strings.xml file that tells the user they
-                // could not be signed in, such as "Unable to sign in."
-                BaseGameUtils.showActivityResultError(this,
-                        requestCode, resultCode, R.string.signin_failure);
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SELECT_PLAYERS) {
+            if (resultCode == GamesActivityResultCodes.RESULT_RECONNECT_REQUIRED){
+                //mExplicitSignOut = true;
+                mGoogleApiClient.disconnect();
+
+                findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+                findViewById(R.id.newMatchButton).setVisibility(View.GONE);
+            }
+            else if (resultCode == Activity.RESULT_OK) {
+                // Show overlay...
+                mOverlayLayout.setVisibility(View.VISIBLE);
+
+                // Get the invitee list.
+                final ArrayList<String> invitees =
+                        data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
+
+                // Get auto-match criteria.
+                Bundle autoMatchCriteria = null;
+                int minAutoMatchPlayers = data.getIntExtra(
+                        Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
+                int maxAutoMatchPlayers = data.getIntExtra(
+                        Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
+                if (minAutoMatchPlayers > 0) {
+                    autoMatchCriteria = RoomConfig.createAutoMatchCriteria(
+                            minAutoMatchPlayers, maxAutoMatchPlayers, 0);
+                } else {
+                    autoMatchCriteria = null;
+                }
+
+                TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
+                        .addInvitedPlayers(invitees)
+                        .setAutoMatchCriteria(autoMatchCriteria)
+                        .build();
+
+                // Create and start the match.
+                Games.TurnBasedMultiplayer
+                        .createMatch(mGoogleApiClient, tbmc)
+                        .setResultCallback(this);
             }
         }
     }
@@ -195,12 +204,12 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
     }
     */
 
-    public void showOfflineOptions(View view) {
+    public void onShowOfflineOptions(View view) {
         mOfflineButton.setEnabled(false);
         mOptionsLayout.setVisibility(View.VISIBLE);
     }
 
-    public void launchMatchActivity(View view) {
+    public void onLaunchMatchActivity(View view) {
         Intent intent = new Intent(this, MatchActivity.class);
 
         int viewId = view.getId();
@@ -216,5 +225,31 @@ public class MainActivity extends Activity implements GoogleApiClient.Connection
         }
 
         startActivity(intent);
+    }
+
+    public void onStartNewMatch(View view) {
+        mOfflineButton.setEnabled(true);
+        mOptionsLayout.setVisibility(View.GONE);
+
+        Intent intent = Games.TurnBasedMultiplayer.getSelectOpponentsIntent(mGoogleApiClient, 1, 3, true);
+        startActivityForResult(intent, RC_SELECT_PLAYERS);
+    }
+
+    @Override
+    public void onResult(TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
+        // Check if the status code is not success.
+        Status status = initiateMatchResult.getStatus();
+        if (!status.isSuccess()) {
+            BaseGameUtils.showAlert(this, status.getStatusMessage());
+            return;
+        }
+
+        // Launch match activity
+        Intent intent = new Intent(this, MatchActivity.class);
+        intent.putExtra(MATCH_ID, initiateMatchResult.getMatch().getMatchId());
+
+        startActivity(intent);
+
+        mOverlayLayout.setVisibility(View.GONE);
     }
 }

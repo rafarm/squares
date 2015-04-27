@@ -75,6 +75,13 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
         createAllSubviews();
     }
 
+    public void setDimensions(int rows, int cols) {
+        mBoardRows = Math.max(rows, 1);
+        mBoardCols = Math.max(cols, 1);
+
+        createAllSubviews();
+    }
+
     private void createAllSubviews() {
         removeAllViews();
 

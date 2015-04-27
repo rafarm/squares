@@ -3,6 +3,9 @@ package com.iesnules.squares;
 import android.graphics.Matrix;
 import android.util.Log;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 /**
  * Created by rafa on 3/3/15.
  */
@@ -24,14 +27,37 @@ public class GameEngine {
         }
     }
 
-    public GameEngine(byte[][] newState) {
-        mGameState = newState;
-        mRealRows = mGameState.length;
-        mRealCols = mGameState[0].length;
+    public GameEngine(byte[] data) {
+        mRealCols = data[0];
+        mRealRows = (data.length - 1) / mRealCols;
+
+        mGameState = new byte[mRealRows][mRealCols];
+        for (int i = 0; i < mRealRows; i++) {
+            int start = i * mRealCols + 1;
+            int end = (i + 1) * mRealCols;
+            mGameState[i] = Arrays.copyOfRange(data, start, end);
+        }
 
         if (!checkGameStateSanity()) {
             throw new RuntimeException("GameEngine: Invalid game state");
         }
+    }
+
+    public byte[] getData() {
+        byte[] data = new byte[mRealRows * mRealCols + 1];
+
+        // Store row size
+        data[0] = (byte)mRealCols;
+
+        // Store matrix
+        for (int i = 0; i < mRealRows; i++) {
+            for (int j = 0; j < mRealCols; j++) {
+                int pos = i * mRealRows + mRealCols + 1;
+                data[pos] = mGameState[i][j];
+            }
+        }
+
+        return data;
     }
 
     public byte[][] getGameState() {
