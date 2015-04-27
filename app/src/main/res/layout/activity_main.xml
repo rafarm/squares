@@ -111,6 +111,16 @@
                 android:background="@mipmap/parent_button_bg"
                 android:visibility="gone" />
 
+            <Button
+                android:layout_width="230dp"
+                android:layout_height="40dp"
+                android:text="@string/list_all_matches"
+                android:id="@+id/listMatchesButton"
+                android:layout_gravity="center"
+                android:onClick="onListAllMatches"
+                android:background="@mipmap/parent_button_bg"
+                android:visibility="gone" />
+
             <!-- sign-out button
             <Button
                 android:id="@+id/sign_out_button"

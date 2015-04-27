@@ -16,6 +16,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesActivityResultCodes;
+import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
@@ -31,6 +32,7 @@ public class MainActivity extends BaseGameActivity implements
         ResultCallback<TurnBasedMultiplayer.InitiateMatchResult> {
 
     private static int RC_SELECT_PLAYERS = 9002;
+    private static int RC_LIST_MATCHES = 9003;
 
     public static String NUMBER_OF_PLAYERS = "NumberOfPlayers";
     public static String MATCH_ID = "MatchID";
@@ -45,6 +47,7 @@ public class MainActivity extends BaseGameActivity implements
     private FrameLayout mOverlayLayout;
     private Button mOfflineButton;
     private Button mNewMatchButton;
+    private Button mListMatchesButton;
 
     private int mPlayServicesAvailability;
 
@@ -58,6 +61,7 @@ public class MainActivity extends BaseGameActivity implements
         mOverlayLayout = (FrameLayout)findViewById(R.id.overlayLayout);
         mOfflineButton = (Button)findViewById(R.id.offlineButton);
         mNewMatchButton = (Button)findViewById(R.id.newMatchButton);
+        mListMatchesButton = (Button)findViewById(R.id.listMatchesButton);
 
         findViewById(R.id.sign_in_button).setOnClickListener(this);
     }
@@ -99,6 +103,7 @@ public class MainActivity extends BaseGameActivity implements
         //findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
 
         mNewMatchButton.setVisibility(View.VISIBLE);
+        mListMatchesButton.setVisibility(View.VISIBLE);
         mOverlayLayout.setVisibility(View.GONE);
     }
 
@@ -138,15 +143,19 @@ public class MainActivity extends BaseGameActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RC_SELECT_PLAYERS) {
-            if (resultCode == GamesActivityResultCodes.RESULT_RECONNECT_REQUIRED){
-                //mExplicitSignOut = true;
-                mGoogleApiClient.disconnect();
+        if (resultCode == GamesActivityResultCodes.RESULT_RECONNECT_REQUIRED){
+            //mExplicitSignOut = true;
+            mGoogleApiClient.disconnect();
 
-                findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-                findViewById(R.id.newMatchButton).setVisibility(View.GONE);
-            }
-            else if (resultCode == Activity.RESULT_OK) {
+            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+            mNewMatchButton.setVisibility(View.GONE);
+            mListMatchesButton.setVisibility(View.GONE);
+
+            return;
+        }
+
+        if (requestCode == RC_SELECT_PLAYERS) {
+            if (resultCode == Activity.RESULT_OK) {
                 // Show overlay...
                 mOverlayLayout.setVisibility(View.VISIBLE);
 
@@ -176,6 +185,21 @@ public class MainActivity extends BaseGameActivity implements
                 Games.TurnBasedMultiplayer
                         .createMatch(mGoogleApiClient, tbmc)
                         .setResultCallback(this);
+            }
+        }
+        else if (requestCode == RC_LIST_MATCHES) {
+            if (resultCode == Activity.RESULT_OK) {
+                TurnBasedMatch match = data.getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH);
+                Invitation invitation = data.getParcelableExtra(Multiplayer.EXTRA_INVITATION);
+
+                if (match != null) {
+                    launchActivityForMatch(match);
+                    return;
+                }
+
+                if (invitation != null) {
+                    // TODO: Manage invitation
+                }
             }
         }
     }
@@ -235,6 +259,14 @@ public class MainActivity extends BaseGameActivity implements
         startActivityForResult(intent, RC_SELECT_PLAYERS);
     }
 
+    public void onListAllMatches(View view) {
+        mOfflineButton.setEnabled(true);
+        mOptionsLayout.setVisibility(View.GONE);
+
+        Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(mGoogleApiClient);
+        startActivityForResult(intent, RC_LIST_MATCHES);
+    }
+
     @Override
     public void onResult(TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
         // Check if the status code is not success.
@@ -244,9 +276,12 @@ public class MainActivity extends BaseGameActivity implements
             return;
         }
 
-        // Launch match activity
+        launchActivityForMatch(initiateMatchResult.getMatch());
+    }
+
+    private void launchActivityForMatch(TurnBasedMatch match) {
         Intent intent = new Intent(this, MatchActivity.class);
-        intent.putExtra(MATCH_ID, initiateMatchResult.getMatch().getMatchId());
+        intent.putExtra(MATCH_ID, match.getMatchId());
 
         startActivity(intent);
 
