@@ -419,10 +419,12 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     @Override
     public void onTurnBasedMatchReceived(TurnBasedMatch turnBasedMatch) {
-        Log.d(TAG, "Updated match received...");
         if (turnBasedMatch.getMatchId().equals(mMatchID)) {
             setupMatch(turnBasedMatch);
             updateUI();
+        }
+        else {
+            // TODO: Notify match update
         }
     }
 
