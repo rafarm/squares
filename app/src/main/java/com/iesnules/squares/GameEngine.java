@@ -174,8 +174,8 @@ public class GameEngine {
     }
 
 
-    public int markEdge(int edgeRow, int edgeCol, int playerID) {
-        int counter = 0;
+    public boolean markEdge(int edgeRow, int edgeCol, int playerID) {
+        boolean squareCaptured = false;
 
         if (!edgeIsMarked(edgeRow, edgeCol)) {
             mGameState[edgeRow][edgeCol] = 1; // Mark edge
@@ -185,14 +185,14 @@ public class GameEngine {
                 if (edgeCol > 0) { // Check left square
                     if (shouldSquareBeCaptured(edgeRow, edgeCol - 1)) {
                         mGameState[edgeRow][edgeCol - 1] = (byte) playerID;
-                        counter++;
+                        squareCaptured = true;
                     }
                 }
 
                 if (edgeCol < (mRealCols - 1)) { // Check right square
                     if (shouldSquareBeCaptured(edgeRow, edgeCol + 1)) {
                         mGameState[edgeRow][edgeCol + 1] = (byte) playerID;
-                        counter++;
+                        squareCaptured = true;
                     }
                 }
             } else { // Horizontal edge
@@ -200,20 +200,20 @@ public class GameEngine {
                 if (edgeRow > 0) { // Check upper square
                     if (shouldSquareBeCaptured(edgeRow - 1, edgeCol)) {
                         mGameState[edgeRow - 1][edgeCol] = (byte) playerID;
-                        counter++;
+                        squareCaptured = true;
                     }
                 }
 
                 if (edgeRow < (mRealRows - 1)) { // Check lower square
                     if (shouldSquareBeCaptured(edgeRow + 1, edgeCol)) {
                         mGameState[edgeRow + 1][edgeCol] = (byte) playerID;
-                        counter++;
+                        squareCaptured = true;
                     }
                 }
             }
         }
 
-        return counter;
+        return squareCaptured;
     }
 
     /*

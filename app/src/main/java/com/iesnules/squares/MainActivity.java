@@ -190,15 +190,9 @@ public class MainActivity extends BaseGameActivity implements
         else if (requestCode == RC_LIST_MATCHES) {
             if (resultCode == Activity.RESULT_OK) {
                 TurnBasedMatch match = data.getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH);
-                Invitation invitation = data.getParcelableExtra(Multiplayer.EXTRA_INVITATION);
 
                 if (match != null) {
                     launchActivityForMatch(match);
-                    return;
-                }
-
-                if (invitation != null) {
-                    // TODO: Manage invitation
                 }
             }
         }

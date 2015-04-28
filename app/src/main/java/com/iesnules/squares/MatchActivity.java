@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -15,6 +16,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.multiplayer.Participant;
+import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
 import com.google.example.games.basegameutils.BaseGameUtils;
@@ -26,10 +28,11 @@ import com.iesnules.squares.custom_views.interfaces.BoardViewListener;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 
 
 public class MatchActivity extends BaseGameActivity implements BoardViewListener,
-        BoardViewDataProvider {
+        BoardViewDataProvider, OnTurnBasedMatchUpdateReceivedListener {
 
     private static final String TAG = "MatchActivity";
 
@@ -38,6 +41,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     private boolean mOnlineMatch;
     private int mNumberOfPlayers;
+    private int mNumberOfOnlineParticipants;
     private int mTurnPlayerIndex;
     private GameEngine mEngine;
 
@@ -75,8 +79,11 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             // Get number of players and create engine
             mNumberOfPlayers = intent.getIntExtra(MainActivity.NUMBER_OF_PLAYERS, 2);
 
-            mEngine = new GameEngine(mBoardView.getBoardRows(), mBoardView.getBoardCols());
+            // Setup an empty match
+            setupMatch(null);
 
+            updateUI();
+            /*
             // Create players views
             mPlayerViews = new PlayerView[mNumberOfPlayers];
 
@@ -93,8 +100,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
                 mPlayersLayout.addView(player, i);
             }
-
-            mTurnPlayerIndex = 0;
+            */
         }
     }
 
@@ -115,9 +121,16 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     protected void onResume() {
         super.onResume();
 
-        if (!mOnlineMatch) {
-            ((PlayerView) mPlayerViews[mTurnPlayerIndex]).setPlayerInTurn(true);
+        updatePlayerInTurn();
+    }
+
+    @Override
+    protected void onStop() {
+        if (mOnlineMatch) {
+            Games.TurnBasedMultiplayer.unregisterMatchUpdateListener(mGoogleApiClient);
         }
+
+        super.onStop();
     }
 
     /*
@@ -148,7 +161,10 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     public void onConnected(Bundle bundle) {
         super.onConnected(bundle);
 
-        // Get match
+        // Register for match updates
+        Games.TurnBasedMultiplayer.registerMatchUpdateListener(mGoogleApiClient, this);
+
+        // Load match
         Games.TurnBasedMultiplayer.loadMatch(mGoogleApiClient, mMatchID).
                 setResultCallback(new ResultCallback<TurnBasedMultiplayer.LoadMatchResult>() {
                     @Override
@@ -169,12 +185,10 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         // Get match
         setupMatch(loadMatchResult.getMatch());
 
-        // Get player IDs
-        mPlayerIDs = mMatch.getParticipantIds();
-        int numberOfParticipants = mPlayerIDs.size();
-        mNumberOfPlayers = numberOfParticipants + mMatch.getAvailableAutoMatchSlots();
+        updateUI();
 
-        // Create players views (and reuse old ones...)
+        /*
+        // Create players views reusing old ones
         PlayerView[] oldPlayerViews = mPlayerViews;
         int numberOfOldViews = 0;
         if (oldPlayerViews != null) {
@@ -227,6 +241,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         mBoardView.setEnabled(isThisUserTurn);
 
         mBoardView.reloadBoard();
+        */
     }
 
     @Override
@@ -247,25 +262,18 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     // BoardView listener methods
     @Override
     public void edgeClickedWithCoordinates(int row, int col, BoardView boardView) {
-        int newCapturedSquares = mEngine.markEdge(row, col, mTurnPlayerIndex + 1);
-
-        if (newCapturedSquares > 0) { // Update score for player and repeat turn
-            ((PlayerView)mPlayerViews[mTurnPlayerIndex]).
-                    setPlayerScore(String.valueOf(mEngine.numOfCapturedSquaresByPlayer(mTurnPlayerIndex + 1)));
-
-            if (mOnlineMatch) {
-                mBoardView.setEnabled(false);
-            }
-
+        if (mEngine.markEdge(row, col, mTurnPlayerIndex + 1)) { // Update score for player and repeat turn
             // TODO: Check if match has finished
         }
         else {
-            ((PlayerView)mPlayerViews[mTurnPlayerIndex]).setPlayerInTurn(false);
+            //((PlayerView)mPlayerViews[mTurnPlayerIndex]).setPlayerInTurn(false);
             mTurnPlayerIndex = ++mTurnPlayerIndex % mNumberOfPlayers;
-            ((PlayerView)mPlayerViews[mTurnPlayerIndex]).setPlayerInTurn(true);
+            //((PlayerView)mPlayerViews[mTurnPlayerIndex]).setPlayerInTurn(true);
         }
 
         if (mOnlineMatch) {
+            mBoardView.setEnabled(false);
+
             String nextPlayerID = null;
 
             if (mTurnPlayerIndex < mPlayerIDs.size()) {
@@ -290,8 +298,10 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                         }
                     });
         }
-
-        mBoardView.reloadBoard();
+        else {
+            //mBoardView.reloadBoard();
+            updateUI();
+        }
     }
 
     private void processResult(TurnBasedMultiplayer.UpdateMatchResult updateMatchResult) {
@@ -304,25 +314,120 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
         setupMatch(updateMatchResult.getMatch());
 
-        // If it's this user's turn enable user interaction.
-        boolean isThisUserTurn = mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN;
-        mBoardView.setEnabled(isThisUserTurn);
+        updateUI();
     }
 
     private void setupMatch(TurnBasedMatch match) {
-        // Get match
-        mMatch = match;
+        if (match != null) {
+            mMatch = match;
 
-        // Get match data & initialize engine
-        byte[] data = mMatch.getData();
-        if (data == null) { // New match
-            mTurnPlayerIndex = 0;
-            mEngine = new GameEngine(mBoardView.getBoardRows(), mBoardView.getBoardCols());
+            // Get player IDs
+            mPlayerIDs = mMatch.getParticipantIds();
+            mNumberOfOnlineParticipants = mPlayerIDs.size();
+            mNumberOfPlayers = mNumberOfOnlineParticipants + mMatch.getAvailableAutoMatchSlots();
+
+            // Get match data & initialize engine
+            byte[] data = mMatch.getData();
+            if (data == null) { // New match
+                newMatch();
+            }
+            else {
+                mTurnPlayerIndex = data[0]; // First byte corresponds player in turn index
+                byte[] state = Arrays.copyOfRange(data, 1, data.length);
+                mEngine = new GameEngine(state);
+            }
         }
         else {
-            mTurnPlayerIndex = data[0]; // First byte corresponds player in turn index
-            byte[] state = Arrays.copyOfRange(data, 1, data.length);
-            mEngine = new GameEngine(state);
+            newMatch();
+            mNumberOfOnlineParticipants = 0;
         }
+
+    }
+
+    private void newMatch() {
+        mTurnPlayerIndex = 0;
+        mEngine = new GameEngine(mBoardView.getBoardRows(), mBoardView.getBoardCols());
+    }
+
+    private void updateUI() {
+        // Create players views reusing old ones
+        PlayerView[] oldPlayerViews = mPlayerViews;
+        int numberOfOldViews = 0;
+        if (oldPlayerViews != null) {
+            numberOfOldViews = oldPlayerViews.length;
+        }
+        mPlayerViews = new PlayerView[mNumberOfPlayers];
+
+        for (int i=0; i<mNumberOfPlayers; i++) {
+            PlayerView playerView;
+
+            if (i < numberOfOldViews) {
+                playerView = oldPlayerViews[i];
+            }
+            else {
+                playerView = new PlayerView(this);
+                mPlayersLayout.addView(playerView, i);
+            }
+
+            String playerName;
+            String playerScore;
+            Uri playerIconURI;
+
+            if (i < mNumberOfOnlineParticipants) {
+                String playerID = mPlayerIDs.get(i);
+
+                Participant player = mMatch.getParticipant(playerID);
+                playerName = player.getDisplayName();
+                playerScore = String.valueOf(mEngine.numOfCapturedSquaresByPlayer(i + 1));
+                playerIconURI = player.getIconImageUri();
+            }
+            else {
+                playerName = "Player "+(i+1);
+                playerScore = String.valueOf(0);
+                playerIconURI = null;
+            }
+
+            playerView.setPlayerName(playerName);
+            playerView.setPlayerScore(playerScore);
+            playerView.setPlayerImage(getResources().getDrawable(R.mipmap.player_image));
+            playerView.setShapeImage(getResources().getDrawable(mShapes[i]));
+
+            mPlayerViews[i] = playerView;
+        }
+
+        updatePlayerInTurn();
+
+        mBoardView.reloadBoard();
+    }
+
+    private void updatePlayerInTurn() {
+        if (mPlayerViews != null) {
+            for(int i = 0; i < mPlayerViews.length; i++ ) {
+                mPlayerViews[i].setPlayerInTurn(false);
+            }
+
+            // Mark player in turn
+            ((PlayerView) mPlayerViews[mTurnPlayerIndex]).setPlayerInTurn(true);
+
+            // If it's this user's turn enable user interaction.
+            if (mOnlineMatch) {
+                boolean isThisUserTurn = mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN;
+                mBoardView.setEnabled(isThisUserTurn);
+            }
+        }
+    }
+
+    @Override
+    public void onTurnBasedMatchReceived(TurnBasedMatch turnBasedMatch) {
+        Log.d(TAG, "Updated match received...");
+        if (turnBasedMatch.getMatchId().equals(mMatchID)) {
+            setupMatch(turnBasedMatch);
+            updateUI();
+        }
+    }
+
+    @Override
+    public void onTurnBasedMatchRemoved(String s) {
+        // TODO: To be completed...
     }
 }

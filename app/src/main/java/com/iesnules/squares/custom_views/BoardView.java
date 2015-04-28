@@ -261,24 +261,6 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
                 View.MeasureSpec.makeMeasureSpec(finalH, MeasureSpec.EXACTLY));
     }
 
-    /*
-    @Override
-    public void onClick(View v) {
-        if (mListener != null) {
-            int index = indexOfChild(v);
-
-            int realCols = 2 * mBoardCols + 1;
-            int row = index / realCols;
-            int col = index % realCols;
-
-            mListener.edgeClickedWithCoordinates(row, col, this);
-        }
-
-        v.setEnabled(false);
-        v.setBackgroundColor(getResources().getColor(R.color.checked_edge_color));
-    }
-    */
-
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         return true;
