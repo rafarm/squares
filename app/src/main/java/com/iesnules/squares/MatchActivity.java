@@ -290,7 +290,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             Games.TurnBasedMultiplayer.takeTurn(mGoogleApiClient,
                     mMatchID,
                     data,
-                    mPlayerIDs.get(mTurnPlayerIndex)).
+                    nextPlayerID).
                     setResultCallback(new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
                         @Override
                         public void onResult(TurnBasedMultiplayer.UpdateMatchResult updateMatchResult) {
@@ -378,14 +378,13 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
                 Participant player = mMatch.getParticipant(playerID);
                 playerName = player.getDisplayName();
-                playerScore = String.valueOf(mEngine.numOfCapturedSquaresByPlayer(i + 1));
                 playerIconURI = player.getIconImageUri();
             }
             else {
                 playerName = "Player "+(i+1);
-                playerScore = String.valueOf(0);
                 playerIconURI = null;
             }
+            playerScore = String.valueOf(mEngine.numOfCapturedSquaresByPlayer(i + 1));
 
             playerView.setPlayerName(playerName);
             playerView.setPlayerScore(playerScore);
