@@ -291,13 +291,22 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
                     int edge_J = getEdgeColCoordinateForNewNode(newNode_I, newNode_J);
 
                     ImageView edge = getEdgeWithCoordinates(edge_I, edge_J);
-                    if (edge != null && edge != mEventMarkedEdge) {
+                    if (edge != null &&
+                            mDataProvider.stateOfEdgeWithCoordinates(edge_I, edge_J, this) == 0) {
+                        if (edge != mEventMarkedEdge) {
+                            if (mEventMarkedEdge != null) {
+                                mEventMarkedEdge.setBackgroundColor(Color.TRANSPARENT);
+                            }
+
+                            edge.setBackgroundColor(Color.WHITE);
+                            mEventMarkedEdge = edge;
+                        }
+                    }
+                    else {
                         if (mEventMarkedEdge != null) {
                             mEventMarkedEdge.setBackgroundColor(Color.TRANSPARENT);
+                            mEventMarkedEdge = null;
                         }
-
-                        edge.setBackgroundColor(Color.WHITE);
-                        mEventMarkedEdge = edge;
                     }
                 }
             }
