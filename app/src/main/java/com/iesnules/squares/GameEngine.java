@@ -3,6 +3,9 @@ package com.iesnules.squares;
 import android.graphics.Matrix;
 import android.util.Log;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 /**
  * Created by rafa on 3/3/15.
  */
@@ -24,14 +27,45 @@ public class GameEngine {
         }
     }
 
-    public GameEngine(byte[][] newState) {
-        mGameState = newState;
-        mRealRows = mGameState.length;
-        mRealCols = mGameState[0].length;
+    public GameEngine(byte[] data) {
+        mRealCols = data[0];
+        mRealRows = (data.length - 1) / mRealCols;
+
+        mGameState = new byte[mRealRows][mRealCols];
+        for (int i = 0; i < mRealRows; i++) {
+            int start = i * mRealCols + 1;
+            int end = (i + 1) * mRealCols + 1;
+            mGameState[i] = Arrays.copyOfRange(data, start, end);
+        }
 
         if (!checkGameStateSanity()) {
             throw new RuntimeException("GameEngine: Invalid game state");
         }
+    }
+
+    public int getRows() {
+        return (mRealRows - 1) / 2;
+    }
+
+    public int getCols() {
+        return (mRealCols - 1) / 2;
+    }
+
+    public byte[] getData() {
+        byte[] data = new byte[mRealRows * mRealCols + 1];
+
+        // Store row size
+        data[0] = (byte)mRealCols;
+
+        // Store matrix
+        for (int i = 0; i < mRealRows; i++) {
+            for (int j = 0; j < mRealCols; j++) {
+                int pos = i * mRealCols + j + 1;
+                data[pos] = mGameState[i][j];
+            }
+        }
+
+        return data;
     }
 
     public byte[][] getGameState() {
@@ -140,8 +174,8 @@ public class GameEngine {
     }
 
 
-    public int markEdge(int edgeRow, int edgeCol, int playerID) {
-        int counter = 0;
+    public boolean markEdge(int edgeRow, int edgeCol, int playerID) {
+        boolean squareCaptured = false;
 
         if (!edgeIsMarked(edgeRow, edgeCol)) {
             mGameState[edgeRow][edgeCol] = 1; // Mark edge
@@ -151,14 +185,14 @@ public class GameEngine {
                 if (edgeCol > 0) { // Check left square
                     if (shouldSquareBeCaptured(edgeRow, edgeCol - 1)) {
                         mGameState[edgeRow][edgeCol - 1] = (byte) playerID;
-                        counter++;
+                        squareCaptured = true;
                     }
                 }
 
                 if (edgeCol < (mRealCols - 1)) { // Check right square
                     if (shouldSquareBeCaptured(edgeRow, edgeCol + 1)) {
                         mGameState[edgeRow][edgeCol + 1] = (byte) playerID;
-                        counter++;
+                        squareCaptured = true;
                     }
                 }
             } else { // Horizontal edge
@@ -166,20 +200,20 @@ public class GameEngine {
                 if (edgeRow > 0) { // Check upper square
                     if (shouldSquareBeCaptured(edgeRow - 1, edgeCol)) {
                         mGameState[edgeRow - 1][edgeCol] = (byte) playerID;
-                        counter++;
+                        squareCaptured = true;
                     }
                 }
 
                 if (edgeRow < (mRealRows - 1)) { // Check lower square
                     if (shouldSquareBeCaptured(edgeRow + 1, edgeCol)) {
                         mGameState[edgeRow + 1][edgeCol] = (byte) playerID;
-                        counter++;
+                        squareCaptured = true;
                     }
                 }
             }
         }
 
-        return counter;
+        return squareCaptured;
     }
 
     /*

@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,7 +18,7 @@ import com.iesnules.squares.custom_views.interfaces.BoardViewListener;
 /**
  * TODO: document your custom view class.
  */
-public class BoardView extends ViewGroup implements View.OnClickListener {
+public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
     private static final String TAG = "BoardView";
 
     private final int NODE_DIM = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 14, getResources().getDisplayMetrics());
@@ -29,6 +30,11 @@ public class BoardView extends ViewGroup implements View.OnClickListener {
 
     private int mBoardRows = 1;
     private int mBoardCols = 1;
+
+    private boolean mTouchStarted = false;
+    private int mPointerID;
+    private int mTouchedNode_I;
+    private int mTouchedNode_J;
 
     public BoardView(Context context) {
         this(context, null);
@@ -69,12 +75,21 @@ public class BoardView extends ViewGroup implements View.OnClickListener {
         createAllSubviews();
     }
 
+    public void setDimensions(int rows, int cols) {
+        mBoardRows = Math.max(rows, 1);
+        mBoardCols = Math.max(cols, 1);
+
+        createAllSubviews();
+    }
+
     private void createAllSubviews() {
         removeAllViews();
 
+        /*
         ImageView node = null;
         Button edge = null;
         ImageView square = null;
+        */
 
         int rows = 2*mBoardRows + 1;
         int cols = 2*mBoardCols + 1;
@@ -140,14 +155,16 @@ public class BoardView extends ViewGroup implements View.OnClickListener {
                 for (int j = 0; j < cols; j++) {
                     if (i%2 == 0) { // Even rows have nodes and horizontal edges
                         if (j%2 != 0) {
-                            Button edge = (Button)getChildAt(i * cols + j);
+                            //Button edge = (Button)getChildAt(i * cols + j);
+                            ImageView edge = (ImageView)getChildAt(i * cols + j);
                             int color = mDataProvider.stateOfEdgeWithCoordinates(i, j, this) == 0 ? uncheckedEdgeColor : checkedEdgeColor;
                             edge.setBackgroundColor(color);
                         }
                     }
                     else { // Odd rows have vertical edges and squares
                         if (j%2 == 0) {
-                            Button edge = (Button)getChildAt(i * cols + j);
+                            //Button edge = (Button)getChildAt(i * cols + j);
+                            ImageView edge = (ImageView)getChildAt(i * cols + j);
                             int color = mDataProvider.stateOfEdgeWithCoordinates(i, j, this) == 0 ? uncheckedEdgeColor : checkedEdgeColor;
                             edge.setBackgroundColor(color);
                         }
@@ -175,38 +192,8 @@ public class BoardView extends ViewGroup implements View.OnClickListener {
         return node;
     }
 
-    /*
-    private Button getHorizontalEdge(int row, int col) {
-        Button edge = getEdge(row, col);
-
-        //GridLayout.LayoutParams params = (GridLayout.LayoutParams)edge.getLayoutParams();
-        //params.setGravity(Gravity.FILL_HORIZONTAL);
-        //params.width = mSquareDim;
-        //params.height = NODE_DIM;
-        //edge.setLayoutParams(params);
-
-        return edge;
-    }
-
-    private Button getVerticalEdge(int row, int col) {
-        Button edge = getEdge(row, col);
-
-        GridLayout.LayoutParams params = (GridLayout.LayoutParams)edge.getLayoutParams();
-        //params.setGravity(Gravity.FILL_VERTICAL);
-        params.width = NODE_DIM;
-        params.height = mSquareDim;
-        edge.setLayoutParams(params);
-
-        return edge;
-    }
-    */
-
-    private Button getEdge() {
-        Button edge = new Button(this.getContext());
-
-        edge.setBackgroundColor(getResources().getColor(R.color.overlay_color));
-
-        edge.setOnClickListener(this);
+    private ImageView getEdge() {
+        ImageView edge = new ImageView(this.getContext());
 
         return edge;
     }
@@ -275,19 +262,79 @@ public class BoardView extends ViewGroup implements View.OnClickListener {
     }
 
     @Override
-    public void onClick(View v) {
-        if (mListener != null) {
-            int index = indexOfChild(v);
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        return true;
+    }
 
-            int realCols = 2 * mBoardCols + 1;
-            int row = index / realCols;
-            int col = index % realCols;
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (isEnabled()) {
+            int action = event.getActionMasked();
+            int index = event.getActionIndex();
 
-            mListener.edgeClickedWithCoordinates(row, col, this);
+            if (action == MotionEvent.ACTION_DOWN) {
+                if (!mTouchStarted) { // Only manage first finger contact...
+                    mTouchStarted = true;
+                    mPointerID = event.getPointerId(index);
+
+                    mTouchedNode_J = nodeCoord(event.getX(index));
+                    mTouchedNode_I = nodeCoord(event.getY(index));
+                }
+            }
+            else if (action == MotionEvent.ACTION_UP) {
+                if (mPointerID == event.getPointerId(index)) {
+                    int newNode_J = nodeCoord(event.getX(index));
+                    int newNode_I = nodeCoord(event.getY(index));
+
+                    if ((mTouchedNode_I - newNode_I) == 0 && (mTouchedNode_J - newNode_J == 1)) { // West edge...
+                        int edge_I = 2 * mTouchedNode_I;
+                        int edge_J = 2 * mTouchedNode_J - 1;
+
+                        if (mDataProvider.stateOfEdgeWithCoordinates(edge_I, edge_J, this) == 0) {
+                            mListener.edgeClickedWithCoordinates(edge_I, edge_J, this);
+                        }
+                    }
+                    else if ((mTouchedNode_I - newNode_I) == 0 && (mTouchedNode_J - newNode_J == -1)) { // East edge...
+                        int edge_I = 2 * mTouchedNode_I;
+                        int edge_J = 2 * mTouchedNode_J + 1;
+
+                        if (mDataProvider.stateOfEdgeWithCoordinates(edge_I, edge_J, this) == 0) {
+                            mListener.edgeClickedWithCoordinates(edge_I, edge_J, this);
+                        }
+                    }
+                    else if ((mTouchedNode_I - newNode_I) == 1 && (mTouchedNode_J - newNode_J == 0)) { // North edge...
+                        int edge_I = 2 * mTouchedNode_I - 1;
+                        int edge_J = 2 * mTouchedNode_J;
+
+                        if (mDataProvider.stateOfEdgeWithCoordinates(edge_I, edge_J, this) == 0) {
+                            mListener.edgeClickedWithCoordinates(edge_I, edge_J, this);
+                        }
+                    }
+                    else if ((mTouchedNode_I - newNode_I) == -1 && (mTouchedNode_J - newNode_J == 0)) { // South edge...
+                        int edge_I = 2 * mTouchedNode_I + 1;
+                        int edge_J = 2 * mTouchedNode_J;
+
+                        if (mDataProvider.stateOfEdgeWithCoordinates(edge_I, edge_J, this) == 0) {
+                            mListener.edgeClickedWithCoordinates(edge_I, edge_J, this);
+                        }
+                    }
+
+                    mTouchStarted = false;
+                }
+            }
+            else if (action == MotionEvent.ACTION_CANCEL) {
+                mTouchStarted = false;
+            }
         }
 
-        v.setEnabled(false);
-        v.setBackgroundColor(getResources().getColor(R.color.checked_edge_color));
+        return true;
+    }
+
+    private int nodeCoord(float touchCoord) {
+        float touchableDim = mSquareDim + NODE_DIM;
+        float halfTouchableDim = touchableDim / 2;
+
+        return (int)((touchCoord + halfTouchableDim) / touchableDim);
     }
 }
 
