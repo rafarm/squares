@@ -94,6 +94,10 @@ public class MainActivity extends BaseGameActivity implements
 
         mOptionsLayout.setVisibility(View.GONE);
         mOfflineButton.setEnabled(true);
+
+        if (!mInSignInFlow) {
+            mOverlayLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -108,6 +112,18 @@ public class MainActivity extends BaseGameActivity implements
         mQuickMatchButton.setVisibility(View.VISIBLE);
         mListMatchesButton.setVisibility(View.VISIBLE);
         mOverlayLayout.setVisibility(View.GONE);
+
+        if (bundle != null) {
+            Invitation invitation = bundle.getParcelable(Multiplayer.EXTRA_INVITATION);
+            if (invitation != null) {
+                // TODO: To be completed...
+            }
+
+            TurnBasedMatch match = bundle.getParcelable(Multiplayer.EXTRA_TURN_BASED_MATCH);
+            if (match != null) {
+                launchActivityForMatch(match);
+            }
+        }
     }
 
     @Override

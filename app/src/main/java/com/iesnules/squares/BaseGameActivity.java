@@ -46,6 +46,7 @@ public class BaseGameActivity extends Activity implements GoogleApiClient.Connec
     protected void onStop() {
         super.onStop();
         mGoogleApiClient.disconnect();
+        mInSignInFlow = false;
     }
 
     @Override
