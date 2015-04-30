@@ -147,7 +147,8 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center"
-            android:id="@+id/overlayLayout">
+            android:id="@+id/overlayLayout"
+            android:visibility="visible">
 
             <ImageView
                 android:layout_width="fill_parent"
