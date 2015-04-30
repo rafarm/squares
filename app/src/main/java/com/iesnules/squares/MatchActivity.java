@@ -186,62 +186,6 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         setupMatch(loadMatchResult.getMatch());
 
         updateUI();
-
-        /*
-        // Create players views reusing old ones
-        PlayerView[] oldPlayerViews = mPlayerViews;
-        int numberOfOldViews = 0;
-        if (oldPlayerViews != null) {
-            numberOfOldViews = oldPlayerViews.length;
-        }
-        mPlayerViews = new PlayerView[mNumberOfPlayers];
-
-        for (int i=0; i<mNumberOfPlayers; i++) {
-            PlayerView playerView;
-
-            if (i < numberOfOldViews) {
-                playerView = oldPlayerViews[i];
-            }
-            else {
-                playerView = new PlayerView(this);
-                mPlayersLayout.addView(playerView, i);
-            }
-
-            String playerName;
-            String playerScore;
-            Uri playerIconURI;
-
-            if (i < numberOfParticipants) {
-                String playerID = mPlayerIDs.get(i);
-
-                Participant player = mMatch.getParticipant(playerID);
-                playerName = player.getDisplayName();
-                playerScore = String.valueOf(mEngine.numOfCapturedSquaresByPlayer(i + 1));
-                playerIconURI = player.getIconImageUri();
-            }
-            else {
-                playerName = getResources().getString(R.string.automatched_player_name);
-                playerScore = String.valueOf(0);
-                playerIconURI = null;
-            }
-
-            playerView.setPlayerName(playerName);
-            playerView.setPlayerScore(playerScore);
-            playerView.setPlayerImage(getResources().getDrawable(R.mipmap.player_image));
-            playerView.setShapeImage(getResources().getDrawable(mShapes[i]));
-
-            mPlayerViews[i] = playerView;
-        }
-
-        // Mark player in turn
-        ((PlayerView) mPlayerViews[mTurnPlayerIndex]).setPlayerInTurn(true);
-
-        // If it's this user's turn enable user interaction.
-        boolean isThisUserTurn = mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN;
-        mBoardView.setEnabled(isThisUserTurn);
-
-        mBoardView.reloadBoard();
-        */
     }
 
     @Override
@@ -266,9 +210,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             // TODO: Check if match has finished
         }
         else {
-            //((PlayerView)mPlayerViews[mTurnPlayerIndex]).setPlayerInTurn(false);
             mTurnPlayerIndex = ++mTurnPlayerIndex % mNumberOfPlayers;
-            //((PlayerView)mPlayerViews[mTurnPlayerIndex]).setPlayerInTurn(true);
         }
 
         if (mOnlineMatch) {

@@ -35,6 +35,7 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
     private int mPointerID;
     private int mTouchedNode_I;
     private int mTouchedNode_J;
+    private ImageView mEventMarkedEdge;
 
     public BoardView(Context context) {
         this(context, null);
@@ -281,53 +282,91 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
                     mTouchedNode_I = nodeCoord(event.getY(index));
                 }
             }
+            else if (action == MotionEvent.ACTION_MOVE) {
+                if (mPointerID == event.getPointerId(index)) {
+                    int newNode_J = nodeCoord(event.getX(index));
+                    int newNode_I = nodeCoord(event.getY(index));
+
+                    int edge_I = getEdgeRowCoordinateForNewNode(newNode_I, newNode_J);
+                    int edge_J = getEdgeColCoordinateForNewNode(newNode_I, newNode_J);
+
+                    ImageView edge = getEdgeWithCoordinates(edge_I, edge_J);
+                    if (edge != null &&
+                            mDataProvider.stateOfEdgeWithCoordinates(edge_I, edge_J, this) == 0) {
+                        if (edge != mEventMarkedEdge) {
+                            if (mEventMarkedEdge != null) {
+                                mEventMarkedEdge.setBackgroundColor(Color.TRANSPARENT);
+                            }
+
+                            edge.setBackgroundColor(Color.WHITE);
+                            mEventMarkedEdge = edge;
+                        }
+                    }
+                    else {
+                        if (mEventMarkedEdge != null) {
+                            mEventMarkedEdge.setBackgroundColor(Color.TRANSPARENT);
+                            mEventMarkedEdge = null;
+                        }
+                    }
+                }
+            }
             else if (action == MotionEvent.ACTION_UP) {
                 if (mPointerID == event.getPointerId(index)) {
                     int newNode_J = nodeCoord(event.getX(index));
                     int newNode_I = nodeCoord(event.getY(index));
 
-                    if ((mTouchedNode_I - newNode_I) == 0 && (mTouchedNode_J - newNode_J == 1)) { // West edge...
-                        int edge_I = 2 * mTouchedNode_I;
-                        int edge_J = 2 * mTouchedNode_J - 1;
-
-                        if (mDataProvider.stateOfEdgeWithCoordinates(edge_I, edge_J, this) == 0) {
-                            mListener.edgeClickedWithCoordinates(edge_I, edge_J, this);
-                        }
-                    }
-                    else if ((mTouchedNode_I - newNode_I) == 0 && (mTouchedNode_J - newNode_J == -1)) { // East edge...
-                        int edge_I = 2 * mTouchedNode_I;
-                        int edge_J = 2 * mTouchedNode_J + 1;
-
-                        if (mDataProvider.stateOfEdgeWithCoordinates(edge_I, edge_J, this) == 0) {
-                            mListener.edgeClickedWithCoordinates(edge_I, edge_J, this);
-                        }
-                    }
-                    else if ((mTouchedNode_I - newNode_I) == 1 && (mTouchedNode_J - newNode_J == 0)) { // North edge...
-                        int edge_I = 2 * mTouchedNode_I - 1;
-                        int edge_J = 2 * mTouchedNode_J;
-
-                        if (mDataProvider.stateOfEdgeWithCoordinates(edge_I, edge_J, this) == 0) {
-                            mListener.edgeClickedWithCoordinates(edge_I, edge_J, this);
-                        }
-                    }
-                    else if ((mTouchedNode_I - newNode_I) == -1 && (mTouchedNode_J - newNode_J == 0)) { // South edge...
-                        int edge_I = 2 * mTouchedNode_I + 1;
-                        int edge_J = 2 * mTouchedNode_J;
-
-                        if (mDataProvider.stateOfEdgeWithCoordinates(edge_I, edge_J, this) == 0) {
-                            mListener.edgeClickedWithCoordinates(edge_I, edge_J, this);
-                        }
-                    }
+                    markEdge(getEdgeRowCoordinateForNewNode(newNode_I, newNode_J),
+                            getEdgeColCoordinateForNewNode(newNode_I, newNode_J));
 
                     mTouchStarted = false;
+                    mEventMarkedEdge = null;
                 }
             }
             else if (action == MotionEvent.ACTION_CANCEL) {
                 mTouchStarted = false;
+                mEventMarkedEdge = null;
             }
         }
 
         return true;
+    }
+
+    private int getEdgeRowCoordinateForNewNode(int newNode_I, int newNode_J) {
+        int row = -1;
+
+        if ((mTouchedNode_I - newNode_I) == 0 && (mTouchedNode_J - newNode_J == 1)) { // West edge...
+            row = 2 * mTouchedNode_I;
+        }
+        else if ((mTouchedNode_I - newNode_I) == 0 && (mTouchedNode_J - newNode_J == -1)) { // East edge...
+            row = 2 * mTouchedNode_I;
+        }
+        else if ((mTouchedNode_I - newNode_I) == 1 && (mTouchedNode_J - newNode_J == 0)) { // North edge...
+            row = 2 * mTouchedNode_I - 1;
+        }
+        else if ((mTouchedNode_I - newNode_I) == -1 && (mTouchedNode_J - newNode_J == 0)) { // South edge...
+            row = 2 * mTouchedNode_I + 1;
+        }
+
+        return row;
+    }
+
+    private int getEdgeColCoordinateForNewNode(int newNode_I, int newNode_J) {
+        int col = -1;
+
+        if ((mTouchedNode_I - newNode_I) == 0 && (mTouchedNode_J - newNode_J == 1)) { // West edge...
+            col = 2 * mTouchedNode_J - 1;
+        }
+        else if ((mTouchedNode_I - newNode_I) == 0 && (mTouchedNode_J - newNode_J == -1)) { // East edge...
+            col = 2 * mTouchedNode_J + 1;
+        }
+        else if ((mTouchedNode_I - newNode_I) == 1 && (mTouchedNode_J - newNode_J == 0)) { // North edge...
+            col = 2 * mTouchedNode_J;
+        }
+        else if ((mTouchedNode_I - newNode_I) == -1 && (mTouchedNode_J - newNode_J == 0)) { // South edge...
+            col = 2 * mTouchedNode_J;
+        }
+
+        return col;
     }
 
     private int nodeCoord(float touchCoord) {
@@ -335,6 +374,38 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
         float halfTouchableDim = touchableDim / 2;
 
         return (int)((touchCoord + halfTouchableDim) / touchableDim);
+    }
+
+    private void markEdge(int row, int col) {
+        if (row >= 0 && col >= 0 && mDataProvider.stateOfEdgeWithCoordinates(row, col, this) == 0) {
+            //provisionallyMarkEdge(row, col);
+            mListener.edgeClickedWithCoordinates(row, col, this);
+        }
+    }
+
+    /*
+    private void provisionallyMarkEdge(int row, int col) {
+        ImageView edge = getEdgeWithCoordinates(row, col);
+
+        if (edge != null) {
+            edge.setBackgroundColor(Color.WHITE);
+        }
+    }
+    */
+
+    private ImageView getEdgeWithCoordinates(int row, int col) {
+        ImageView edge = null;
+        int cols = 2*mBoardCols + 1;
+
+        if (row >= 0 && col >= 0) {
+            View view = getChildAt(row * cols + col);
+
+            if (view instanceof ImageView) {
+                edge = (ImageView)view;
+            }
+        }
+
+        return edge;
     }
 }
 
