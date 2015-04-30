@@ -94,7 +94,7 @@ public class PlayerView extends FrameLayout implements Animator.AnimatorListener
 
         mPlayerInTurn = false;
     }
-
+    /*
     public Drawable getPlayerImage() {
         return mPlayerImage.getDrawable();
     }
@@ -102,7 +102,11 @@ public class PlayerView extends FrameLayout implements Animator.AnimatorListener
     public void setPlayerImage(Drawable image) {
         mPlayerImage.setImageDrawable(image);
     }
+    */
 
+    public ImageView getPlayerImage() {
+        return mPlayerImage;
+    }
 
     public String getPlayerName() {
         return mPlayerName.getText().toString();

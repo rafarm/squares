@@ -2,9 +2,11 @@ package com.iesnules.squares;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -13,6 +15,7 @@ import android.widget.Toast;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.common.images.ImageManager;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.multiplayer.Participant;
@@ -55,6 +58,8 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     private String mMatchID;
     private TurnBasedMatch mMatch;
 
+    private ImageManager mImageManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +75,8 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
         // Get match ID
         mMatchID = intent.getStringExtra(MainActivity.MATCH_ID);
+
+        mImageManager = ImageManager.create(this);
 
         if (mMatchID != null) { // Online mode
             mOnlineMatch = true;
@@ -330,8 +337,11 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
             playerView.setPlayerName(playerName);
             playerView.setPlayerScore(playerScore);
-            playerView.setPlayerImage(getResources().getDrawable(R.mipmap.player_image));
-            playerView.setShapeImage(getResources().getDrawable(mShapes[i]));
+            //playerView.setPlayerImage(getResources().getDrawable(R.mipmap.player_image));
+            mImageManager.loadImage(playerView.getPlayerImage(),playerIconURI,R.mipmap.player_image );
+            //playerView.setShapeImage(getResources().getDrawable(mShapes[i]));
+
+
 
             mPlayerViews[i] = playerView;
         }
