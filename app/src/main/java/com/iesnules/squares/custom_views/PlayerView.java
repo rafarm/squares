@@ -35,6 +35,7 @@ public class PlayerView extends FrameLayout implements Animator.AnimatorListener
     private ObjectAnimator mBrakeAnimation;
 
     private boolean mPlayerInTurn;
+    private boolean mIsParticipant;
 
     public PlayerView(Context context) {
         super(context);
@@ -93,6 +94,7 @@ public class PlayerView extends FrameLayout implements Animator.AnimatorListener
         mBrakeAnimation.addListener(this);
 
         mPlayerInTurn = false;
+        mIsParticipant = false;
     }
     /*
     public Drawable getPlayerImage() {
@@ -103,6 +105,14 @@ public class PlayerView extends FrameLayout implements Animator.AnimatorListener
         mPlayerImage.setImageDrawable(image);
     }
     */
+
+    public boolean getIsParticipant() {
+        return mIsParticipant;
+    }
+
+    public void setIsParticipant(boolean isParticipant) {
+        mIsParticipant = isParticipant;
+    }
 
     public ImageView getPlayerImage() {
         return mPlayerImage;

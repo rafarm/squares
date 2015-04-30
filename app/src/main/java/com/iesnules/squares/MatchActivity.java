@@ -319,29 +319,29 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             }
 
             String playerName;
-            String playerScore;
             Uri playerIconURI;
 
-            if (i < mNumberOfOnlineParticipants) {
-                String playerID = mPlayerIDs.get(i);
+            if (!playerView.getIsParticipant()) {
+                if (i < mNumberOfOnlineParticipants) {
+                    String playerID = mPlayerIDs.get(i);
 
-                Participant player = mMatch.getParticipant(playerID);
-                playerName = player.getDisplayName();
-                playerIconURI = player.getIconImageUri();
+                    Participant player = mMatch.getParticipant(playerID);
+                    playerName = player.getDisplayName();
+                    playerIconURI = player.getIconImageUri();
+
+                    playerView.setIsParticipant(true);
+                }
+                else {
+                    playerName = "Player "+(i+1);
+                    playerIconURI = null;
+                }
+
+                playerView.setPlayerName(playerName);
+                mImageManager.loadImage(playerView.getPlayerImage(),playerIconURI,R.mipmap.player_image );
+                playerView.setShapeImage(getResources().getDrawable(mShapes[i]));
             }
-            else {
-                playerName = "Player "+(i+1);
-                playerIconURI = null;
-            }
-            playerScore = String.valueOf(mEngine.numOfCapturedSquaresByPlayer(i + 1));
 
-            playerView.setPlayerName(playerName);
-            playerView.setPlayerScore(playerScore);
-            //playerView.setPlayerImage(getResources().getDrawable(R.mipmap.player_image));
-            mImageManager.loadImage(playerView.getPlayerImage(),playerIconURI,R.mipmap.player_image );
-            //playerView.setShapeImage(getResources().getDrawable(mShapes[i]));
-
-
+            playerView.setPlayerScore(String.valueOf(mEngine.numOfCapturedSquaresByPlayer(i + 1)));
 
             mPlayerViews[i] = playerView;
         }
