@@ -9,7 +9,10 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -19,6 +22,7 @@ import com.google.android.gms.common.images.ImageManager;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.multiplayer.Participant;
+import com.google.android.gms.games.multiplayer.ParticipantResult;
 import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
@@ -32,6 +36,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 
 public class MatchActivity extends BaseGameActivity implements BoardViewListener,
@@ -53,6 +58,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     private int[] mShapes = {R.mipmap.triangle_player, R.mipmap.square_player, R.mipmap.star_player, R.mipmap.pentagon_player};
 
     private LinearLayout mPlayersLayout;
+    private FrameLayout mResultsLayout;
     private BoardView mBoardView;
 
     private String mMatchID;
@@ -68,6 +74,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         setContentView(R.layout.activity_match);
 
         mPlayersLayout = (LinearLayout)findViewById(R.id.playersLayout);
+        mResultsLayout = (FrameLayout)findViewById(R.id.resultsLayout);
 
         mBoardView = (BoardView)findViewById(R.id.boardView);
         mBoardView.setDataProvider(this);
@@ -90,24 +97,6 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             setupMatch(null);
 
             updateUI();
-            /*
-            // Create players views
-            mPlayerViews = new PlayerView[mNumberOfPlayers];
-
-            for (int i=0; i<mNumberOfPlayers; i++) {
-                PlayerView player = new PlayerView(this);
-
-                player.setPlayerName("Player "+(i+1));
-                player.setPlayerScore("0");
-                player.setPlayerImage(getResources().getDrawable(R.mipmap.player_image));
-                player.setShapeImage(getResources().getDrawable(mShapes[i]));
-
-
-                mPlayerViews[i] = player;
-
-                mPlayersLayout.addView(player, i);
-            }
-            */
         }
     }
 
@@ -189,10 +178,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             return;
         }
 
-        // Get match
-        setupMatch(loadMatchResult.getMatch());
-
-        updateUI();
+        processMatch(loadMatchResult.getMatch());
     }
 
     @Override
@@ -213,8 +199,29 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     // BoardView listener methods
     @Override
     public void edgeClickedWithCoordinates(int row, int col, BoardView boardView) {
-        if (mEngine.markEdge(row, col, mTurnPlayerIndex + 1)) { // Update score for player and repeat turn
-            // TODO: Check if match has finished
+        if (mEngine.markEdge(row, col, mTurnPlayerIndex + 1)) { // Square captured. Check for match completion
+            if (mEngine.matchFinished()) {
+                PlayerResult[] playerResults = getPlayerResults();
+
+                if (mOnlineMatch) {
+                    Games.TurnBasedMultiplayer.finishMatch(mGoogleApiClient,
+                            mMatchID,
+                            getMatchData(),
+                            getParticipantResults(playerResults)).
+                            setResultCallback(new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
+                                @Override
+                                public void onResult(TurnBasedMultiplayer.UpdateMatchResult updateMatchResult) {
+                                    processResult(updateMatchResult);
+                                }
+                            });
+                }
+                else {
+                    updateUI();
+                    showResults(playerResults);
+                }
+
+                return;
+            }
         }
         else {
             mTurnPlayerIndex = ++mTurnPlayerIndex % mNumberOfPlayers;
@@ -229,16 +236,9 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                 nextPlayerID = mPlayerIDs.get(mTurnPlayerIndex);
             }
 
-            byte[] state = mEngine.getData();
-            byte[] data = new byte[state.length + 1];
-            data[0] = (byte)mTurnPlayerIndex;
-            for (int i = 0; i < state.length; i++) {
-                data[i+1] = state[i];
-            }
-
             Games.TurnBasedMultiplayer.takeTurn(mGoogleApiClient,
                     mMatchID,
-                    data,
+                    getMatchData(),
                     nextPlayerID).
                     setResultCallback(new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
                         @Override
@@ -253,6 +253,80 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         }
     }
 
+    private byte[] getMatchData() {
+        byte[] state = mEngine.getData();
+
+        byte[] data = new byte[state.length + 1];
+        data[0] = (byte)mTurnPlayerIndex;
+
+        for (int i = 0; i < state.length; i++) {
+            data[i+1] = state[i];
+        }
+
+        return data;
+    }
+
+    private PlayerResult[] getPlayerResults() {
+        PlayerResult[] playerResults = new PlayerResult[mNumberOfPlayers];
+
+        for (int i =0; i < mNumberOfPlayers; i++) {
+            int score = mEngine.numOfCapturedSquaresByPlayer(i + 1);
+            String playerID;
+
+            if (mPlayerIDs != null && i < mPlayerIDs.size()) {
+                playerID = mPlayerIDs.get(i);
+            }
+            else {
+                playerID = String.valueOf(i);
+            }
+
+            PlayerResult playerResult = new PlayerResult(playerID, mPlayerViews[i], score);
+            playerResults[i] = playerResult;
+        }
+
+        // Sort & invert results to find winner
+        Arrays.sort(playerResults);
+        for (int i = 0; i < mNumberOfPlayers/2; i++) {
+            PlayerResult temp = playerResults[i];
+            playerResults[0] = playerResults[mNumberOfPlayers - i - 1];
+            playerResults[mNumberOfPlayers - i - 1] = temp;
+        }
+
+        return playerResults;
+    }
+
+    private List<ParticipantResult> getParticipantResults(PlayerResult[] playerResults) {
+        ArrayList<ParticipantResult> participantResults = null;
+
+        if (playerResults != null && playerResults.length > 1) {
+            int winnerScore = playerResults[0].getScore();
+            boolean tie = winnerScore == playerResults[1].getScore();
+
+            // Build participant results list
+            participantResults = new ArrayList<ParticipantResult>();
+
+            for (int i = 0; i < mNumberOfPlayers; i++) {
+                PlayerResult playerResult = playerResults[i];
+                String playerID = playerResult.getPlayerID();
+                int score = playerResult.getScore();
+                int result;
+
+                if (score == winnerScore) {
+                    result = tie ? ParticipantResult.MATCH_RESULT_TIE : ParticipantResult.MATCH_RESULT_WIN;
+                }
+                else {
+                    result = ParticipantResult.MATCH_RESULT_LOSS;
+                }
+
+                ParticipantResult participantResult = new ParticipantResult(playerID, result, i + 1);
+
+                participantResults.add(participantResult);
+            }
+        }
+
+        return participantResults;
+    }
+
     private void processResult(TurnBasedMultiplayer.UpdateMatchResult updateMatchResult) {
         // Check if the status code is not success.
         Status status = updateMatchResult.getStatus();
@@ -261,9 +335,18 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             return;
         }
 
-        setupMatch(updateMatchResult.getMatch());
+        processMatch(updateMatchResult.getMatch());
+    }
 
+    private void processMatch(TurnBasedMatch match) {
+        setupMatch(match);
         updateUI();
+
+        if (match.getStatus() == TurnBasedMatch.MATCH_STATUS_COMPLETE) {
+            showResults(getPlayerResults());
+
+            Games.TurnBasedMultiplayer.finishMatch(mGoogleApiClient, mMatchID);
+        }
     }
 
     private void setupMatch(TurnBasedMatch match) {
@@ -289,6 +372,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         else {
             newMatch();
             mNumberOfOnlineParticipants = 0;
+            mPlayerIDs = null;
         }
 
     }
@@ -305,6 +389,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         if (oldPlayerViews != null) {
             numberOfOldViews = oldPlayerViews.length;
         }
+
         mPlayerViews = new PlayerView[mNumberOfPlayers];
 
         for (int i=0; i<mNumberOfPlayers; i++) {
@@ -368,11 +453,93 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         }
     }
 
+    private void showResults(PlayerResult[] playerResults) {
+        Button accept = (Button)findViewById(R.id.resultsOKButton);
+        accept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mResultsLayout.setVisibility(View.GONE);
+            }
+        });
+
+        if (playerResults != null && playerResults.length > 1) {
+            if (!mOnlineMatch || mMatch.canRematch()) {
+                final Button rematch = (Button)findViewById(R.id.resultsRematchButton);
+                rematch.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        rematch();
+                        //mResultsLayout.setVisibility(View.GONE);
+                    }
+                });
+            }
+
+            TextView title = (TextView)findViewById(R.id.resultsTitleTextView);
+
+            String titleText = null;
+            if (playerResults[0].getScore() == playerResults[1].getScore()) { // Tie
+                titleText = getResources().getString(R.string.tie);
+            }
+            else {
+                titleText = playerResults[0].getPlayeView().getPlayerName() + " " +
+                        getResources().getString(R.string.win);
+            }
+
+            title.setText(titleText);
+
+            // Signal winners
+            for (int i = 0; i < mNumberOfPlayers; i++) {
+                PlayerView playerView = playerResults[i].getPlayeView();
+
+                if (i == 0 ||
+                        (playerResults[i].getScore() == playerResults[0].getScore())) {
+                    playerView.setPlayerInTurn(true);
+                }
+                else {
+                    playerView.setPlayerInTurn(false);
+                }
+            }
+        }
+
+        mResultsLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void rematch() {
+        if (mOnlineMatch) {
+            Games.TurnBasedMultiplayer.rematch(mGoogleApiClient, mMatchID).
+                    setResultCallback(new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
+                        @Override
+                        public void onResult(TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
+                            processRematch(initiateMatchResult);
+                        }
+                    });
+        }
+        else {
+            setupMatch(null);
+            updateUI();
+        }
+    }
+
+    private void processRematch(TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
+        Status status = initiateMatchResult.getStatus();
+        if (!status.isSuccess()) {
+            BaseGameUtils.showAlert(this, status.getStatusMessage());
+            return;
+        }
+
+        TurnBasedMatch match = initiateMatchResult.getMatch();
+        mMatchID = match.getMatchId();
+
+        setupMatch(match);
+        updateUI();
+
+        mResultsLayout.setVisibility(View.GONE);
+    }
+
     @Override
     public void onTurnBasedMatchReceived(TurnBasedMatch turnBasedMatch) {
         if (turnBasedMatch.getMatchId().equals(mMatchID)) {
-            setupMatch(turnBasedMatch);
-            updateUI();
+            processMatch(turnBasedMatch);
         }
         else {
             // TODO: Notify match update
@@ -382,5 +549,47 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     @Override
     public void onTurnBasedMatchRemoved(String s) {
         // TODO: To be completed...
+    }
+}
+
+class PlayerResult implements Comparable<PlayerResult> {
+    private String mPlayerID;
+    private PlayerView mPlayerView;
+    private int mScore = 0;
+
+    public PlayerResult(String playerID, PlayerView playerView, int score) {
+        mPlayerID = playerID;
+        mPlayerView = playerView;
+        mScore = score;
+    }
+
+    public String getPlayerID() {
+        return mPlayerID;
+    }
+
+    public PlayerView getPlayeView() {
+        return mPlayerView;
+    }
+
+    public int getScore() {
+        return mScore;
+    }
+
+    @Override
+    public int compareTo(PlayerResult another) {
+        if (another == null) {
+            throw new NullPointerException("Unable to be compared with a null object.");
+        }
+
+        int comparison = 0;
+
+        if (another.getScore() < mScore) {
+            comparison = 1;
+        }
+        else if (another.getScore() > mScore) {
+            comparison = -1;
+        }
+
+        return comparison;
     }
 }
