@@ -40,7 +40,7 @@ public class MainActivity extends BaseGameActivity implements
 
 
 
-    //private boolean mSignInClicked = false;
+    private boolean mCreatingMatch = false;
     //boolean mExplicitSignOut = false;
 
     private LinearLayout mOptionsLayout;
@@ -95,7 +95,7 @@ public class MainActivity extends BaseGameActivity implements
         mOptionsLayout.setVisibility(View.GONE);
         mOfflineButton.setEnabled(true);
 
-        if (!mInSignInFlow) {
+        if (!mInSignInFlow && !mCreatingMatch) {
             mOverlayLayout.setVisibility(View.GONE);
         }
     }
@@ -176,6 +176,8 @@ public class MainActivity extends BaseGameActivity implements
 
         if (requestCode == RC_SELECT_PLAYERS) {
             if (resultCode == Activity.RESULT_OK) {
+                mCreatingMatch = true;
+
                 // Show overlay...
                 mOverlayLayout.setVisibility(View.VISIBLE);
 
@@ -304,6 +306,8 @@ public class MainActivity extends BaseGameActivity implements
 
     @Override
     public void onResult(TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
+        mCreatingMatch = false;
+
         // Check if the status code is not success.
         Status status = initiateMatchResult.getStatus();
         if (!status.isSuccess()) {
