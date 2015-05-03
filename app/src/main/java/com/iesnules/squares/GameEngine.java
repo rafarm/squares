@@ -51,6 +51,14 @@ public class GameEngine {
         return (mRealCols - 1) / 2;
     }
 
+    public int getTotalSquares() {
+        return getRows() * getCols();
+    }
+
+    public boolean matchFinished() {
+        return getTotalSquares() == numOfCapturedSquares();
+    }
+
     public byte[] getData() {
         byte[] data = new byte[mRealRows * mRealCols + 1];
 
@@ -257,5 +265,7 @@ public class GameEngine {
     public boolean gameFinished(){
         return numOfCapturedSquares() == ((mRealRows - 1) / 2) * ((mRealCols - 1) / 2);
     }
+
+
 
 }
