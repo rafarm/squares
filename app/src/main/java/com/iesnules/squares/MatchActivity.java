@@ -1,6 +1,9 @@
 package com.iesnules.squares;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -29,6 +32,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+
+import static android.app.PendingIntent.getActivity;
 
 
 public class MatchActivity extends BaseGameActivity implements BoardViewListener,
@@ -373,4 +378,29 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     public void onTurnBasedMatchRemoved(String s) {
         // TODO: To be completed...
     }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MatchActivity.this);
+
+        builder.setMessage(getString(R.string.Dialogmessage))
+                .setTitle(getString(R.string.DialogTitle))
+                .setPositiveButton(getString(R.string.PositiveButton), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Log.i("Dialogos", "Confirmacion Aceptada.");
+                        dialog.cancel();
+                    }
+                })
+                .setNegativeButton(getString(R.string.NegativeButton), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Log.i("Dialogos", "Confirmacion Cancelada.");
+                        dialog.cancel();
+                    }
+                });
+        builder.create();
+
+    }
+
 }
+
+
