@@ -179,7 +179,12 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             return;
         }
 
-        processMatch(loadMatchResult.getMatch());
+        TurnBasedMatch match = loadMatchResult.getMatch();
+        mMatchID = match.getMatchId();
+
+        processMatch(match);
+
+        mResultsLayout.setVisibility(View.GONE);
     }
 
     @Override
@@ -485,11 +490,11 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
             String titleText = null;
             if (playerResults[0].getScore() == playerResults[1].getScore()) { // Tie
-                titleText = getResources().getString(R.string.tie);
+                titleText = getString(R.string.tie);
             }
             else {
                 titleText = playerResults[0].getPlayeView().getPlayerName() + " " +
-                        getResources().getString(R.string.win);
+                        getString(R.string.win);
             }
 
             title.setText(titleText);
@@ -536,7 +541,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                     setResultCallback(new ResultCallback<TurnBasedMultiplayer.LoadMatchResult>() {
                         @Override
                         public void onResult(TurnBasedMultiplayer.LoadMatchResult loadMatchResult) {
-                            processLoadMatch(loadMatchResult);
+                            processResult(loadMatchResult);
                         }
                     });
 
@@ -549,22 +554,6 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         }
 
         TurnBasedMatch match = initiateMatchResult.getMatch();
-        mMatchID = match.getMatchId();
-
-        setupMatch(match);
-        updateUI();
-
-        mResultsLayout.setVisibility(View.GONE);
-    }
-
-    private void processLoadMatch(TurnBasedMultiplayer.LoadMatchResult loadMatchResult) {
-        Status status = loadMatchResult.getStatus();
-        if (!status.isSuccess()) {
-            BaseGameUtils.showAlert(null, status.getStatusMessage());
-            return;
-        }
-
-        TurnBasedMatch match = loadMatchResult.getMatch();
         mMatchID = match.getMatchId();
 
         setupMatch(match);
