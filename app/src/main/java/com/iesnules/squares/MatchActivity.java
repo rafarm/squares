@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -305,6 +306,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             // Build participant results list
             participantResults = new ArrayList<ParticipantResult>();
 
+            int placing = 1;
             for (int i = 0; i < mNumberOfPlayers; i++) {
                 PlayerResult playerResult = playerResults[i];
                 String playerID = playerResult.getPlayerID();
@@ -316,9 +318,10 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                 }
                 else {
                     result = ParticipantResult.MATCH_RESULT_LOSS;
+                    placing++;
                 }
 
-                ParticipantResult participantResult = new ParticipantResult(playerID, result, i + 1);
+                ParticipantResult participantResult = new ParticipantResult(playerID, result, placing);
 
                 participantResults.add(participantResult);
             }
@@ -463,8 +466,8 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         });
 
         if (playerResults != null && playerResults.length > 1) {
+            final Button rematch = (Button)findViewById(R.id.resultsRematchButton);
             if (!mOnlineMatch || mMatch.canRematch()) {
-                final Button rematch = (Button)findViewById(R.id.resultsRematchButton);
                 rematch.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -473,6 +476,10 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                     }
                 });
             }
+            else {
+                rematch.setVisibility(View.GONE);
+            }
+
 
             TextView title = (TextView)findViewById(R.id.resultsTitleTextView);
 
@@ -522,12 +529,42 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     private void processRematch(TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
         Status status = initiateMatchResult.getStatus();
+        if (status.getStatusCode() == GamesStatusCodes.STATUS_MATCH_ERROR_ALREADY_REMATCHED) {
+            String rematchID = mMatch.getRematchId();
+
+            Games.TurnBasedMultiplayer.loadMatch(mGoogleApiClient, rematchID).
+                    setResultCallback(new ResultCallback<TurnBasedMultiplayer.LoadMatchResult>() {
+                        @Override
+                        public void onResult(TurnBasedMultiplayer.LoadMatchResult loadMatchResult) {
+                            processLoadMatch(loadMatchResult);
+                        }
+                    });
+
+            return;
+        }
+
         if (!status.isSuccess()) {
             BaseGameUtils.showAlert(this, status.getStatusMessage());
             return;
         }
 
         TurnBasedMatch match = initiateMatchResult.getMatch();
+        mMatchID = match.getMatchId();
+
+        setupMatch(match);
+        updateUI();
+
+        mResultsLayout.setVisibility(View.GONE);
+    }
+
+    private void processLoadMatch(TurnBasedMultiplayer.LoadMatchResult loadMatchResult) {
+        Status status = loadMatchResult.getStatus();
+        if (!status.isSuccess()) {
+            BaseGameUtils.showAlert(null, status.getStatusMessage());
+            return;
+        }
+
+        TurnBasedMatch match = loadMatchResult.getMatch();
         mMatchID = match.getMatchId();
 
         setupMatch(match);
