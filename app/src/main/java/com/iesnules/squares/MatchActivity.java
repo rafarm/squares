@@ -425,7 +425,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                     playerView.setIsParticipant(true);
                 }
                 else {
-                    playerName = "Player "+(i+1);
+                    playerName = getString(R.string.player) + " " + (i+1);
                     playerIconURI = null;
                 }
 
