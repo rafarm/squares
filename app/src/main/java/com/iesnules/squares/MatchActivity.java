@@ -56,7 +56,10 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     private ArrayList <String> mPlayerIDs;
     private PlayerView[] mPlayerViews;
-    private int[] mShapes = {R.mipmap.triangle_player, R.mipmap.square_player, R.mipmap.star_player, R.mipmap.pentagon_player};
+    private int[] mShapes = {R.mipmap.triangle_player,
+            R.mipmap.square_player,
+            R.mipmap.star_player,
+            R.mipmap.pentagon_player};
 
     private LinearLayout mPlayersLayout;
     private FrameLayout mResultsLayout;
@@ -477,7 +480,10 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                     @Override
                     public void onClick(View v) {
                         rematch();
-                        //mResultsLayout.setVisibility(View.GONE);
+
+                        if (!mOnlineMatch) {
+                            mResultsLayout.setVisibility(View.GONE);
+                        }
                     }
                 });
             }
