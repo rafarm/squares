@@ -1,9 +1,127 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="squares.iesnules.com.squares.MatchActivity">
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 
-</RelativeLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0"
+        android:id="@+id/playersLayout"
+        android:baselineAligned="false"
+        android:layout_margin="10dp">
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/backgroudLogo"
+            android:background="@mipmap/logo_main_black"
+            android:layout_gravity="center" />
+
+        <com.iesnules.squares.custom_views.BoardView
+            custom:boardRows="7"
+            custom:boardCols="5"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/boardView"
+            android:layout_gravity="center"
+            android:layout_weight="1" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/resultsLayout"
+            android:background="@color/overlay_color"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/resultsContentLayout"
+                android:background="@color/background_floating_material_light"
+                android:layout_gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Large Text"
+                    android:id="@+id/resultsTitleTextView"
+                    android:layout_gravity="center_horizontal" />
+
+                <!--
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Medium Text"
+                    android:id="@+id/resultsFirstPlayerTextView"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="40dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Medium Text"
+                    android:id="@+id/resultsSecondPlayerTextView"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="40dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Medium Text"
+                    android:id="@+id/resultsThirdPlayerTextView"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="40dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Medium Text"
+                    android:id="@+id/resultsFourthPlayerTextView"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="40dp" />
+                -->
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal">
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/accept"
+                        android:id="@+id/resultsOKButton" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/rematch"
+                        android:id="@+id/resultsRematchButton" />
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
+
+    </FrameLayout>
+
+</LinearLayout>
