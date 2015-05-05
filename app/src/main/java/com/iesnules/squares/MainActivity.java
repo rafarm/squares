@@ -4,6 +4,8 @@ package com.iesnules.squares;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.content.Intent;
 import android.widget.Button;
@@ -33,15 +35,15 @@ public class MainActivity extends BaseGameActivity implements
 
     private static int RC_SELECT_PLAYERS = 9002;
     private static int RC_LIST_MATCHES = 9003;
+    private static int RC_REQUEST_LEADERBOARDS = 9004;
 
     public static String NUMBER_OF_PLAYERS = "NumberOfPlayers";
     public static String MATCH_ID = "MatchID";
-    //public static String EXPLICIT_SIGN_OUT = "ExplicitSignOut";
 
 
 
-    //private boolean mSignInClicked = false;
-    //boolean mExplicitSignOut = false;
+    private boolean mCreatingMatch = false;
+    boolean mExplicitSignOut = false;
 
     private LinearLayout mOptionsLayout;
     private FrameLayout mOverlayLayout;
@@ -49,8 +51,7 @@ public class MainActivity extends BaseGameActivity implements
     private Button mNewMatchButton;
     private Button mListMatchesButton;
     private Button mQuickMatchButton;
-
-    private int mPlayServicesAvailability;
+    private Button mLeaderboardsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,7 @@ public class MainActivity extends BaseGameActivity implements
         mNewMatchButton = (Button)findViewById(R.id.newMatchButton);
         mListMatchesButton = (Button)findViewById(R.id.listMatchesButton);
         mQuickMatchButton = (Button)findViewById(R.id.quickMatchButton);
+        mLeaderboardsButton = (Button)findViewById(R.id.leaderboardsButton);
 
         findViewById(R.id.sign_in_button).setOnClickListener(this);
     }
@@ -72,7 +74,7 @@ public class MainActivity extends BaseGameActivity implements
     protected void onStart() {
         super.onStart();
 
-        if (!mInSignInFlow) {
+        if (!mInSignInFlow && !mExplicitSignOut) {
             // auto sign in
             mInSignInFlow = true;
             mGoogleApiClient.connect();
@@ -94,6 +96,10 @@ public class MainActivity extends BaseGameActivity implements
 
         mOptionsLayout.setVisibility(View.GONE);
         mOfflineButton.setEnabled(true);
+
+        if (!mInSignInFlow && !mCreatingMatch) {
+            mOverlayLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -102,12 +108,19 @@ public class MainActivity extends BaseGameActivity implements
 
         // show sign-out button, hide the sign-in button
         findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-        //findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
 
         mNewMatchButton.setVisibility(View.VISIBLE);
         mQuickMatchButton.setVisibility(View.VISIBLE);
         mListMatchesButton.setVisibility(View.VISIBLE);
+        mLeaderboardsButton.setVisibility(View.VISIBLE);
         mOverlayLayout.setVisibility(View.GONE);
+
+        if (bundle != null) {
+            TurnBasedMatch match = bundle.getParcelable(Multiplayer.EXTRA_TURN_BASED_MATCH);
+            if (match != null) {
+                launchActivityForMatch(match);
+            }
+        }
     }
 
     @Override
@@ -121,45 +134,48 @@ public class MainActivity extends BaseGameActivity implements
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.sign_in_button) {
-            //mSignInClicked = true;
+            mExplicitSignOut = false;
             mGoogleApiClient.connect();
         }
     }
 
-    /*
-    public void signOutClicked(View view) {
-        mSignInClicked = false;
-
+    public void onSignOut() {
         mExplicitSignOut = true;
+
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             Games.signOut(mGoogleApiClient);
             mGoogleApiClient.disconnect();
         }
 
-        // show sign-in button, hide the sign-out button
+        // show sign-in button && hide other buttons
         findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-        findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+        mNewMatchButton.setVisibility(View.GONE);
+        mQuickMatchButton.setVisibility(View.GONE);
+        mListMatchesButton.setVisibility(View.GONE);
+        mLeaderboardsButton.setVisibility(View.GONE);
     }
-    */
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == GamesActivityResultCodes.RESULT_RECONNECT_REQUIRED){
-            //mExplicitSignOut = true;
+            mExplicitSignOut = true;
             mGoogleApiClient.disconnect();
 
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
             mNewMatchButton.setVisibility(View.GONE);
             mQuickMatchButton.setVisibility(View.GONE);
             mListMatchesButton.setVisibility(View.GONE);
+            mLeaderboardsButton.setVisibility(View.GONE);
 
             return;
         }
 
         if (requestCode == RC_SELECT_PLAYERS) {
             if (resultCode == Activity.RESULT_OK) {
+                mCreatingMatch = true;
+
                 // Show overlay...
                 mOverlayLayout.setVisibility(View.VISIBLE);
 
@@ -202,12 +218,20 @@ public class MainActivity extends BaseGameActivity implements
         }
     }
 
-    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            return super.onPrepareOptionsMenu(menu);
+        }
+
+        return false;
     }
 
     @Override
@@ -218,13 +242,13 @@ public class MainActivity extends BaseGameActivity implements
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_sign_out) {
+            onSignOut();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
-    */
 
     public void onShowOfflineOptions(View view) {
         mOfflineButton.setEnabled(false);
@@ -286,8 +310,15 @@ public class MainActivity extends BaseGameActivity implements
         startActivityForResult(intent, RC_LIST_MATCHES);
     }
 
+    public void onDisplayLeaderboards(View view) {
+        startActivityForResult(Games.Leaderboards.getAllLeaderboardsIntent(mGoogleApiClient),
+                RC_REQUEST_LEADERBOARDS);
+    }
+
     @Override
     public void onResult(TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
+        mCreatingMatch = false;
+
         // Check if the status code is not success.
         Status status = initiateMatchResult.getStatus();
         if (!status.isSuccess()) {

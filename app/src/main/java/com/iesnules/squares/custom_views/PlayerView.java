@@ -5,10 +5,13 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Outline;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewOutlineProvider;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -35,6 +38,7 @@ public class PlayerView extends FrameLayout implements Animator.AnimatorListener
     private ObjectAnimator mBrakeAnimation;
 
     private boolean mPlayerInTurn;
+    private boolean mIsParticipant;
 
     public PlayerView(Context context) {
         super(context);
@@ -68,6 +72,17 @@ public class PlayerView extends FrameLayout implements Animator.AnimatorListener
         mPlayerScore = (TextView) findViewById(R.id.playerScore);
         mShapeImage = (ImageView) findViewById(R.id.shapeImage);
 
+        /*
+        // Set player image Clipping
+        mPlayerImage.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                outline.setOval(0, 0, view.getWidth(), view.getHeight());
+            }
+        });
+        mPlayerImage.setClipToOutline(true);
+        */
+
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
         params.gravity = Gravity.CENTER;
         params.weight = 1;
@@ -93,8 +108,9 @@ public class PlayerView extends FrameLayout implements Animator.AnimatorListener
         mBrakeAnimation.addListener(this);
 
         mPlayerInTurn = false;
+        mIsParticipant = false;
     }
-
+    /*
     public Drawable getPlayerImage() {
         return mPlayerImage.getDrawable();
     }
@@ -102,7 +118,19 @@ public class PlayerView extends FrameLayout implements Animator.AnimatorListener
     public void setPlayerImage(Drawable image) {
         mPlayerImage.setImageDrawable(image);
     }
+    */
 
+    public boolean getIsParticipant() {
+        return mIsParticipant;
+    }
+
+    public void setIsParticipant(boolean isParticipant) {
+        mIsParticipant = isParticipant;
+    }
+
+    public ImageView getPlayerImage() {
+        return mPlayerImage;
+    }
 
     public String getPlayerName() {
         return mPlayerName.getText().toString();

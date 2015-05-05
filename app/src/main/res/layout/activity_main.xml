@@ -131,6 +131,16 @@
                 android:background="@mipmap/parent_button_bg"
                 android:visibility="gone" />
 
+            <Button
+                android:layout_width="230dp"
+                android:layout_height="40dp"
+                android:text="@string/display_leaderboards"
+                android:id="@+id/leaderboardsButton"
+                android:layout_gravity="center"
+                android:onClick="onDisplayLeaderboards"
+                android:background="@mipmap/parent_button_bg"
+                android:visibility="gone" />
+
             <!-- sign-out button
             <Button
                 android:id="@+id/sign_out_button"
@@ -147,7 +157,8 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center"
-            android:id="@+id/overlayLayout">
+            android:id="@+id/overlayLayout"
+            android:visibility="visible">
 
             <ImageView
                 android:layout_width="fill_parent"
