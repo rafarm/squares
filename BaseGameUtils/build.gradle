@@ -31,10 +31,10 @@ dependencies {
 android {
     // Set defaults so that BaseGameUtils can be used outside of BasicSamples
     if (!hasProperty('android_compile_version')) {
-        ext.android_compile_version = 20
+        ext.android_compile_version = 22
     }
     if (!hasProperty('android_version')) {
-        ext.android_version = '20'
+        ext.android_version = '22.0.1'
     }
 
     compileSdkVersion android_compile_version

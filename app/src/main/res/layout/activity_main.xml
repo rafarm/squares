@@ -16,94 +16,165 @@
         android:layout_gravity="center"
         android:layout_margin="20dp" />
 
-    <LinearLayout
-        android:orientation="vertical"
+    <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:id="@+id/mainLayout"
-        android:weightSum="1"
-        android:gravity="center"
-        android:animateLayoutChanges="true">
-
-        <Button
-            android:layout_width="230dp"
-            android:layout_height="40dp"
-            android:text="@string/play_offline"
-            android:id="@+id/offlineButton"
-            android:layout_gravity="center"
-            android:onClick="showOfflineOptions"
-            android:background="@mipmap/parent_button_bg" />
+        android:id="@+id/contentLayout">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="false"
-            android:layout_alignParentRight="false"
-            android:layout_alignParentEnd="false"
-            android:visibility="gone"
-            android:id="@+id/optionsLayout"
-            android:layout_alignParentTop="false"
-            android:layout_alignParentLeft="false"
-            android:layout_alignWithParentIfMissing="false"
             android:orientation="vertical"
-            android:layout_alignParentStart="false"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp">
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:id="@+id/mainLayout"
+            android:weightSum="1"
+            android:animateLayoutChanges="true"
+            android:gravity="center">
 
             <Button
-                android:layout_width="200dp"
+                android:layout_width="230dp"
                 android:layout_height="40dp"
-                android:text="@string/two_players"
-                android:id="@+id/twoPlayersButton"
+                android:text="@string/play_offline"
+                android:id="@+id/offlineButton"
                 android:layout_gravity="center"
-                android:visibility="visible"
-                android:onClick="launchMatchActivity"
-                android:enabled="true"
-                android:background="@mipmap/child_button_bg"
-                android:layout_margin="5dp" />
+                android:onClick="onShowOfflineOptions"
+                android:background="@mipmap/parent_button_bg" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="false"
+                android:layout_alignParentRight="false"
+                android:layout_alignParentEnd="false"
+                android:visibility="gone"
+                android:id="@+id/optionsLayout"
+                android:layout_alignParentTop="false"
+                android:layout_alignParentLeft="false"
+                android:layout_alignWithParentIfMissing="false"
+                android:orientation="vertical"
+                android:layout_alignParentStart="false"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp">
+
+                <Button
+                    android:layout_width="200dp"
+                    android:layout_height="40dp"
+                    android:text="@string/two_players"
+                    android:id="@+id/twoPlayersButton"
+                    android:layout_gravity="center"
+                    android:visibility="visible"
+                    android:onClick="onLaunchMatchActivity"
+                    android:enabled="true"
+                    android:background="@mipmap/child_button_bg"
+                    android:layout_margin="5dp" />
+
+                <Button
+                    android:layout_width="200dp"
+                    android:layout_height="40dp"
+                    android:text="@string/three_players"
+                    android:id="@+id/threePlayersButton"
+                    android:layout_gravity="center"
+                    android:visibility="visible"
+                    android:onClick="onLaunchMatchActivity"
+                    android:background="@mipmap/child_button_bg"
+                    android:layout_margin="5dp" />
+
+                <Button
+                    android:layout_width="200dp"
+                    android:layout_height="40dp"
+                    android:text="@string/four_players"
+                    android:id="@+id/fourPlayersButton"
+                    android:layout_gravity="center"
+                    android:onClick="onLaunchMatchActivity"
+                    android:background="@mipmap/child_button_bg"
+                    android:layout_margin="5dp" />
+
+            </LinearLayout>
+
+            <!-- sign-in button -->
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/sign_in_button"
+                android:layout_width="238dp"
+                android:layout_height="44dp"
+                android:layout_gravity="center" />
 
             <Button
-                android:layout_width="200dp"
+                android:layout_width="230dp"
                 android:layout_height="40dp"
-                android:text="@string/three_players"
-                android:id="@+id/threePlayersButton"
+                android:text="@string/new_match"
+                android:id="@+id/newMatchButton"
                 android:layout_gravity="center"
-                android:visibility="visible"
-                android:onClick="launchMatchActivity"
-                android:background="@mipmap/child_button_bg"
-                android:layout_margin="5dp" />
+                android:onClick="onStartNewMatch"
+                android:background="@mipmap/parent_button_bg"
+                android:visibility="gone" />
 
             <Button
-                android:layout_width="200dp"
+                android:layout_width="230dp"
                 android:layout_height="40dp"
-                android:text="@string/four_players"
-                android:id="@+id/fourPlayersButton"
+                android:text="@string/quick_match"
+                android:id="@+id/quickMatchButton"
                 android:layout_gravity="center"
-                android:onClick="launchMatchActivity"
-                android:background="@mipmap/child_button_bg"
-                android:layout_margin="5dp" />
+                android:onClick="onQuickMatch"
+                android:background="@mipmap/parent_button_bg"
+                android:visibility="gone" />
+
+            <Button
+                android:layout_width="230dp"
+                android:layout_height="40dp"
+                android:text="@string/list_all_matches"
+                android:id="@+id/listMatchesButton"
+                android:layout_gravity="center"
+                android:onClick="onListAllMatches"
+                android:background="@mipmap/parent_button_bg"
+                android:visibility="gone" />
+
+            <Button
+                android:layout_width="230dp"
+                android:layout_height="40dp"
+                android:text="@string/display_leaderboards"
+                android:id="@+id/leaderboardsButton"
+                android:layout_gravity="center"
+                android:onClick="onDisplayLeaderboards"
+                android:background="@mipmap/parent_button_bg"
+                android:visibility="gone" />
+
+            <!-- sign-out button
+            <Button
+                android:id="@+id/sign_out_button"
+                android:layout_width="238dp"
+                android:layout_height="44dp"
+                android:text="Sign Out"
+                android:visibility="gone"
+                android:onClick="signOutClicked" />
+                -->
 
         </LinearLayout>
 
-        <!-- sign-in button -->
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/sign_in_button"
-            android:layout_width="238dp"
-            android:layout_height="44dp" />
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:id="@+id/overlayLayout"
+            android:visibility="visible">
 
-        <!-- sign-out button -->
-        <Button
-            android:id="@+id/sign_out_button"
-            android:layout_width="238dp"
-            android:layout_height="44dp"
-            android:text="Sign Out"
-            android:visibility="gone"
-            android:onClick="signOutClicked" />
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/overlay"
+                android:background="@color/overlay_color"
+                android:clickable="true" />
 
-    </LinearLayout>
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/progressBar"
+                android:layout_gravity="center" />
+
+        </FrameLayout>
+
+    </FrameLayout>
 
 </LinearLayout>
