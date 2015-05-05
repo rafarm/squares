@@ -1,16 +1,27 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
-        <!-- Customize your theme here. -->
-    </style>
+    <style name="AppTheme" parent="@android:style/Theme.Material">
 
-
-    <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="@style/Theme.AppCompat.Light">
         <item name="android:windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowBackground">@color/general_background_color</item>
+        <!--
+        <item name="android:selectableItemBackground">@color/general_background_color</item>
+        <item name="android:popupMenuStyle">@style/Squares.PopupMenu</item>
+        <item name="android:dropDownListViewStyle">@style/Squares.DropDownListView</item>
+        -->
     </style>
+
+    <!--
+    <style name="Squares.PopupMenu" parent="android:style/Widget.Holo.Light.ListPopupWindow">
+        <item name="android:popupBackground">@color/checked_edge_color</item>
+    </style>
+
+    <style name="Squares.DropDownListView" parent="android:style/Widget.Holo.ListView.DropDown">
+        <item name="android:listSelector">@color/general_background_color</item>
+    </style>
+    -->
 </resources>
