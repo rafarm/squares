@@ -32,8 +32,8 @@
             android:layout_gravity="center" />
 
         <com.iesnules.squares.custom_views.BoardView
-            custom:boardRows="8"
-            custom:boardCols="6"
+            custom:boardRows="7"
+            custom:boardCols="5"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/boardView"

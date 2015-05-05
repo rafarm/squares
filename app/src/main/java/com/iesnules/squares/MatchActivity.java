@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -55,7 +58,10 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     private ArrayList <String> mPlayerIDs;
     private PlayerView[] mPlayerViews;
-    private int[] mShapes = {R.mipmap.triangle_player, R.mipmap.square_player, R.mipmap.star_player, R.mipmap.pentagon_player};
+    private int[] mShapes = {R.mipmap.triangle_player,
+            R.mipmap.square_player,
+            R.mipmap.star_player,
+            R.mipmap.pentagon_player};
 
     private LinearLayout mPlayersLayout;
     private FrameLayout mResultsLayout;
@@ -129,7 +135,6 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         super.onStop();
     }
 
-    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -144,14 +149,37 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_leave_match) { // Player wants to leave match...
+            // TODO: Ask player for confirmation...
+
+            if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
+                moveToNextPlayer();
+                Games.TurnBasedMultiplayer.
+                        leaveMatchDuringTurn(mGoogleApiClient, mMatchID, getNextPlayerID());
+
+            }
+            else {
+                Games.TurnBasedMultiplayer.leaveMatch(mGoogleApiClient, mMatchID);
+            }
+
+            finish();
             return true;
+        }
+        else if (id == R.id.action_dismiss_match) { // Player wants to dismiss match...
+            Games.TurnBasedMultiplayer.dismissMatch(mGoogleApiClient, mMatchID);
         }
 
         return super.onOptionsItemSelected(item);
     }
-    */
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            return super.onPrepareOptionsMenu(menu);
+        }
+
+        return false;
+    }
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -178,7 +206,12 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             return;
         }
 
-        processMatch(loadMatchResult.getMatch());
+        TurnBasedMatch match = loadMatchResult.getMatch();
+        mMatchID = match.getMatchId();
+
+        processMatch(match);
+
+        mResultsLayout.setVisibility(View.GONE);
     }
 
     @Override
@@ -196,10 +229,35 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         return mPlayerViews[playerNumber - 1].getShapeImage();
     }
 
+    private String getLeaderBoardId() {
+        String leaderBoardID = null;
+
+        switch (mNumberOfPlayers) {
+            case 2:
+                leaderBoardID = getString(R.string.two_players_score_leaderboard_id);
+                break;
+            case 3:
+                leaderBoardID = getString(R.string.three_players_score_leaderboard_id);
+                break;
+            case 4:
+                leaderBoardID = getString(R.string.four_players_score_leaderboard_id);
+                break;
+            default:
+                break;
+        }
+
+        return leaderBoardID;
+    }
+
     // BoardView listener methods
     @Override
     public void edgeClickedWithCoordinates(int row, int col, BoardView boardView) {
         if (mEngine.markEdge(row, col, mTurnPlayerIndex + 1)) { // Square captured. Check for match completion
+            // Update leaderboard for current player...
+            Games.Leaderboards.submitScore(mGoogleApiClient,
+                    getLeaderBoardId(),
+                    mEngine.numOfCapturedSquaresByPlayer(mTurnPlayerIndex + 1));
+
             if (mEngine.matchFinished()) {
                 PlayerResult[] playerResults = getPlayerResults();
 
@@ -224,17 +282,13 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             }
         }
         else {
-            mTurnPlayerIndex = ++mTurnPlayerIndex % mNumberOfPlayers;
+            moveToNextPlayer();
         }
 
         if (mOnlineMatch) {
             mBoardView.setEnabled(false);
 
-            String nextPlayerID = null;
-
-            if (mTurnPlayerIndex < mPlayerIDs.size()) {
-                nextPlayerID = mPlayerIDs.get(mTurnPlayerIndex);
-            }
+            String nextPlayerID = getNextPlayerID();
 
             Games.TurnBasedMultiplayer.takeTurn(mGoogleApiClient,
                     mMatchID,
@@ -251,6 +305,20 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             //mBoardView.reloadBoard();
             updateUI();
         }
+    }
+
+    private void moveToNextPlayer() {
+        mTurnPlayerIndex = ++mTurnPlayerIndex % mNumberOfPlayers;
+    }
+
+    private String getNextPlayerID() {
+        String nextPlayerID = null;
+
+        if (mTurnPlayerIndex < mPlayerIDs.size()) {
+            nextPlayerID = mPlayerIDs.get(mTurnPlayerIndex);
+        }
+
+        return nextPlayerID;
     }
 
     private byte[] getMatchData() {
@@ -305,6 +373,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             // Build participant results list
             participantResults = new ArrayList<ParticipantResult>();
 
+            int placing = 1;
             for (int i = 0; i < mNumberOfPlayers; i++) {
                 PlayerResult playerResult = playerResults[i];
                 String playerID = playerResult.getPlayerID();
@@ -316,9 +385,10 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                 }
                 else {
                     result = ParticipantResult.MATCH_RESULT_LOSS;
+                    placing++;
                 }
 
-                ParticipantResult participantResult = new ParticipantResult(playerID, result, i + 1);
+                ParticipantResult participantResult = new ParticipantResult(playerID, result, placing);
 
                 participantResults.add(participantResult);
             }
@@ -417,7 +487,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                     playerView.setIsParticipant(true);
                 }
                 else {
-                    playerName = "Player "+(i+1);
+                    playerName = getString(R.string.player) + " " + (i+1);
                     playerIconURI = null;
                 }
 
@@ -463,26 +533,33 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         });
 
         if (playerResults != null && playerResults.length > 1) {
+            final Button rematch = (Button)findViewById(R.id.resultsRematchButton);
             if (!mOnlineMatch || mMatch.canRematch()) {
-                final Button rematch = (Button)findViewById(R.id.resultsRematchButton);
                 rematch.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         rematch();
-                        //mResultsLayout.setVisibility(View.GONE);
+
+                        if (!mOnlineMatch) {
+                            mResultsLayout.setVisibility(View.GONE);
+                        }
                     }
                 });
             }
+            else {
+                rematch.setVisibility(View.GONE);
+            }
+
 
             TextView title = (TextView)findViewById(R.id.resultsTitleTextView);
 
             String titleText = null;
             if (playerResults[0].getScore() == playerResults[1].getScore()) { // Tie
-                titleText = getResources().getString(R.string.tie);
+                titleText = getString(R.string.tie);
             }
             else {
                 titleText = playerResults[0].getPlayeView().getPlayerName() + " " +
-                        getResources().getString(R.string.win);
+                        getString(R.string.win);
             }
 
             title.setText(titleText);
@@ -522,6 +599,20 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     private void processRematch(TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
         Status status = initiateMatchResult.getStatus();
+        if (status.getStatusCode() == GamesStatusCodes.STATUS_MATCH_ERROR_ALREADY_REMATCHED) {
+            String rematchID = mMatch.getRematchId();
+
+            Games.TurnBasedMultiplayer.loadMatch(mGoogleApiClient, rematchID).
+                    setResultCallback(new ResultCallback<TurnBasedMultiplayer.LoadMatchResult>() {
+                        @Override
+                        public void onResult(TurnBasedMultiplayer.LoadMatchResult loadMatchResult) {
+                            processResult(loadMatchResult);
+                        }
+                    });
+
+            return;
+        }
+
         if (!status.isSuccess()) {
             BaseGameUtils.showAlert(this, status.getStatusMessage());
             return;
@@ -539,6 +630,11 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     @Override
     public void onTurnBasedMatchReceived(TurnBasedMatch turnBasedMatch) {
         if (turnBasedMatch.getMatchId().equals(mMatchID)) {
+            if (turnBasedMatch.getStatus() == TurnBasedMatch.MATCH_STATUS_CANCELED) {
+                notifyMatchCancellation();
+                finish();
+            }
+
             processMatch(turnBasedMatch);
         }
         else {
@@ -547,8 +643,15 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     }
 
     @Override
-    public void onTurnBasedMatchRemoved(String s) {
-        // TODO: To be completed...
+    public void onTurnBasedMatchRemoved(String matchID) {
+        if (matchID.equals(mMatchID)) {
+            notifyMatchCancellation();
+            finish();
+        }
+    }
+
+    private void notifyMatchCancellation() {
+        // TODO: Notify the player that this match has been cancelled...
     }
 }
 
