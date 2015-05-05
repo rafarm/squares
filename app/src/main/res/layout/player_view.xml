@@ -1,26 +1,29 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:elevation="5dp">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:weightSum="1"
-        android:background="@mipmap/parent_button_bg"
         android:layout_gravity="center_horizontal"
         android:baselineAligned="true"
         android:paddingLeft="10dp"
         android:paddingTop="4dp"
         android:paddingRight="10dp"
-        android:paddingBottom="4dp">
+        android:paddingBottom="4dp"
+        android:background="@color/checked_edge_color">
 
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:id="@+id/playerImage"
             android:layout_gravity="center_horizontal"
-            android:adjustViewBounds="false" />
+            android:adjustViewBounds="false"
+            android:elevation="5dp"
+            android:clickable="false" />
 
         <TextView
             android:layout_width="wrap_content"
