@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Squares</string>
+    <string name="app_name" translatable="false">Squares</string>
 
     <string name="action_sign_out">Sign Out</string>
     <string name="action_leave_match">Leave Match</string>
@@ -20,8 +20,8 @@
     <string name="tie">Tie!!!</string>
     <string name="win">wins!!!</string>
     <string name="player">Player</string>
-    <string name="DialogMessage">EXIT</string>
-    <string name="DialogTitle">Do you want to exit?</string>
+    <string name="DialogMessage">Quit match</string>
+    <string name="DialogTitle">Do you want to quit this match?</string>
     <string name="PositiveButton">Yes</string>
     <string name="NegativeButton">No</string>
 

@@ -50,12 +50,9 @@ public class MainActivity extends BaseGameActivity implements
     private FrameLayout mOverlayLayout;
     private Button mOfflineButton;
     private Button mOnlineButton;
-    /*
-    private Button mNewMatchButton;
-    private Button mListMatchesButton;
-    private Button mQuickMatchButton;
-    private Button mLeaderboardsButton;
-    */
+
+    private boolean mOfflineModeExpanded = false;
+    private boolean mOnlineModeExpanded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,8 +101,10 @@ public class MainActivity extends BaseGameActivity implements
 
         mOfflineOptionsLayout.setVisibility(View.GONE);
         mOnlineOptionsLayout.setVisibility(View.GONE);
-        mOfflineButton.setEnabled(true);
-        mOnlineButton.setEnabled(true);
+        mOfflineModeExpanded = false;
+        mOnlineModeExpanded = false;
+        //mOfflineButton.setEnabled(true);
+        //mOnlineButton.setEnabled(true);
 
         if (!mInSignInFlow && !mCreatingMatch) {
             mOverlayLayout.setVisibility(View.GONE);
@@ -120,12 +119,7 @@ public class MainActivity extends BaseGameActivity implements
         findViewById(R.id.sign_in_button).setVisibility(View.GONE);
         mOnlineButton.setVisibility(View.VISIBLE);
 
-        /*
-        mNewMatchButton.setVisibility(View.VISIBLE);
-        mQuickMatchButton.setVisibility(View.VISIBLE);
-        mListMatchesButton.setVisibility(View.VISIBLE);
-        mLeaderboardsButton.setVisibility(View.VISIBLE);
-        */
+
         mOverlayLayout.setVisibility(View.GONE);
 
         if (bundle != null) {
@@ -164,12 +158,6 @@ public class MainActivity extends BaseGameActivity implements
         // show sign-in button && hide other buttons
         findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
         mOnlineButton.setVisibility(View.GONE);
-        /*
-        mNewMatchButton.setVisibility(View.GONE);
-        mQuickMatchButton.setVisibility(View.GONE);
-        mListMatchesButton.setVisibility(View.GONE);
-        mLeaderboardsButton.setVisibility(View.GONE);
-        */
     }
 
     @Override
@@ -182,12 +170,6 @@ public class MainActivity extends BaseGameActivity implements
 
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
             mOnlineButton.setVisibility(View.GONE);
-            /*
-            mNewMatchButton.setVisibility(View.GONE);
-            mQuickMatchButton.setVisibility(View.GONE);
-            mListMatchesButton.setVisibility(View.GONE);
-            mLeaderboardsButton.setVisibility(View.GONE);
-            */
 
             return;
         }
@@ -271,17 +253,33 @@ public class MainActivity extends BaseGameActivity implements
     }
 
     public void onShowOfflineOptions(View view) {
-        mOfflineButton.setEnabled(false);
-        mOnlineButton.setEnabled(true);
-        mOfflineOptionsLayout.setVisibility(View.VISIBLE);
-        mOnlineOptionsLayout.setVisibility(View.GONE);
+        //mOfflineButton.setEnabled(false);
+        //mOnlineButton.setEnabled(true);
+        if (mOfflineModeExpanded) {
+            mOfflineOptionsLayout.setVisibility(View.GONE);
+            //mOnlineButton.setVisibility(View.VISIBLE);
+        }
+        else {
+            mOfflineOptionsLayout.setVisibility(View.VISIBLE);
+            //mOnlineButton.setVisibility(View.GONE);
+        }
+
+        mOfflineModeExpanded = !mOfflineModeExpanded;
     }
 
     public void onShowOnlineOptions(View view) {
-        mOfflineButton.setEnabled(true);
-        mOnlineButton.setEnabled(false);
-        mOfflineOptionsLayout.setVisibility(View.GONE);
-        mOnlineOptionsLayout.setVisibility(View.VISIBLE);
+        //mOfflineButton.setEnabled(true);
+        //mOnlineButton.setEnabled(false);
+        if (mOnlineModeExpanded) {
+            mOnlineOptionsLayout.setVisibility(View.GONE);
+            //mOfflineButton.setVisibility(View.VISIBLE);
+        }
+        else {
+            mOnlineOptionsLayout.setVisibility(View.VISIBLE);
+            //mOfflineButton.setVisibility(View.GONE);
+        }
+
+        mOnlineModeExpanded = !mOnlineModeExpanded;
     }
 
     public void onLaunchMatchActivity(View view) {
