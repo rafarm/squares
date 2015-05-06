@@ -3,6 +3,8 @@ package com.iesnules.squares.custom_views;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -173,10 +175,20 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
                             ImageView square = (ImageView)getChildAt(i * cols + j);
                             byte state = mDataProvider.stateOfSquareWithCoordinates(i, j, this);
                             if (state == 0) {
-                                square.setBackground(null);
+                                if (Build.VERSION.SDK_INT >= 16) {
+                                    square.setBackground(null);
+                                }
+                                else {
+                                    square.setBackgroundDrawable(null);
+                                }
                             }
                             else {
-                                square.setBackground(mDataProvider.shapeForPlayerNumber(state, this));
+                                if (Build.VERSION.SDK_INT >= 16) {
+                                    square.setBackground(mDataProvider.shapeForPlayerNumber(state, this));
+                                }
+                                else {
+                                    square.setBackgroundDrawable(mDataProvider.shapeForPlayerNumber(state, this));
+                                }
                             }
                         }
                     }
@@ -187,8 +199,15 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
 
     private ImageView getNode() {
         ImageView node = new ImageView(this.getContext());
+        Drawable drawable = getResources().getDrawable(R.mipmap.node);
 
-        node.setBackground(getResources().getDrawable(R.mipmap.node));
+        if (Build.VERSION.SDK_INT >= 16) {
+            node.setBackground(drawable);
+        }
+        else {
+            node.setBackgroundDrawable(drawable);
+        }
+
 
         return node;
     }
