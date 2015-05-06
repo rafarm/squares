@@ -103,8 +103,8 @@ public class MainActivity extends BaseGameActivity implements
         mOnlineOptionsLayout.setVisibility(View.GONE);
         mOfflineModeExpanded = false;
         mOnlineModeExpanded = false;
-        //mOfflineButton.setEnabled(true);
-        //mOnlineButton.setEnabled(true);
+        mOfflineButton.setEnabled(true);
+        mOnlineButton.setEnabled(true);
 
         if (!mInSignInFlow && !mCreatingMatch) {
             mOverlayLayout.setVisibility(View.GONE);
@@ -257,10 +257,13 @@ public class MainActivity extends BaseGameActivity implements
         //mOnlineButton.setEnabled(true);
         if (mOfflineModeExpanded) {
             mOfflineOptionsLayout.setVisibility(View.GONE);
+            mOnlineButton.setEnabled(true);
             //mOnlineButton.setVisibility(View.VISIBLE);
         }
         else {
             mOfflineOptionsLayout.setVisibility(View.VISIBLE);
+            mOnlineButton.setEnabled(false);
+            //mOnlineOptionsLayout.setVisibility(View.GONE);
             //mOnlineButton.setVisibility(View.GONE);
         }
 
@@ -272,10 +275,13 @@ public class MainActivity extends BaseGameActivity implements
         //mOnlineButton.setEnabled(false);
         if (mOnlineModeExpanded) {
             mOnlineOptionsLayout.setVisibility(View.GONE);
+            mOfflineButton.setEnabled(true);
             //mOfflineButton.setVisibility(View.VISIBLE);
         }
         else {
             mOnlineOptionsLayout.setVisibility(View.VISIBLE);
+            mOfflineButton.setEnabled(false);
+            //mOfflineOptionsLayout.setVisibility(View.GONE);
             //mOfflineButton.setVisibility(View.GONE);
         }
 

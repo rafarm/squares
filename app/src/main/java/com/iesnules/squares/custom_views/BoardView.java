@@ -150,9 +150,9 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
             int rows = 2*mBoardRows + 1;
             int cols = 2*mBoardCols + 1;
 
-            int checkedEdgeColor = getResources().getColor(R.color.checked_edge_color);
+            //int checkedEdgeColor = getResources().getColor(R.color.checked_edge_color);
             //int uncheckedEdgeColor = getResources().getColor(R.color.overlay_color);
-            int uncheckedEdgeColor = Color.TRANSPARENT;
+            //int uncheckedEdgeColor = Color.TRANSPARENT;
 
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
@@ -160,35 +160,55 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
                         if (j%2 != 0) {
                             //Button edge = (Button)getChildAt(i * cols + j);
                             ImageView edge = (ImageView)getChildAt(i * cols + j);
+                            Drawable bg = null;
+                            if (mDataProvider.stateOfEdgeWithCoordinates(i, j, this) != 0) {
+                                bg = getResources().getDrawable(R.mipmap.edge);
+                            }
+                            /*
                             int color = mDataProvider.stateOfEdgeWithCoordinates(i, j, this) == 0 ? uncheckedEdgeColor : checkedEdgeColor;
                             edge.setBackgroundColor(color);
+                            */
+                            if (Build.VERSION.SDK_INT >= 16) {
+                                edge.setBackground(bg);
+                            }
+                            else {
+                                edge.setBackgroundDrawable(bg);
+                            }
                         }
                     }
                     else { // Odd rows have vertical edges and squares
                         if (j%2 == 0) {
                             //Button edge = (Button)getChildAt(i * cols + j);
                             ImageView edge = (ImageView)getChildAt(i * cols + j);
+                            Drawable bg = null;
+                            if (mDataProvider.stateOfEdgeWithCoordinates(i, j, this) != 0) {
+                                bg = getResources().getDrawable(R.mipmap.edge);
+                            }
+                            /*
                             int color = mDataProvider.stateOfEdgeWithCoordinates(i, j, this) == 0 ? uncheckedEdgeColor : checkedEdgeColor;
                             edge.setBackgroundColor(color);
+                            */
+                            if (Build.VERSION.SDK_INT >= 16) {
+                                edge.setBackground(bg);
+                            }
+                            else {
+                                edge.setBackgroundDrawable(bg);
+                            }
                         }
                         else {
                             ImageView square = (ImageView)getChildAt(i * cols + j);
                             byte state = mDataProvider.stateOfSquareWithCoordinates(i, j, this);
-                            if (state == 0) {
-                                if (Build.VERSION.SDK_INT >= 16) {
-                                    square.setBackground(null);
-                                }
-                                else {
-                                    square.setBackgroundDrawable(null);
-                                }
+                            Drawable bg = null;
+
+                            if (mDataProvider.stateOfSquareWithCoordinates(i, j, this) != 0) {
+                                bg = mDataProvider.shapeForPlayerNumber(state, this);
+                            }
+
+                            if (Build.VERSION.SDK_INT >= 16) {
+                                square.setBackground(bg);
                             }
                             else {
-                                if (Build.VERSION.SDK_INT >= 16) {
-                                    square.setBackground(mDataProvider.shapeForPlayerNumber(state, this));
-                                }
-                                else {
-                                    square.setBackgroundDrawable(mDataProvider.shapeForPlayerNumber(state, this));
-                                }
+                                square.setBackgroundDrawable(bg);
                             }
                         }
                     }
@@ -314,16 +334,36 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
                             mDataProvider.stateOfEdgeWithCoordinates(edge_I, edge_J, this) == 0) {
                         if (edge != mEventMarkedEdge) {
                             if (mEventMarkedEdge != null) {
-                                mEventMarkedEdge.setBackgroundColor(Color.TRANSPARENT);
+                                //mEventMarkedEdge.setBackgroundColor(Color.TRANSPARENT);
+                                if (Build.VERSION.SDK_INT >= 16) {
+                                    mEventMarkedEdge.setBackground(null);
+                                }
+                                else {
+                                    mEventMarkedEdge.setBackgroundDrawable(null);
+                                }
                             }
 
-                            edge.setBackgroundColor(Color.WHITE);
+                            //edge.setBackgroundColor(Color.WHITE);
+                            Drawable bg = getResources().getDrawable(R.mipmap.node);
+                            if (Build.VERSION.SDK_INT >= 16) {
+                                edge.setBackground(bg);
+                            }
+                            else {
+                                edge.setBackgroundDrawable(bg);
+                            }
                             mEventMarkedEdge = edge;
                         }
                     }
                     else {
                         if (mEventMarkedEdge != null) {
-                            mEventMarkedEdge.setBackgroundColor(Color.TRANSPARENT);
+                            //mEventMarkedEdge.setBackgroundColor(Color.TRANSPARENT);
+                            if (Build.VERSION.SDK_INT >= 16) {
+                                mEventMarkedEdge.setBackground(null);
+                            }
+                            else {
+                                mEventMarkedEdge.setBackgroundDrawable(null);
+                            }
+
                             mEventMarkedEdge = null;
                         }
                     }
