@@ -253,10 +253,12 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     @Override
     public void edgeClickedWithCoordinates(int row, int col, BoardView boardView) {
         if (mEngine.markEdge(row, col, mTurnPlayerIndex + 1)) { // Square captured. Check for match completion
-            // Update leaderboard for current player...
-            Games.Leaderboards.submitScore(mGoogleApiClient,
-                    getLeaderBoardId(),
-                    mEngine.numOfCapturedSquaresByPlayer(mTurnPlayerIndex + 1));
+            if (mOnlineMatch) {
+                // Update leaderboard for current player...
+                Games.Leaderboards.submitScore(mGoogleApiClient,
+                        getLeaderBoardId(),
+                        mEngine.numOfCapturedSquaresByPlayer(mTurnPlayerIndex + 1));
+            }
 
             if (mEngine.matchFinished()) {
                 PlayerResult[] playerResults = getPlayerResults();
