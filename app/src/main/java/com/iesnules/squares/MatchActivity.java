@@ -2,7 +2,7 @@ package com.iesnules.squares;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -44,8 +44,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import static android.app.PendingIntent.getActivity;
-
 
 public class MatchActivity extends BaseGameActivity implements BoardViewListener,
         BoardViewDataProvider, OnTurnBasedMatchUpdateReceivedListener {
@@ -55,6 +53,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     // How long to show toasts.
     final static int TOAST_DELAY = Toast.LENGTH_SHORT;
 
+
     private boolean mOnlineMatch;
     private int mNumberOfPlayers;
     private int mNumberOfOnlineParticipants;
@@ -63,10 +62,10 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     private ArrayList <String> mPlayerIDs;
     private PlayerView[] mPlayerViews;
-    private int[] mShapes = {R.mipmap.triangle_player,
-            R.mipmap.square_player,
-            R.mipmap.star_player,
-            R.mipmap.pentagon_player};
+    private int[] mShapes = {R.mipmap.p1_shape,
+            R.mipmap.p2_shape,
+            R.mipmap.p3_shape,
+            R.mipmap.p4_shape};
 
     private LinearLayout mPlayersLayout;
     private FrameLayout mResultsLayout;
@@ -231,7 +230,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     @Override
     public Drawable shapeForPlayerNumber(int playerNumber, BoardView boardView) {
-        return mPlayerViews[playerNumber - 1].getShapeImage();
+        return getResources().getDrawable(mShapes[playerNumber - 1]);
     }
 
     private String getLeaderBoardId() {
@@ -660,6 +659,40 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     private void notifyMatchCancellation() {
         // TODO: Notify the player that this match has been cancelled...
     }
+
+    @Override
+    public void onBackPressed(){
+        if(mOnlineMatch){
+            super.onBackPressed();
+        }
+        else{
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MatchActivity.this);
+
+            // set dialog message
+            alertDialogBuilder
+                    .setTitle(getString(R.string.DialogMessage))
+                    .setMessage(getString(R.string.DialogTitle))
+                    .setCancelable(false)
+
+                    .setNegativeButton(getString(R.string.NegativeButton), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // if this button is clicked, just close
+                            // the dialog box and do nothing
+                            dialog.cancel();
+                        }
+                    })
+                    .setPositiveButton(getString(R.string.PositiveButton),new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog,int id) {
+                            // if this button is clicked, close
+                            // current activity
+                            finish();
+                        }
+                    }).show();
+        }
+    }
+
+
+
 }
 
 class PlayerResult implements Comparable<PlayerResult> {
@@ -703,28 +736,4 @@ class PlayerResult implements Comparable<PlayerResult> {
         return comparison;
     }
 
-    @Override
-    public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MatchActivity.this);
-
-        builder.setMessage(getString(R.string.Dialogmessage))
-                .setTitle(getString(R.string.DialogTitle))
-                .setPositiveButton(getString(R.string.PositiveButton), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Log.i("Dialogos", "Confirmacion Aceptada.");
-                        dialog.cancel();
-                    }
-                })
-                .setNegativeButton(getString(R.string.NegativeButton), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Log.i("Dialogos", "Confirmacion Cancelada.");
-                        dialog.cancel();
-                    }
-                });
-        builder.create();
-
-    }
-
 }
-
-
