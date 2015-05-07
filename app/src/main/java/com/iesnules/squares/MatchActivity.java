@@ -362,7 +362,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         Arrays.sort(playerResults);
         for (int i = 0; i < mNumberOfPlayers/2; i++) {
             PlayerResult temp = playerResults[i];
-            playerResults[0] = playerResults[mNumberOfPlayers - i - 1];
+            playerResults[i] = playerResults[mNumberOfPlayers - i - 1];
             playerResults[mNumberOfPlayers - i - 1] = temp;
         }
 

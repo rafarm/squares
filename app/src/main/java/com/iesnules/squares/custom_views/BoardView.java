@@ -33,6 +33,8 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
     private int mBoardRows = 1;
     private int mBoardCols = 1;
 
+    private float mSquaresAlpha = 1;
+
     private boolean mTouchStarted = false;
     private int mPointerID;
     private int mTouchedNode_I;
@@ -71,6 +73,7 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
         try {
             mBoardRows = a.getInt(R.styleable.BoardView_boardRows, 1);
             mBoardCols = a.getInt(R.styleable.BoardView_boardCols, 1);
+            mSquaresAlpha = Math.min(Math.max(0f,a.getFloat(R.styleable.BoardView_squaresAlpha, 1f)), 1f);
         } finally {
             a.recycle();
         }
@@ -228,7 +231,6 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
             node.setBackgroundDrawable(drawable);
         }
 
-
         return node;
     }
 
@@ -240,7 +242,7 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
 
     private ImageView getSquare() {
         ImageView square = new ImageView(this.getContext());
-
+        square.setAlpha(mSquaresAlpha);
 
         return square;
     }
