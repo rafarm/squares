@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Squares</string>
+    <string name="DialogMessage">Terminar partida</string>
+    <string name="DialogTitle">Quieres terminar la partida?</string>
+    <string name="NegativeButton">No</string>
+    <string name="PositiveButton">Si</string>
+    <string name="action_dismiss_match">Ignorar partida</string>
+    <string name="action_leave_match">Abandonar partida</string>
+    <string name="action_settings">Ajustes</string>
+    <string name="action_sign_out">Cerrar sesion</string>
+    <string name="four_players">Cuatro Jugadores</string>
+    <string name="display_leaderboards">Tabla de clasificacion</string>
+    <string name="list_all_matches">Todas las partidas</string>
+    <string name="new_match">Nueva partida</string>
+    <string name="play_offline">Modo Offline</string>
+    <string name="play_online">Modo Online</string>
+    <string name="player">Jugador</string>
+    <string name="quick_match">Partida Rapida</string>
+    <string name="rematch">Revancha</string>
+    <string name="signin_failure">Incapaz de iniciar sesion</string>
+    <string name="signin_other_error">Hay un problema al iniciar sesion, por favor intentalo de nuevo despues</string>
+    <string name="three_players">Tres jugadores</string>
+    <string name="tie">Empate!!!</string>
+    <string name="two_players">Dos jugadores</string>
+    <string name="win">gana!!!</string>
+    <string name="title_activity_board">BoardActivity</string>
+    <string name="title_activity_match">MatchActivity</string>
+</resources>
