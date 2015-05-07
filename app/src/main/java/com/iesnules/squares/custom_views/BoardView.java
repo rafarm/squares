@@ -241,6 +241,7 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
     private ImageView getSquare() {
         ImageView square = new ImageView(this.getContext());
 
+
         return square;
     }
 

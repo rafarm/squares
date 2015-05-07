@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Outline;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -155,7 +156,12 @@ public class PlayerView extends FrameLayout implements Animator.AnimatorListener
     }
 
     public void setShapeImage(Drawable image){
-        mShapeImage.setImageDrawable(image);
+        if (Build.VERSION.SDK_INT >= 16) {
+            mShapeImage.setBackground(image);
+        }
+        else {
+            mShapeImage.setBackgroundDrawable(image);
+        }
     }
 
     public boolean getPlayerInTurn() {

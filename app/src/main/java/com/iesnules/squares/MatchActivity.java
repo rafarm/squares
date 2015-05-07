@@ -62,10 +62,10 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     private ArrayList <String> mPlayerIDs;
     private PlayerView[] mPlayerViews;
-    private int[] mShapes = {R.mipmap.triangle_player,
-            R.mipmap.square_player,
-            R.mipmap.star_player,
-            R.mipmap.pentagon_player};
+    private int[] mShapes = {R.mipmap.p1_shape,
+            R.mipmap.p2_shape,
+            R.mipmap.p3_shape,
+            R.mipmap.p4_shape};
 
     private LinearLayout mPlayersLayout;
     private FrameLayout mResultsLayout;
@@ -230,7 +230,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     @Override
     public Drawable shapeForPlayerNumber(int playerNumber, BoardView boardView) {
-        return mPlayerViews[playerNumber - 1].getShapeImage();
+        return getResources().getDrawable(mShapes[playerNumber - 1]);
     }
 
     private String getLeaderBoardId() {
