@@ -666,7 +666,16 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             super.onBackPressed();
         }
         else{
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MatchActivity.this);
+
+            GameEngine gameengine = new GameEngine();
+
+
+            if(gameengine.gameFinished()){}
+
+
+
+
+            else{AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MatchActivity.this);
 
             // set dialog message
             alertDialogBuilder
@@ -688,6 +697,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                             finish();
                         }
                     }).show();
+            }
         }
     }
 
