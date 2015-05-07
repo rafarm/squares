@@ -158,8 +158,10 @@ public class MainActivity extends BaseGameActivity implements
         // show sign-in button && hide other buttons
         findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
         mOnlineButton.setVisibility(View.GONE);
-    }
+        mOnlineOptionsLayout.setVisibility(View.GONE);
 
+
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
