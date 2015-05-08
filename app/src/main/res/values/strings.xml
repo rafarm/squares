@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Squares</string>
+    <string name="app_name">Squares</string>
 
     <string name="action_sign_out">Sign Out</string>
     <string name="action_leave_match">Leave Match</string>

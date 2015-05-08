@@ -26,20 +26,26 @@ import com.iesnules.squares.R;
 /**
  * TODO: document your custom view class.
  */
-public class PlayerView extends FrameLayout implements Animator.AnimatorListener {
-    private final int VIEW_MARGIN = 10;
+public class PlayerView extends FrameLayout /*implements Animator.AnimatorListener*/ {
+    private final int VIEW_MARGIN = 5;
 
     private ImageView mPlayerImage;
+    private ImageView mOverPlayerImage;
     private TextView mPlayerName;
     private TextView mPlayerScore;
     private  ImageView mShapeImage;
 
+    /*
     private ObjectAnimator mAccelerateAnimation;
     private ObjectAnimator mRotateAnimation;
     private ObjectAnimator mBrakeAnimation;
+    */
 
     private boolean mPlayerInTurn;
     private boolean mIsParticipant;
+
+    private Drawable mOverPlayerInTurnDrawable;
+    private Drawable mOverPlayerNoTurnDrawable;
 
     public PlayerView(Context context) {
         super(context);
@@ -68,10 +74,11 @@ public class PlayerView extends FrameLayout implements Animator.AnimatorListener
 
         a.recycle();
 
-        mPlayerImage = (ImageView) findViewById(R.id.playerImage);
-        mPlayerName = (TextView) findViewById(R.id.playerName);
-        mPlayerScore = (TextView) findViewById(R.id.playerScore);
-        mShapeImage = (ImageView) findViewById(R.id.shapeImage);
+        mPlayerImage = (ImageView)findViewById(R.id.playerImage);
+        mOverPlayerImage = (ImageView)findViewById(R.id.overPlayerImage);
+        mPlayerName = (TextView)findViewById(R.id.playerName);
+        mPlayerScore = (TextView)findViewById(R.id.playerScore);
+        mShapeImage = (ImageView)findViewById(R.id.shapeImage);
 
         /*
         // Set player image Clipping
@@ -90,6 +97,7 @@ public class PlayerView extends FrameLayout implements Animator.AnimatorListener
         params.setMargins(VIEW_MARGIN, VIEW_MARGIN, VIEW_MARGIN, VIEW_MARGIN);
         setLayoutParams(params);
 
+        /*
         mAccelerateAnimation = ObjectAnimator.ofFloat(mShapeImage, "rotation", 0, 360);
         mAccelerateAnimation.setInterpolator(new AccelerateInterpolator());
         mAccelerateAnimation.setDuration(1700);
@@ -107,6 +115,7 @@ public class PlayerView extends FrameLayout implements Animator.AnimatorListener
         mBrakeAnimation.setDuration(1000);
         mBrakeAnimation.setRepeatCount(0);
         mBrakeAnimation.addListener(this);
+        */
 
         mPlayerInTurn = false;
         mIsParticipant = false;
@@ -164,21 +173,61 @@ public class PlayerView extends FrameLayout implements Animator.AnimatorListener
         }
     }
 
+    public void setOverPlayerInTurnDrawable(Drawable drawable) {
+        mOverPlayerInTurnDrawable = drawable;
+        updateOverPlayerImage();
+    }
+
+    public Drawable getOverPlayerInTurnDrawable() {
+        return mOverPlayerInTurnDrawable;
+    }
+
+    public Drawable getOverPlayerNoTurnDrawable() {
+        return mOverPlayerNoTurnDrawable;
+    }
+
+    public void setOverPlayerNoTurnDrawable(Drawable drawable) {
+        mOverPlayerNoTurnDrawable = drawable;
+        updateOverPlayerImage();
+    }
+
+    public void updateOverPlayerImage() {
+        if (mPlayerInTurn) {
+            if (Build.VERSION.SDK_INT >= 16) {
+                mOverPlayerImage.setBackground(mOverPlayerInTurnDrawable);
+            }
+            else {
+                mOverPlayerImage.setBackgroundDrawable(mOverPlayerInTurnDrawable);
+            }
+        }
+        else {
+            if (Build.VERSION.SDK_INT >= 16) {
+                mOverPlayerImage.setBackground(mOverPlayerNoTurnDrawable);
+            }
+            else {
+                mOverPlayerImage.setBackgroundDrawable(mOverPlayerNoTurnDrawable);
+            }
+        }
+    }
+
     public boolean getPlayerInTurn() {
         return mPlayerInTurn;
     }
 
     public void setPlayerInTurn(Boolean turn) {
         mPlayerInTurn = turn;
-
+        updateOverPlayerImage();
+        /*
         if (turn) {
             mAccelerateAnimation.start();
         }
         else {
             mRotateAnimation.cancel();
         }
+        */
     }
 
+    /*
     @Override
     public void onAnimationStart(Animator animation) {
 
@@ -205,4 +254,5 @@ public class PlayerView extends FrameLayout implements Animator.AnimatorListener
     public void onAnimationCancel(Animator animation) {
 
     }
+    */
 }

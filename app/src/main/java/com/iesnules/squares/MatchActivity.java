@@ -66,6 +66,10 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             R.mipmap.p2_shape,
             R.mipmap.p3_shape,
             R.mipmap.p4_shape};
+    private int[] mOverPlayers = {R.mipmap.over_p1,
+            R.mipmap.over_p2,
+            R.mipmap.over_p3,
+            R.mipmap.over_p4};
 
     private LinearLayout mPlayersLayout;
     private FrameLayout mResultsLayout;
@@ -502,6 +506,8 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                 playerView.setShapeImage(getResources().getDrawable(mShapes[i]));
             }
 
+            playerView.setOverPlayerNoTurnDrawable(getResources().getDrawable(R.mipmap.over_p_looser));
+            playerView.setOverPlayerInTurnDrawable(getResources().getDrawable(mOverPlayers[i]));
             playerView.setPlayerScore(String.valueOf(mEngine.numOfCapturedSquaresByPlayer(i + 1)));
 
             mPlayerViews[i] = playerView;
@@ -558,17 +564,19 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
 
             TextView title = (TextView)findViewById(R.id.resultsTitleTextView);
+            TextView wins = (TextView)findViewById(R.id.winsTextView);
 
-            String titleText = null;
+            //String titleText = null;
             if (playerResults[0].getScore() == playerResults[1].getScore()) { // Tie
-                titleText = getString(R.string.tie);
+                title.setText(getString(R.string.tie));
+                wins.setText(null);
             }
             else {
-                titleText = playerResults[0].getPlayeView().getPlayerName() + " " +
-                        getString(R.string.win);
+                title.setText(playerResults[0].getPlayeView().getPlayerName());
+                wins.setText(getString(R.string.win));
             }
 
-            title.setText(titleText);
+            //title.setText(titleText);
 
             // Signal winners
             for (int i = 0; i < mNumberOfPlayers; i++) {

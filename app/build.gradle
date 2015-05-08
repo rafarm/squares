@@ -5,8 +5,14 @@ android {
         debug {
             keyAlias 'squaresdebugkey'
             keyPassword 'squaresdebug'
-            storeFile file('/datos/usuarios/profesores/rrubiom/workspace/squares/squaresdebug.jks')
+            storeFile file('/Users/rafa/AndroidStudioProjects/squares/squaresdebug.jks')
             storePassword 'squaresdebug'
+        }
+        release {
+            keyAlias 'squaresreleasekey'
+            keyPassword 'squaresrelease'
+            storeFile file('/Users/rafa/AndroidStudioProjects/squares/squaresdebug.jks')
+            storePassword 'squaresrelease'
         }
     }
     compileSdkVersion 22
@@ -15,8 +21,8 @@ android {
         applicationId "com.iesnules.squares"
         minSdkVersion 15
         targetSdkVersion 21
-        versionCode 1
-        versionName "1.0"
+        versionCode 03
+        versionName "0.3"
     }
     buildTypes {
         release {
