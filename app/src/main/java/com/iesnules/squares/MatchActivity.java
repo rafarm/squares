@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.opengl.Visibility;
 import android.os.Bundle;
@@ -315,6 +317,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     private void moveToNextPlayer() {
         mTurnPlayerIndex = ++mTurnPlayerIndex % mNumberOfPlayers;
+
     }
 
     private String getNextPlayerID() {
@@ -740,5 +743,11 @@ class PlayerResult implements Comparable<PlayerResult> {
 
         return comparison;
     }
+
+    /*
+            Ringtone sound = RingtoneManager.getRingtone(getApplicationContext(), notification);
+        sound.play();
+        MATCH_STATUS.MyTurn!!!
+     */
 
 }
