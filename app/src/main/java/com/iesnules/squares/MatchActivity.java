@@ -666,28 +666,33 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             super.onBackPressed();
         }
         else{
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MatchActivity.this);
+            if(mEngine.gameFinished()){
+                super.onBackPressed();
+            }
+            else {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MatchActivity.this);
 
-            // set dialog message
-            alertDialogBuilder
-                    .setTitle(getString(R.string.DialogMessage))
-                    .setMessage(getString(R.string.DialogTitle))
-                    .setCancelable(false)
+                // set dialog message
+                alertDialogBuilder
+                        .setTitle(getString(R.string.DialogMessage))
+                        .setMessage(getString(R.string.DialogTitle))
+                        .setCancelable(false)
 
-                    .setNegativeButton(getString(R.string.NegativeButton), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // if this button is clicked, just close
-                            // the dialog box and do nothing
-                            dialog.cancel();
-                        }
-                    })
-                    .setPositiveButton(getString(R.string.PositiveButton),new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog,int id) {
-                            // if this button is clicked, close
-                            // current activity
-                            finish();
-                        }
-                    }).show();
+                        .setNegativeButton(getString(R.string.NegativeButton), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // if this button is clicked, just close
+                                // the dialog box and do nothing
+                                dialog.cancel();
+                            }
+                        })
+                        .setPositiveButton(getString(R.string.PositiveButton), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // if this button is clicked, close
+                                // current activity
+                                finish();
+                            }
+                        }).show();
+            }
         }
     }
 
