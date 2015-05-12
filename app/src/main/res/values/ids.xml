@@ -4,4 +4,11 @@
     <string name="two_players_score_leaderboard_id" translatable="false">CgkIzMSisOAOEAIQAg</string>
     <string name="three_players_score_leaderboard_id" translatable="false">CgkIzMSisOAOEAIQAw</string>
     <string name="four_players_score_leaderboard_id" translatable="false">CgkIzMSisOAOEAIQBA</string>
+    <string name="no_longer_loser_achievement_id" translatable="false">CgkIzMSisOAOEAIQDQ</string>
+    <string name="beginner_achievement_id" translatable="false">CgkIzMSisOAOEAIQCg</string>
+    <string name="amateur_achievement_id" translatable="false">CgkIzMSisOAOEAIQBg</string>
+    <string name="professional_achievement_id" translatable="false">CgkIzMSisOAOEAIQBw</string>
+    <string name="master_achievement_id" translatable="false">CgkIzMSisOAOEAIQCA</string>
+    <string name="no_mercy_achievement_id" translatable="false">CgkIzMSisOAOEAIQCQ</string>
+    <string name="squares_maniac_achievement_id" translatable="false">CgkIzMSisOAOEAIQDg</string>
 </resources>

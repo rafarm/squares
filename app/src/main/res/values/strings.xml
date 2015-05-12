@@ -16,6 +16,7 @@
     <string name="quick_match">Quick Match</string>
     <string name="list_all_matches">All Matches</string>
     <string name="display_leaderboards">Leaderboards</string>
+    <string name="display_achievements">Achievements</string>
     <string name="rematch">Rematch</string>
     <string name="tie">Tie!!!</string>
     <string name="win">wins!!!</string>

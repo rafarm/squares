@@ -269,6 +269,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             }
 
             if (mEngine.matchFinished()) {
+
                 PlayerResult[] playerResults = getPlayerResults();
 
                 if (mOnlineMatch) {

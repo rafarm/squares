@@ -37,6 +37,7 @@ public class MainActivity extends BaseGameActivity implements
     private static int RC_SELECT_PLAYERS = 9002;
     private static int RC_LIST_MATCHES = 9003;
     private static int RC_REQUEST_LEADERBOARDS = 9004;
+    private static int RC_REQUEST_ACHIEVEMENTS = 9005;
 
     public static String NUMBER_OF_PLAYERS = "NumberOfPlayers";
     public static String MATCH_ID = "MatchID";
@@ -372,6 +373,11 @@ public class MainActivity extends BaseGameActivity implements
     public void onDisplayLeaderboards(View view) {
         startActivityForResult(Games.Leaderboards.getAllLeaderboardsIntent(mGoogleApiClient),
                 RC_REQUEST_LEADERBOARDS);
+    }
+
+    public void onDisplayAchievements(View view) {
+        startActivityForResult(Games.Achievements.getAchievementsIntent(mGoogleApiClient),
+                RC_REQUEST_ACHIEVEMENTS);
     }
 
     @Override
