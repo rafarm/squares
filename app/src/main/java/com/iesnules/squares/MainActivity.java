@@ -3,6 +3,7 @@ package com.iesnules.squares;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,10 +41,11 @@ public class MainActivity extends BaseGameActivity implements
     public static String NUMBER_OF_PLAYERS = "NumberOfPlayers";
     public static String MATCH_ID = "MatchID";
 
-
+    private static String EXPLICIT_SIGN_OUT = "ExplicitSignOut";
+    private static String SHARED_PREFS = "SharedPreferences";
 
     private boolean mCreatingMatch = false;
-    boolean mExplicitSignOut = false;
+    boolean mExplicitSignOut;
 
     private LinearLayout mOfflineOptionsLayout;
     private LinearLayout mOnlineOptionsLayout;
@@ -57,6 +59,10 @@ public class MainActivity extends BaseGameActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Has user explicitly sign-out of google services?
+        SharedPreferences settings = getSharedPreferences(SHARED_PREFS, 0);
+        mExplicitSignOut = settings.getBoolean(EXPLICIT_SIGN_OUT, false);
 
         setContentView(R.layout.activity_main);
 
@@ -109,6 +115,18 @@ public class MainActivity extends BaseGameActivity implements
         if (!mInSignInFlow && !mCreatingMatch) {
             mOverlayLayout.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Save user option of being signed out of google services
+        SharedPreferences settings = getSharedPreferences(SHARED_PREFS, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean(EXPLICIT_SIGN_OUT, mExplicitSignOut);
+
+        editor.commit();
     }
 
     @Override
@@ -363,7 +381,15 @@ public class MainActivity extends BaseGameActivity implements
         // Check if the status code is not success.
         Status status = initiateMatchResult.getStatus();
         if (!status.isSuccess()) {
-            BaseGameUtils.showAlert(this, status.getStatusMessage());
+            String message = status.getStatusMessage();
+            if (message == null) {
+                message = getString(R.string.sign_in_failed);
+            }
+            BaseGameUtils.showAlert(this, message);
+
+            // Hide overlay...
+            mOverlayLayout.setVisibility(View.GONE);
+
             return;
         }
 
