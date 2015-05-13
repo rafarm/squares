@@ -44,6 +44,8 @@ public class MainActivity extends BaseGameActivity implements
 
     private static String EXPLICIT_SIGN_OUT = "ExplicitSignOut";
     private static String SHARED_PREFS = "SharedPreferences";
+    private static String OFFLINE_EXPANDED = "OfflineModeExpanded";
+    private static String ONLINE_EXPANDED = "OnlineModeExpanded";
 
     private boolean mCreatingMatch = false;
     boolean mExplicitSignOut;
@@ -106,10 +108,22 @@ public class MainActivity extends BaseGameActivity implements
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         decorView.setSystemUiVisibility(uiOptions);
 
-        mOfflineOptionsLayout.setVisibility(View.GONE);
-        mOnlineOptionsLayout.setVisibility(View.GONE);
-        mOfflineModeExpanded = false;
-        mOnlineModeExpanded = false;
+        if (mOfflineModeExpanded) {
+            mOfflineOptionsLayout.setVisibility(View.VISIBLE);
+        }
+        else {
+            mOfflineOptionsLayout.setVisibility(View.GONE);
+        }
+
+        if (mOnlineModeExpanded) {
+            mOnlineOptionsLayout.setVisibility(View.VISIBLE);
+        }
+        else {
+            mOnlineOptionsLayout.setVisibility(View.GONE);
+        }
+
+        //mOfflineModeExpanded = false;
+        //mOnlineModeExpanded = false;
         mOfflineButton.setEnabled(true);
         mOnlineButton.setEnabled(true);
 
@@ -410,4 +424,18 @@ public class MainActivity extends BaseGameActivity implements
 
         mOverlayLayout.setVisibility(View.GONE);
     }
+
+
+    protected void onSaveInstanceState(Bundle saveState){
+        super.onSaveInstanceState(saveState);
+        saveState.putBoolean(OFFLINE_EXPANDED, mOfflineModeExpanded);
+        saveState.putBoolean(ONLINE_EXPANDED, mOnlineModeExpanded);
+    }
+
+    protected void onRestoreInstanceState(Bundle recState){
+        super.onSaveInstanceState(recState);
+        mOfflineModeExpanded = recState.getBoolean(OFFLINE_EXPANDED, false);
+        mOnlineModeExpanded = recState.getBoolean(ONLINE_EXPANDED, false);
+    }
+
 }
