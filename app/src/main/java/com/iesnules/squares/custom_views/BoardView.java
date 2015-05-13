@@ -3,6 +3,8 @@ package com.iesnules.squares.custom_views;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -30,6 +32,8 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
 
     private int mBoardRows = 1;
     private int mBoardCols = 1;
+
+    private float mSquaresAlpha = 1;
 
     private boolean mTouchStarted = false;
     private int mPointerID;
@@ -69,6 +73,7 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
         try {
             mBoardRows = a.getInt(R.styleable.BoardView_boardRows, 1);
             mBoardCols = a.getInt(R.styleable.BoardView_boardCols, 1);
+            mSquaresAlpha = Math.min(Math.max(0f,a.getFloat(R.styleable.BoardView_squaresAlpha, 1f)), 1f);
         } finally {
             a.recycle();
         }
@@ -148,9 +153,9 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
             int rows = 2*mBoardRows + 1;
             int cols = 2*mBoardCols + 1;
 
-            int checkedEdgeColor = getResources().getColor(R.color.checked_edge_color);
+            //int checkedEdgeColor = getResources().getColor(R.color.checked_edge_color);
             //int uncheckedEdgeColor = getResources().getColor(R.color.overlay_color);
-            int uncheckedEdgeColor = Color.TRANSPARENT;
+            //int uncheckedEdgeColor = Color.TRANSPARENT;
 
             for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
@@ -158,25 +163,55 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
                         if (j%2 != 0) {
                             //Button edge = (Button)getChildAt(i * cols + j);
                             ImageView edge = (ImageView)getChildAt(i * cols + j);
+                            Drawable bg = null;
+                            if (mDataProvider.stateOfEdgeWithCoordinates(i, j, this) != 0) {
+                                bg = getResources().getDrawable(R.mipmap.edge);
+                            }
+                            /*
                             int color = mDataProvider.stateOfEdgeWithCoordinates(i, j, this) == 0 ? uncheckedEdgeColor : checkedEdgeColor;
                             edge.setBackgroundColor(color);
+                            */
+                            if (Build.VERSION.SDK_INT >= 16) {
+                                edge.setBackground(bg);
+                            }
+                            else {
+                                edge.setBackgroundDrawable(bg);
+                            }
                         }
                     }
                     else { // Odd rows have vertical edges and squares
                         if (j%2 == 0) {
                             //Button edge = (Button)getChildAt(i * cols + j);
                             ImageView edge = (ImageView)getChildAt(i * cols + j);
+                            Drawable bg = null;
+                            if (mDataProvider.stateOfEdgeWithCoordinates(i, j, this) != 0) {
+                                bg = getResources().getDrawable(R.mipmap.edge);
+                            }
+                            /*
                             int color = mDataProvider.stateOfEdgeWithCoordinates(i, j, this) == 0 ? uncheckedEdgeColor : checkedEdgeColor;
                             edge.setBackgroundColor(color);
+                            */
+                            if (Build.VERSION.SDK_INT >= 16) {
+                                edge.setBackground(bg);
+                            }
+                            else {
+                                edge.setBackgroundDrawable(bg);
+                            }
                         }
                         else {
                             ImageView square = (ImageView)getChildAt(i * cols + j);
                             byte state = mDataProvider.stateOfSquareWithCoordinates(i, j, this);
-                            if (state == 0) {
-                                square.setBackground(null);
+                            Drawable bg = null;
+
+                            if (mDataProvider.stateOfSquareWithCoordinates(i, j, this) != 0) {
+                                bg = mDataProvider.shapeForPlayerNumber(state, this);
+                            }
+
+                            if (Build.VERSION.SDK_INT >= 16) {
+                                square.setBackground(bg);
                             }
                             else {
-                                square.setBackground(mDataProvider.shapeForPlayerNumber(state, this));
+                                square.setBackgroundDrawable(bg);
                             }
                         }
                     }
@@ -187,8 +222,14 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
 
     private ImageView getNode() {
         ImageView node = new ImageView(this.getContext());
+        Drawable drawable = getResources().getDrawable(R.mipmap.node);
 
-        node.setBackground(getResources().getDrawable(R.mipmap.node));
+        if (Build.VERSION.SDK_INT >= 16) {
+            node.setBackground(drawable);
+        }
+        else {
+            node.setBackgroundDrawable(drawable);
+        }
 
         return node;
     }
@@ -201,6 +242,7 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
 
     private ImageView getSquare() {
         ImageView square = new ImageView(this.getContext());
+        square.setAlpha(mSquaresAlpha);
 
         return square;
     }
@@ -295,16 +337,36 @@ public class BoardView extends ViewGroup /*implements View.OnClickListener*/ {
                             mDataProvider.stateOfEdgeWithCoordinates(edge_I, edge_J, this) == 0) {
                         if (edge != mEventMarkedEdge) {
                             if (mEventMarkedEdge != null) {
-                                mEventMarkedEdge.setBackgroundColor(Color.TRANSPARENT);
+                                //mEventMarkedEdge.setBackgroundColor(Color.TRANSPARENT);
+                                if (Build.VERSION.SDK_INT >= 16) {
+                                    mEventMarkedEdge.setBackground(null);
+                                }
+                                else {
+                                    mEventMarkedEdge.setBackgroundDrawable(null);
+                                }
                             }
 
-                            edge.setBackgroundColor(Color.WHITE);
+                            //edge.setBackgroundColor(Color.WHITE);
+                            Drawable bg = getResources().getDrawable(R.mipmap.node);
+                            if (Build.VERSION.SDK_INT >= 16) {
+                                edge.setBackground(bg);
+                            }
+                            else {
+                                edge.setBackgroundDrawable(bg);
+                            }
                             mEventMarkedEdge = edge;
                         }
                     }
                     else {
                         if (mEventMarkedEdge != null) {
-                            mEventMarkedEdge.setBackgroundColor(Color.TRANSPARENT);
+                            //mEventMarkedEdge.setBackgroundColor(Color.TRANSPARENT);
+                            if (Build.VERSION.SDK_INT >= 16) {
+                                mEventMarkedEdge.setBackground(null);
+                            }
+                            else {
+                                mEventMarkedEdge.setBackgroundDrawable(null);
+                            }
+
                             mEventMarkedEdge = null;
                         }
                     }

@@ -2,5 +2,6 @@
 <resources>
     <color name="general_background_color">#FF333333</color>
     <color name="overlay_color">#DD333333</color>
-    <color name="checked_edge_color">#FFFFE680</color>
+    <color name="checked_edge_color">#FFF2F2F2</color>
+    <color name="display_background_color">#FFF2F2F2</color>
 </resources>

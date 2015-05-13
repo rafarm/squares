@@ -13,7 +13,8 @@
         android:layout_weight="0"
         android:id="@+id/playersLayout"
         android:baselineAligned="false"
-        android:layout_margin="10dp">
+        android:layout_marginBottom="10dp"
+        android:background="@mipmap/edge">
 
     </LinearLayout>
 
@@ -27,15 +28,16 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/backgroudLogo"
+            android:id="@+id/backgroundLogo"
             android:background="@mipmap/logo_main_black"
             android:layout_gravity="center" />
 
         <com.iesnules.squares.custom_views.BoardView
             custom:boardRows="7"
             custom:boardCols="5"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            custom:squaresAlpha="0.8"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:id="@+id/boardView"
             android:layout_gravity="center"
             android:layout_weight="1" />
@@ -49,77 +51,61 @@
 
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
                 android:id="@+id/resultsContentLayout"
-                android:background="@color/background_floating_material_light"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:visibility="visible"
+                android:gravity="center">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Large Text"
-                    android:id="@+id/resultsTitleTextView"
-                    android:layout_gravity="center_horizontal" />
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal|bottom">
 
-                <!--
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Medium Text"
-                    android:id="@+id/resultsFirstPlayerTextView"
-                    android:layout_gravity="left"
-                    android:layout_marginLeft="40dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Large Text"
+                        android:id="@+id/resultsTitleTextView"
+                        android:textSize="40dp"
+                        android:textColor="@color/display_background_color" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/win"
+                        android:id="@+id/winsTextView"
+                        android:textSize="40dp"
+                        android:textColor="@color/display_background_color" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Medium Text"
-                    android:id="@+id/resultsSecondPlayerTextView"
-                    android:layout_gravity="left"
-                    android:layout_marginLeft="40dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Medium Text"
-                    android:id="@+id/resultsThirdPlayerTextView"
-                    android:layout_gravity="left"
-                    android:layout_marginLeft="40dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Medium Text"
-                    android:id="@+id/resultsFourthPlayerTextView"
-                    android:layout_gravity="left"
-                    android:layout_marginLeft="40dp" />
-                -->
+                </LinearLayout>
 
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center_horizontal">
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal|bottom">
 
                     <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="160dp"
+                        android:layout_height="40dp"
                         android:text="@string/accept"
-                        android:id="@+id/resultsOKButton" />
+                        android:id="@+id/resultsOKButton"
+                        android:background="@drawable/child_button" />
 
                     <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="160dp"
+                        android:layout_height="40dp"
                         android:text="@string/rematch"
-                        android:id="@+id/resultsRematchButton" />
+                        android:id="@+id/resultsRematchButton"
+                        android:background="@drawable/child_button" />
                 </LinearLayout>
+
             </LinearLayout>
+
         </FrameLayout>
 
     </FrameLayout>
