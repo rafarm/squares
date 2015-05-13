@@ -27,6 +27,9 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.common.images.ImageManager;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesStatusCodes;
+import com.google.android.gms.games.achievement.Achievement;
+import com.google.android.gms.games.achievement.AchievementBuffer;
+import com.google.android.gms.games.achievement.Achievements;
 import com.google.android.gms.games.multiplayer.Participant;
 import com.google.android.gms.games.multiplayer.ParticipantResult;
 import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
@@ -41,6 +44,7 @@ import com.iesnules.squares.custom_views.interfaces.BoardViewListener;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -716,8 +720,73 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             Games.Achievements.increment(mGoogleApiClient,
                     getString(R.string.squares_maniac_achievement_id),
                     1);
+
+            // Check if this user is the winner
+            String userID = Games.Players.getCurrentPlayerId(mGoogleApiClient);
+            String winnerID = playerResults[0].getPlayerID();
+
+            if (userID.equals(winnerID) &&
+                    playerResults[0].getScore() != playerResults[1].getScore()) {
+
+                // This player is no longer a loser...
+                Games.Achievements.unlock(mGoogleApiClient,
+                        getString(R.string.no_longer_loser_achievement_id));
+
+                // Check if this player has no mercy...
+                if (mEngine.getTotalSquares() == playerResults[0].getScore()) {
+                    Games.Achievements.unlock(mGoogleApiClient,
+                            getString(R.string.no_mercy_achievement_id));
+                }
+
+                // Get user's current achievements
+                Games.Achievements.load(mGoogleApiClient, true)
+                        .setResultCallback(new ResultCallback<Achievements.LoadAchievementsResult>() {
+                    @Override
+                    public void onResult(Achievements.LoadAchievementsResult loadAchievementsResult) {
+                        processAchievementsResult(loadAchievementsResult);
+                    }
+                });
+            }
         }
-    };
+    }
+
+    private void processAchievementsResult(Achievements.LoadAchievementsResult loadAchievementsResult) {
+        Status status = loadAchievementsResult.getStatus();
+        if (status.isSuccess()) {
+            AchievementBuffer buffer = loadAchievementsResult.getAchievements();
+            HashMap<String, Achievement> achievements = new HashMap<String, Achievement>();
+
+            for (int i=0; i<buffer.getCount(); i++) {
+                Achievement achievement = buffer.get(i);
+                achievements.put(achievement.getAchievementId(), achievement);
+            }
+
+            String masterID = getString(R.string.master_achievement_id);
+            String professionalID = getString(R.string.professional_achievement_id);
+            String amateurID = getString(R.string.amateur_achievement_id);
+            String beginnerID = getString(R.string.beginner_achievement_id);
+
+            Achievement professional = achievements.get(professionalID);
+            Achievement amateur = achievements.get(amateurID);
+            Achievement beginner = achievements.get(beginnerID);
+
+            String achievementID = null;
+            if (professional.getState() == Achievement.STATE_UNLOCKED) {
+                achievementID = masterID;
+            }
+            else if (amateur.getState() == Achievement.STATE_UNLOCKED) {
+                achievementID = professionalID;
+            }
+            else if (beginner.getState() == Achievement.STATE_UNLOCKED) {
+                achievementID = amateurID;
+            }
+            else {
+                achievementID = beginnerID;
+            }
+
+            Games.Achievements.increment(mGoogleApiClient, achievementID, 1);
+        }
+    }
 }
 
 class PlayerResult implements Comparable<PlayerResult> {
