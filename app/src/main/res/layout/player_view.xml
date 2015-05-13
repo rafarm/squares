@@ -1,62 +1,71 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:elevation="5dp">
-    <LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:weightSum="1"
         android:layout_gravity="center_horizontal"
         android:baselineAligned="true"
-        android:paddingLeft="10dp"
-        android:paddingTop="4dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="4dp"
-        android:background="@color/checked_edge_color">
+        android:layout_margin="0dp"
+        android:padding="0dp">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:id="@+id/playerImage"
+            android:layout_gravity="center"
+            android:adjustViewBounds="false"
+            android:clickable="false" />
 
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:id="@+id/playerImage"
-            android:layout_gravity="center_horizontal"
+            android:id="@+id/overPlayerImage"
+            android:layout_gravity="center"
             android:adjustViewBounds="false"
-            android:elevation="5dp"
             android:clickable="false" />
+
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Player"
+        android:id="@+id/playerName"
+        android:layout_gravity="center_horizontal"
+        android:textSize="12sp"
+        android:layout_marginBottom="4dp"
+        android:textAlignment="center"
+        android:textColor="@color/general_background_color"
+        android:singleLine="true"
+        android:ellipsize="end" />
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/shapeImage"
+            android:layout_gravity="center"
+            android:baselineAlignBottom="false" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Player"
-            android:id="@+id/playerName"
-            android:layout_gravity="center_horizontal"
-            android:textSize="10sp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:textAlignment="center" />
+            android:text="Number"
+            android:id="@+id/playerScore"
+            android:layout_gravity="center"
+            android:textSize="20sp"
+            android:textColor="@color/display_background_color" />
 
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
+    </FrameLayout>
 
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:id="@+id/shapeImage"
-                android:layout_gravity="center"
-                android:baselineAlignBottom="false" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Number"
-                android:id="@+id/playerScore"
-                android:layout_gravity="center"
-                android:textSize="20sp"
-                android:textColor="#DDD" />
-        </FrameLayout>
-
-    </LinearLayout>
-</FrameLayout>
+</LinearLayout>
