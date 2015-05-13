@@ -64,10 +64,14 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     private ArrayList <String> mPlayerIDs;
     private PlayerView[] mPlayerViews;
-    private int[] mShapes = {R.mipmap.triangle_player,
-            R.mipmap.square_player,
-            R.mipmap.star_player,
-            R.mipmap.pentagon_player};
+    private int[] mShapes = {R.mipmap.p1_shape,
+            R.mipmap.p2_shape,
+            R.mipmap.p3_shape,
+            R.mipmap.p4_shape};
+    private int[] mOverPlayers = {R.mipmap.over_p1,
+            R.mipmap.over_p2,
+            R.mipmap.over_p3,
+            R.mipmap.over_p4};
 
     private LinearLayout mPlayersLayout;
     private FrameLayout mResultsLayout;
@@ -232,7 +236,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     @Override
     public Drawable shapeForPlayerNumber(int playerNumber, BoardView boardView) {
-        return mPlayerViews[playerNumber - 1].getShapeImage();
+        return getResources().getDrawable(mShapes[playerNumber - 1]);
     }
 
     private String getLeaderBoardId() {
@@ -267,9 +271,12 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             }
 
             if (mEngine.matchFinished()) {
+
                 PlayerResult[] playerResults = getPlayerResults();
 
                 if (mOnlineMatch) {
+                    processAchievements(playerResults);
+
                     Games.TurnBasedMultiplayer.finishMatch(mGoogleApiClient,
                             mMatchID,
                             getMatchData(),
@@ -365,7 +372,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         Arrays.sort(playerResults);
         for (int i = 0; i < mNumberOfPlayers/2; i++) {
             PlayerResult temp = playerResults[i];
-            playerResults[0] = playerResults[mNumberOfPlayers - i - 1];
+            playerResults[i] = playerResults[mNumberOfPlayers - i - 1];
             playerResults[mNumberOfPlayers - i - 1] = temp;
         }
 
@@ -422,9 +429,15 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         updateUI();
 
         if (match.getStatus() == TurnBasedMatch.MATCH_STATUS_COMPLETE) {
-            showResults(getPlayerResults());
+            PlayerResult[] playerResults = getPlayerResults();
 
-            Games.TurnBasedMultiplayer.finishMatch(mGoogleApiClient, mMatchID);
+            showResults(playerResults);
+
+            if (match.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
+                processAchievements(playerResults);
+
+                Games.TurnBasedMultiplayer.finishMatch(mGoogleApiClient, match.getMatchId());
+            }
         }
     }
 
@@ -505,6 +518,8 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                 playerView.setShapeImage(getResources().getDrawable(mShapes[i]));
             }
 
+            playerView.setOverPlayerNoTurnDrawable(getResources().getDrawable(R.mipmap.over_p_looser));
+            playerView.setOverPlayerInTurnDrawable(getResources().getDrawable(mOverPlayers[i]));
             playerView.setPlayerScore(String.valueOf(mEngine.numOfCapturedSquaresByPlayer(i + 1)));
 
             mPlayerViews[i] = playerView;
@@ -561,17 +576,19 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
 
             TextView title = (TextView)findViewById(R.id.resultsTitleTextView);
+            TextView wins = (TextView)findViewById(R.id.winsTextView);
 
-            String titleText = null;
+            //String titleText = null;
             if (playerResults[0].getScore() == playerResults[1].getScore()) { // Tie
-                titleText = getString(R.string.tie);
+                title.setText(getString(R.string.tie));
+                wins.setText(null);
             }
             else {
-                titleText = playerResults[0].getPlayeView().getPlayerName() + " " +
-                        getString(R.string.win);
+                title.setText(playerResults[0].getPlayeView().getPlayerName());
+                wins.setText(getString(R.string.win));
             }
 
-            title.setText(titleText);
+            //title.setText(titleText);
 
             // Signal winners
             for (int i = 0; i < mNumberOfPlayers; i++) {
@@ -664,7 +681,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         if(mOnlineMatch){
             super.onBackPressed();
         }
@@ -699,8 +716,10 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         }
     }
 
+    private void processAchievements(PlayerResult[] playerResults) {
+        // TODO: Process and notify google servers user's achievements
 
-
+    };
 }
 
 class PlayerResult implements Comparable<PlayerResult> {

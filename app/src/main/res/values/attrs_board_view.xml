@@ -2,5 +2,6 @@
     <declare-styleable name="BoardView">
         <attr name="boardRows" format="integer" />
         <attr name="boardCols" format="integer" />
+        <attr name="squaresAlpha" format="float" />
     </declare-styleable>
 </resources>
