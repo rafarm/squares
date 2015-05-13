@@ -683,10 +683,6 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         }
     }
 
-    /*public void alertBuilder(){
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MatchActivity.this);
-    }*/
-
     private void notifyMatchCancellation() {
         // TODO: Notify the player that this match has been cancelled...
 
@@ -737,11 +733,11 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             }
         }
     }
-    public void soundNotification(){
+
+    private void soundNotification(){
         Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Ringtone sound = RingtoneManager.getRingtone(this, uri);
         sound.play();
-
     }
 
     private void processAchievements(PlayerResult[] playerResults) {
