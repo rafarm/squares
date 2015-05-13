@@ -262,9 +262,14 @@ public class GameEngine {
         return total;
     }
 
-    public boolean gameFinished(){
+
+    public boolean  gameFinished(){
         return numOfCapturedSquares() == ((mRealRows - 1) / 2) * ((mRealCols - 1) / 2);
     }
+
+
+
+
 
 
 
