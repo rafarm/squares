@@ -122,10 +122,8 @@ public class MainActivity extends BaseGameActivity implements
             mOnlineOptionsLayout.setVisibility(View.GONE);
         }
 
-        //mOfflineModeExpanded = false;
-        //mOnlineModeExpanded = false;
-        mOfflineButton.setEnabled(true);
-        mOnlineButton.setEnabled(true);
+        mOfflineButton.setEnabled(mOfflineModeExpanded || !mOnlineModeExpanded);
+        mOnlineButton.setEnabled(mOnlineModeExpanded || !mOfflineModeExpanded);
 
         if (!mInSignInFlow && !mCreatingMatch) {
             mOverlayLayout.setVisibility(View.GONE);
