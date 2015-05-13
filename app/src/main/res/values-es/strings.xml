@@ -13,8 +13,8 @@
     <string name="display_leaderboards">Tabla de clasificacion</string>
     <string name="list_all_matches">Todas las partidas</string>
     <string name="new_match">Nueva partida</string>
-    <string name="play_offline">Modo Offline</string>
-    <string name="play_online">Modo Online</string>
+    <string name="play_offline">Juega Offline</string>
+    <string name="play_online">Juega Online</string>
     <string name="player">Jugador</string>
     <string name="quick_match">Partida Rapida</string>
     <string name="rematch">Revancha</string>
@@ -27,4 +27,6 @@
     <string name="title_activity_board">BoardActivity</string>
     <string name="title_activity_match">MatchActivity</string>
     <string name="display_achievements">Logros</string>
+    <string name="CancellationMessage">Esta partida ha sido cancelada</string>
+    <string name="CancellationTitle">Partida Cancelada</string>
 </resources>

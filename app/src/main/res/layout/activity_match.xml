@@ -14,7 +14,8 @@
         android:id="@+id/playersLayout"
         android:baselineAligned="false"
         android:layout_marginBottom="10dp"
-        android:background="@mipmap/edge">
+        android:background="@mipmap/edge"
+        android:minHeight="110dp">
 
     </LinearLayout>
 

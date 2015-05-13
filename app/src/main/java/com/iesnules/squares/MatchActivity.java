@@ -87,6 +87,8 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     private ImageManager mImageManager;
 
+    private Ringtone mSound;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +103,10 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         mBoardView = (BoardView)findViewById(R.id.boardView);
         mBoardView.setDataProvider(this);
         mBoardView.setListener(this);
+
+        // Create sound for notifications
+        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        mSound = RingtoneManager.getRingtone(this, uri);
 
         // Get match ID
         mMatchID = intent.getStringExtra(MainActivity.MATCH_ID);
@@ -735,9 +741,9 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     }
 
     private void soundNotification(){
-        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Ringtone sound = RingtoneManager.getRingtone(this, uri);
-        sound.play();
+        if (!mSound.isPlaying()) {
+            mSound.play();
+        }
     }
 
     private void processAchievements(PlayerResult[] playerResults) {
@@ -750,7 +756,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                     1);
 
             // Check if this user is the winner
-            String userID = Games.Players.getCurrentPlayerId(mGoogleApiClient);
+            String userID = mMatch.getParticipantId(Games.Players.getCurrentPlayerId(mGoogleApiClient));
             String winnerID = playerResults[0].getPlayerID();
 
             if (userID.equals(winnerID) &&
