@@ -57,6 +57,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
 
     private boolean mOnlineMatch;
+    private AlertDialog.Builder mAlertDialog = new AlertDialog.Builder(MatchActivity.this);
     private int mNumberOfPlayers;
     private int mNumberOfOnlineParticipants;
     private int mTurnPlayerIndex;
@@ -656,6 +657,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     @Override
     public void onTurnBasedMatchReceived(TurnBasedMatch turnBasedMatch) {
         if (turnBasedMatch.getMatchId().equals(mMatchID)) {
+            soundNotification();
             if (turnBasedMatch.getStatus() == TurnBasedMatch.MATCH_STATUS_CANCELED) {
                 notifyMatchCancellation();
                 finish();
@@ -676,8 +678,24 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         }
     }
 
+    /*public void alertBuilder(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MatchActivity.this);
+    }*/
+
     private void notifyMatchCancellation() {
         // TODO: Notify the player that this match has been cancelled...
+
+        mAlertDialog
+                .setTitle(getString(R.string.CancellationTitle))
+                .setMessage(getString(R.string.CancellationMessage))
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.action_leave_match), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // if this button is clicked, close
+                        // current activity
+                        finish();
+                    }
+                }).show();
     }
 
     @Override
@@ -690,12 +708,11 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                 super.onBackPressed();
             }
             else {
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MatchActivity.this);
 
                 // set dialog message
-                alertDialogBuilder
-                        .setTitle(getString(R.string.DialogMessage))
-                        .setMessage(getString(R.string.DialogTitle))
+                mAlertDialog
+                        .setTitle(getString(R.string.DialogTitle))
+                        .setMessage(getString(R.string.DialogMessage))
                         .setCancelable(false)
 
                         .setNegativeButton(getString(R.string.NegativeButton), new DialogInterface.OnClickListener() {
@@ -714,6 +731,12 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                         }).show();
             }
         }
+    }
+    public void soundNotification(){
+        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Ringtone sound = RingtoneManager.getRingtone(this, uri);
+        sound.play();
+
     }
 
     private void processAchievements(PlayerResult[] playerResults) {
@@ -762,11 +785,5 @@ class PlayerResult implements Comparable<PlayerResult> {
 
         return comparison;
     }
-
-    /*
-            Ringtone sound = RingtoneManager.getRingtone(getApplicationContext(), notification);
-        sound.play();
-        MATCH_STATUS.MyTurn!!!
-     */
 
 }
