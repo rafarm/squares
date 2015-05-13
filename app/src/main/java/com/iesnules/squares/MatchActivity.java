@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.opengl.Visibility;
 import android.os.Bundle;
@@ -59,6 +61,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
 
     private boolean mOnlineMatch;
+    private AlertDialog.Builder mAlertDialog;
     private int mNumberOfPlayers;
     private int mNumberOfOnlineParticipants;
     private int mTurnPlayerIndex;
@@ -90,6 +93,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
         Intent intent = getIntent();
         setContentView(R.layout.activity_match);
+        mAlertDialog = new AlertDialog.Builder(this);
 
         mPlayersLayout = (LinearLayout)findViewById(R.id.playersLayout);
         mResultsLayout = (FrameLayout)findViewById(R.id.resultsLayout);
@@ -326,6 +330,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     private void moveToNextPlayer() {
         mTurnPlayerIndex = ++mTurnPlayerIndex % mNumberOfPlayers;
+
     }
 
     private String getNextPlayerID() {
@@ -657,6 +662,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     @Override
     public void onTurnBasedMatchReceived(TurnBasedMatch turnBasedMatch) {
         if (turnBasedMatch.getMatchId().equals(mMatchID)) {
+            soundNotification();
             if (turnBasedMatch.getStatus() == TurnBasedMatch.MATCH_STATUS_CANCELED) {
                 notifyMatchCancellation();
                 finish();
@@ -677,8 +683,24 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         }
     }
 
+    /*public void alertBuilder(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MatchActivity.this);
+    }*/
+
     private void notifyMatchCancellation() {
         // TODO: Notify the player that this match has been cancelled...
+
+        /*mAlertDialog
+                .setTitle(getString(R.string.CancellationTitle))
+                .setMessage(getString(R.string.CancellationMessage))
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.action_leave_match), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // if this button is clicked, close
+                        // current activity
+                        finish();
+                    }
+                }).show();*/
     }
 
     @Override
@@ -687,29 +709,39 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             super.onBackPressed();
         }
         else{
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MatchActivity.this);
+            if(mEngine.gameFinished()){
+                super.onBackPressed();
+            }
+            else {
 
-            // set dialog message
-            alertDialogBuilder
-                    .setTitle(getString(R.string.DialogMessage))
-                    .setMessage(getString(R.string.DialogTitle))
-                    .setCancelable(false)
+                // set dialog message
+                mAlertDialog
+                        .setTitle(getString(R.string.DialogTitle))
+                        .setMessage(getString(R.string.DialogMessage))
+                        .setCancelable(false)
 
-                    .setNegativeButton(getString(R.string.NegativeButton), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // if this button is clicked, just close
-                            // the dialog box and do nothing
-                            dialog.cancel();
-                        }
-                    })
-                    .setPositiveButton(getString(R.string.PositiveButton),new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog,int id) {
-                            // if this button is clicked, close
-                            // current activity
-                            finish();
-                        }
-                    }).show();
+                        .setNegativeButton(getString(R.string.NegativeButton), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // if this button is clicked, just close
+                                // the dialog box and do nothing
+                                dialog.cancel();
+                            }
+                        })
+                        .setPositiveButton(getString(R.string.PositiveButton), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // if this button is clicked, close
+                                // current activity
+                                finish();
+                            }
+                        }).show();
+            }
         }
+    }
+    public void soundNotification(){
+        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Ringtone sound = RingtoneManager.getRingtone(this, uri);
+        sound.play();
+
     }
 
     private void processAchievements(PlayerResult[] playerResults) {
