@@ -26,4 +26,5 @@
     <string name="win">gana!!!</string>
     <string name="title_activity_board">BoardActivity</string>
     <string name="title_activity_match">MatchActivity</string>
+    <string name="display_achievements">Logros</string>
 </resources>

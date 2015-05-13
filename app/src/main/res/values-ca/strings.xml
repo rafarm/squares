@@ -26,4 +26,5 @@
     <string name="title_activity_match">MachActivity</string>
     <string name="two_players">Dos jugadors</string>
     <string name="win">Has guanyat!!!</string>
+    <string name="display_achievements">Assoliments</string>
 </resources>

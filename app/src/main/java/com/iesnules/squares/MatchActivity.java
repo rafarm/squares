@@ -273,6 +273,8 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                 PlayerResult[] playerResults = getPlayerResults();
 
                 if (mOnlineMatch) {
+                    processAchievements(playerResults);
+
                     Games.TurnBasedMultiplayer.finishMatch(mGoogleApiClient,
                             mMatchID,
                             getMatchData(),
@@ -424,9 +426,15 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         updateUI();
 
         if (match.getStatus() == TurnBasedMatch.MATCH_STATUS_COMPLETE) {
-            showResults(getPlayerResults());
+            PlayerResult[] playerResults = getPlayerResults();
 
-            Games.TurnBasedMultiplayer.finishMatch(mGoogleApiClient, mMatchID);
+            showResults(playerResults);
+
+            if (match.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
+                processAchievements(playerResults);
+
+                Games.TurnBasedMultiplayer.finishMatch(mGoogleApiClient, match.getMatchId());
+            }
         }
     }
 
@@ -670,7 +678,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         if(mOnlineMatch){
             super.onBackPressed();
         }
@@ -700,8 +708,10 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         }
     }
 
+    private void processAchievements(PlayerResult[] playerResults) {
+        // TODO: Process and notify google servers user's achievements
 
-
+    };
 }
 
 class PlayerResult implements Comparable<PlayerResult> {
