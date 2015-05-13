@@ -57,7 +57,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
 
     private boolean mOnlineMatch;
-    private AlertDialog.Builder mAlertDialog = new AlertDialog.Builder(MatchActivity.this);
+    private AlertDialog.Builder mAlertDialog;
     private int mNumberOfPlayers;
     private int mNumberOfOnlineParticipants;
     private int mTurnPlayerIndex;
@@ -89,6 +89,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
         Intent intent = getIntent();
         setContentView(R.layout.activity_match);
+        mAlertDialog = new AlertDialog.Builder(this);
 
         mPlayersLayout = (LinearLayout)findViewById(R.id.playersLayout);
         mResultsLayout = (FrameLayout)findViewById(R.id.resultsLayout);
@@ -685,7 +686,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     private void notifyMatchCancellation() {
         // TODO: Notify the player that this match has been cancelled...
 
-        mAlertDialog
+        /*mAlertDialog
                 .setTitle(getString(R.string.CancellationTitle))
                 .setMessage(getString(R.string.CancellationMessage))
                 .setCancelable(false)
@@ -695,7 +696,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                         // current activity
                         finish();
                     }
-                }).show();
+                }).show();*/
     }
 
     @Override
