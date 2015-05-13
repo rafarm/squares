@@ -136,7 +136,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     @Override
     protected void onStop() {
-        if (mOnlineMatch) {
+        if (mOnlineMatch && mGoogleApiClient.isConnected()) {
             Games.TurnBasedMultiplayer.unregisterMatchUpdateListener(mGoogleApiClient);
         }
 
@@ -711,6 +711,12 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     private void processAchievements(PlayerResult[] playerResults) {
         // TODO: Process and notify google servers user's achievements
 
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            // Increase matches played...
+            Games.Achievements.increment(mGoogleApiClient,
+                    getString(R.string.squares_maniac_achievement_id),
+                    1);
+        }
     };
 }
 
