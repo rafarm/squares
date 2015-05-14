@@ -714,7 +714,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             soundNotification();
             if (turnBasedMatch.getStatus() == TurnBasedMatch.MATCH_STATUS_CANCELED) {
                 notifyMatchCancellation();
-                finish();
+                //finish();
             }
 
             processMatch(turnBasedMatch);
@@ -728,7 +728,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     public void onTurnBasedMatchRemoved(String matchID) {
         if (matchID.equals(mMatchID)) {
             notifyMatchCancellation();
-            finish();
+            //finish();
         }
     }
 
