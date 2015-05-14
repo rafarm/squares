@@ -13,8 +13,8 @@
     <string name="four_players">Quatre jugadors</string>
     <string name="list_all_matches">Totes les partides</string>
     <string name="new_match">Nova Partida</string>
-    <string name="play_offline">Mode Offline</string>
-    <string name="play_online">Mode Online</string>
+    <string name="play_offline">Juga Offline</string>
+    <string name="play_online">Juga Online</string>
     <string name="player">Jugador</string>
     <string name="quick_match">Partida rapida</string>
     <string name="rematch">Revenja</string>
@@ -27,4 +27,8 @@
     <string name="two_players">Dos jugadors</string>
     <string name="win">Has guanyat!!!</string>
     <string name="display_achievements">Assoliments</string>
+    <string name="CancellationMessage">Aquesta partida ha estat cancelada</string>
+    <string name="CancellationTitle">Partida Cancelada</string>
+    <string name="rematch_offered">Revenja Oferida</string>
+    <string name="decline">Declinar</string>
 </resources>

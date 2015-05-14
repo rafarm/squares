@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.opengl.Visibility;
 import android.os.Bundle;
@@ -27,6 +29,9 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.common.images.ImageManager;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesStatusCodes;
+import com.google.android.gms.games.achievement.Achievement;
+import com.google.android.gms.games.achievement.AchievementBuffer;
+import com.google.android.gms.games.achievement.Achievements;
 import com.google.android.gms.games.multiplayer.Participant;
 import com.google.android.gms.games.multiplayer.ParticipantResult;
 import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
@@ -41,6 +46,7 @@ import com.iesnules.squares.custom_views.interfaces.BoardViewListener;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -55,6 +61,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
 
     private boolean mOnlineMatch;
+    private AlertDialog.Builder mAlertDialog;
     private int mNumberOfPlayers;
     private int mNumberOfOnlineParticipants;
     private int mTurnPlayerIndex;
@@ -80,12 +87,15 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     private ImageManager mImageManager;
 
+    private Ringtone mSound;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
         setContentView(R.layout.activity_match);
+        mAlertDialog = new AlertDialog.Builder(this);
 
         mPlayersLayout = (LinearLayout)findViewById(R.id.playersLayout);
         mResultsLayout = (FrameLayout)findViewById(R.id.resultsLayout);
@@ -93,6 +103,10 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         mBoardView = (BoardView)findViewById(R.id.boardView);
         mBoardView.setDataProvider(this);
         mBoardView.setListener(this);
+
+        // Create sound for notifications
+        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        mSound = RingtoneManager.getRingtone(this, uri);
 
         // Get match ID
         mMatchID = intent.getStringExtra(MainActivity.MATCH_ID);
@@ -136,7 +150,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     @Override
     protected void onStop() {
-        if (mOnlineMatch) {
+        if (mOnlineMatch && mGoogleApiClient.isConnected()) {
             Games.TurnBasedMultiplayer.unregisterMatchUpdateListener(mGoogleApiClient);
         }
 
@@ -322,6 +336,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     private void moveToNextPlayer() {
         mTurnPlayerIndex = ++mTurnPlayerIndex % mNumberOfPlayers;
+
     }
 
     private String getNextPlayerID() {
@@ -435,6 +450,45 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
                 Games.TurnBasedMultiplayer.finishMatch(mGoogleApiClient, match.getMatchId());
             }
+        }
+
+        // Process rematch
+        final String rematchID = match.getRematchId();
+        if (rematchID != null) {
+            TextView title = (TextView)findViewById(R.id.resultsTitleTextView);
+            TextView wins = (TextView)findViewById(R.id.winsTextView);
+            TextView rematchOffered = (TextView)findViewById(R.id.rematchTextView);
+
+            title.setVisibility(View.GONE);
+            wins.setVisibility(View.GONE);
+            rematchOffered.setVisibility(View.VISIBLE);
+
+            // Reset accept button
+            Button accept = (Button)findViewById(R.id.resultsOKButton);
+            accept.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Load match
+                    Games.TurnBasedMultiplayer.loadMatch(mGoogleApiClient, rematchID).
+                            setResultCallback(new ResultCallback<TurnBasedMultiplayer.LoadMatchResult>() {
+                                @Override
+                                public void onResult(TurnBasedMultiplayer.LoadMatchResult loadMatchResult) {
+                                    processResult(loadMatchResult);
+                                }
+                            });
+                }
+            });
+
+            // Reset rematch button to behave as 'Decline' rematch
+            Button rematch = (Button)findViewById(R.id.resultsRematchButton);
+            rematch.setVisibility(View.VISIBLE);
+            rematch.setText(getString(R.string.decline));
+            rematch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mResultsLayout.setVisibility(View.GONE);
+                }
+            });
         }
     }
 
@@ -554,7 +608,8 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         });
 
         if (playerResults != null && playerResults.length > 1) {
-            final Button rematch = (Button)findViewById(R.id.resultsRematchButton);
+            Button rematch = (Button)findViewById(R.id.resultsRematchButton);
+            rematch.setText(getString(R.string.rematch));
             if (!mOnlineMatch || mMatch.canRematch()) {
                 rematch.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -574,6 +629,11 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
             TextView title = (TextView)findViewById(R.id.resultsTitleTextView);
             TextView wins = (TextView)findViewById(R.id.winsTextView);
+            TextView rematchOffered = (TextView)findViewById(R.id.rematchTextView);
+
+            title.setVisibility(View.VISIBLE);
+            wins.setVisibility(View.VISIBLE);
+            rematchOffered.setVisibility(View.GONE);
 
             //String titleText = null;
             if (playerResults[0].getScore() == playerResults[1].getScore()) { // Tie
@@ -584,8 +644,6 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                 title.setText(playerResults[0].getPlayeView().getPlayerName());
                 wins.setText(getString(R.string.win));
             }
-
-            //title.setText(titleText);
 
             // Signal winners
             for (int i = 0; i < mNumberOfPlayers; i++) {
@@ -653,6 +711,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     @Override
     public void onTurnBasedMatchReceived(TurnBasedMatch turnBasedMatch) {
         if (turnBasedMatch.getMatchId().equals(mMatchID)) {
+            soundNotification();
             if (turnBasedMatch.getStatus() == TurnBasedMatch.MATCH_STATUS_CANCELED) {
                 notifyMatchCancellation();
                 finish();
@@ -675,6 +734,18 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     private void notifyMatchCancellation() {
         // TODO: Notify the player that this match has been cancelled...
+
+        /*mAlertDialog
+                .setTitle(getString(R.string.CancellationTitle))
+                .setMessage(getString(R.string.CancellationMessage))
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.action_leave_match), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // if this button is clicked, close
+                        // current activity
+                        finish();
+                    }
+                }).show();*/
     }
 
     @Override
@@ -683,45 +754,114 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             super.onBackPressed();
         }
         else{
+            if(mEngine.gameFinished()){
+                super.onBackPressed();
+            }
+            else {
 
-            GameEngine gameengine = new GameEngine();
+                // set dialog message
+                mAlertDialog
+                        .setTitle(getString(R.string.DialogTitle))
+                        .setMessage(getString(R.string.DialogMessage))
+                        .setCancelable(false)
 
-
-            if(gameengine.gameFinished()){}
-
-
-
-
-            else{AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MatchActivity.this);
-
-            // set dialog message
-            alertDialogBuilder
-                    .setTitle(getString(R.string.DialogMessage))
-                    .setMessage(getString(R.string.DialogTitle))
-                    .setCancelable(false)
-
-                    .setNegativeButton(getString(R.string.NegativeButton), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // if this button is clicked, just close
-                            // the dialog box and do nothing
-                            dialog.cancel();
-                        }
-                    })
-                    .setPositiveButton(getString(R.string.PositiveButton),new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog,int id) {
-                            // if this button is clicked, close
-                            // current activity
-                            finish();
-                        }
-                    }).show();
+                        .setNegativeButton(getString(R.string.NegativeButton), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // if this button is clicked, just close
+                                // the dialog box and do nothing
+                                dialog.cancel();
+                            }
+                        })
+                        .setPositiveButton(getString(R.string.PositiveButton), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // if this button is clicked, close
+                                // current activity
+                                finish();
+                            }
+                        }).show();
             }
         }
     }
 
-    private void processAchievements(PlayerResult[] playerResults) {
-        // TODO: Process and notify google servers user's achievements
+    private void soundNotification(){
+        if (!mSound.isPlaying()) {
+            mSound.play();
+        }
+    }
 
-    };
+    private void processAchievements(PlayerResult[] playerResults) {
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            // Increase matches played...
+            Games.Achievements.increment(mGoogleApiClient,
+                    getString(R.string.squares_maniac_achievement_id),
+                    1);
+
+            // Check if this user is the winner
+            String userID = mMatch.getParticipantId(Games.Players.getCurrentPlayerId(mGoogleApiClient));
+            String winnerID = playerResults[0].getPlayerID();
+
+            if (userID.equals(winnerID) &&
+                    playerResults[0].getScore() != playerResults[1].getScore()) {
+
+                // This player is no longer a loser...
+                Games.Achievements.unlock(mGoogleApiClient,
+                        getString(R.string.no_longer_loser_achievement_id));
+
+                // Check if this player has no mercy...
+                if (mEngine.getTotalSquares() == playerResults[0].getScore()) {
+                    Games.Achievements.unlock(mGoogleApiClient,
+                            getString(R.string.no_mercy_achievement_id));
+                }
+
+                // Get user's current achievements
+                Games.Achievements.load(mGoogleApiClient, true)
+                        .setResultCallback(new ResultCallback<Achievements.LoadAchievementsResult>() {
+                    @Override
+                    public void onResult(Achievements.LoadAchievementsResult loadAchievementsResult) {
+                        processAchievementsResult(loadAchievementsResult);
+                    }
+                });
+            }
+        }
+    }
+
+    private void processAchievementsResult(Achievements.LoadAchievementsResult loadAchievementsResult) {
+        Status status = loadAchievementsResult.getStatus();
+        if (status.isSuccess()) {
+            AchievementBuffer buffer = loadAchievementsResult.getAchievements();
+            HashMap<String, Achievement> achievements = new HashMap<String, Achievement>();
+
+            for (int i=0; i<buffer.getCount(); i++) {
+                Achievement achievement = buffer.get(i);
+                achievements.put(achievement.getAchievementId(), achievement);
+            }
+
+            String masterID = getString(R.string.master_achievement_id);
+            String professionalID = getString(R.string.professional_achievement_id);
+            String amateurID = getString(R.string.amateur_achievement_id);
+            String beginnerID = getString(R.string.beginner_achievement_id);
+
+            Achievement professional = achievements.get(professionalID);
+            Achievement amateur = achievements.get(amateurID);
+            Achievement beginner = achievements.get(beginnerID);
+
+            String achievementID = null;
+            if (professional.getState() == Achievement.STATE_UNLOCKED) {
+                achievementID = masterID;
+            }
+            else if (amateur.getState() == Achievement.STATE_UNLOCKED) {
+                achievementID = professionalID;
+            }
+            else if (beginner.getState() == Achievement.STATE_UNLOCKED) {
+                achievementID = amateurID;
+            }
+            else {
+                achievementID = beginnerID;
+            }
+
+            Games.Achievements.increment(mGoogleApiClient, achievementID, 1);
+        }
+    }
 }
 
 class PlayerResult implements Comparable<PlayerResult> {
