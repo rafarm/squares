@@ -31,4 +31,5 @@
     <string name="CancellationTitle">Partida Cancelada</string>
     <string name="rematch_offered">Revenja Oferida</string>
     <string name="decline">Declinar</string>
+    <string name="other_match_updated">Altra partida actualitzada</string>
 </resources>
