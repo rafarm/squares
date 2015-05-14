@@ -29,4 +29,6 @@
     <string name="display_achievements">Logros</string>
     <string name="CancellationMessage">Esta partida ha sido cancelada</string>
     <string name="CancellationTitle">Partida Cancelada</string>
+    <string name="rematch_offered">Revancha Ofrecida</string>
+    <string name="decline">Declinar</string>
 </resources>

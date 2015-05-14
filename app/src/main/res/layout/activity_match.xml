@@ -56,7 +56,6 @@
                 android:layout_height="fill_parent"
                 android:id="@+id/resultsContentLayout"
                 android:layout_gravity="center"
-                android:visibility="visible"
                 android:gravity="center">
 
                 <LinearLayout
@@ -80,6 +79,15 @@
                         android:id="@+id/winsTextView"
                         android:textSize="40dp"
                         android:textColor="@color/display_background_color" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/rematch_offered"
+                        android:id="@+id/rematchTextView"
+                        android:textSize="40dp"
+                        android:textColor="@color/display_background_color"
+                        android:visibility="gone" />
 
                 </LinearLayout>
 

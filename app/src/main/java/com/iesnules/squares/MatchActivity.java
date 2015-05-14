@@ -451,6 +451,45 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                 Games.TurnBasedMultiplayer.finishMatch(mGoogleApiClient, match.getMatchId());
             }
         }
+
+        // Process rematch
+        final String rematchID = match.getRematchId();
+        if (rematchID != null) {
+            TextView title = (TextView)findViewById(R.id.resultsTitleTextView);
+            TextView wins = (TextView)findViewById(R.id.winsTextView);
+            TextView rematchOffered = (TextView)findViewById(R.id.rematchTextView);
+
+            title.setVisibility(View.GONE);
+            wins.setVisibility(View.GONE);
+            rematchOffered.setVisibility(View.VISIBLE);
+
+            // Reset accept button
+            Button accept = (Button)findViewById(R.id.resultsOKButton);
+            accept.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Load match
+                    Games.TurnBasedMultiplayer.loadMatch(mGoogleApiClient, rematchID).
+                            setResultCallback(new ResultCallback<TurnBasedMultiplayer.LoadMatchResult>() {
+                                @Override
+                                public void onResult(TurnBasedMultiplayer.LoadMatchResult loadMatchResult) {
+                                    processResult(loadMatchResult);
+                                }
+                            });
+                }
+            });
+
+            // Reset rematch button to behave as 'Decline' rematch
+            Button rematch = (Button)findViewById(R.id.resultsRematchButton);
+            rematch.setVisibility(View.VISIBLE);
+            rematch.setText(getString(R.string.decline));
+            rematch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mResultsLayout.setVisibility(View.GONE);
+                }
+            });
+        }
     }
 
     private void setupMatch(TurnBasedMatch match) {
@@ -569,7 +608,8 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         });
 
         if (playerResults != null && playerResults.length > 1) {
-            final Button rematch = (Button)findViewById(R.id.resultsRematchButton);
+            Button rematch = (Button)findViewById(R.id.resultsRematchButton);
+            rematch.setText(getString(R.string.rematch));
             if (!mOnlineMatch || mMatch.canRematch()) {
                 rematch.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -589,6 +629,11 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
             TextView title = (TextView)findViewById(R.id.resultsTitleTextView);
             TextView wins = (TextView)findViewById(R.id.winsTextView);
+            TextView rematchOffered = (TextView)findViewById(R.id.rematchTextView);
+
+            title.setVisibility(View.VISIBLE);
+            wins.setVisibility(View.VISIBLE);
+            rematchOffered.setVisibility(View.GONE);
 
             //String titleText = null;
             if (playerResults[0].getScore() == playerResults[1].getScore()) { // Tie
@@ -599,8 +644,6 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                 title.setText(playerResults[0].getPlayeView().getPlayerName());
                 wins.setText(getString(R.string.win));
             }
-
-            //title.setText(titleText);
 
             // Signal winners
             for (int i = 0; i < mNumberOfPlayers; i++) {
@@ -747,8 +790,6 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     }
 
     private void processAchievements(PlayerResult[] playerResults) {
-        // TODO: Process and notify google servers user's achievements
-
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             // Increase matches played...
             Games.Achievements.increment(mGoogleApiClient,

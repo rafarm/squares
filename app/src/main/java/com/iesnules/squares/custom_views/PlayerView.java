@@ -70,8 +70,6 @@ public class PlayerView extends FrameLayout /*implements Animator.AnimatorListen
         final TypedArray a = getContext().obtainStyledAttributes(
                 attrs, R.styleable.PlayerView, defStyle, 0);
 
-        // TODO: Process AtributeSet
-
         a.recycle();
 
         mPlayerImage = (ImageView)findViewById(R.id.playerImage);
