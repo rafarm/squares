@@ -895,6 +895,8 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             }
 
             Games.Achievements.increment(mGoogleApiClient, achievementID, 1);
+
+            buffer.release();
         }
     }
 
