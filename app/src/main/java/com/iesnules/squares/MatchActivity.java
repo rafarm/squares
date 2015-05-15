@@ -32,6 +32,8 @@ import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.achievement.Achievement;
 import com.google.android.gms.games.achievement.AchievementBuffer;
 import com.google.android.gms.games.achievement.Achievements;
+import com.google.android.gms.games.multiplayer.Invitation;
+import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
 import com.google.android.gms.games.multiplayer.Participant;
 import com.google.android.gms.games.multiplayer.ParticipantResult;
 import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
@@ -52,7 +54,8 @@ import java.util.List;
 
 
 public class MatchActivity extends BaseGameActivity implements BoardViewListener,
-        BoardViewDataProvider, OnTurnBasedMatchUpdateReceivedListener {
+        BoardViewDataProvider, OnTurnBasedMatchUpdateReceivedListener,
+        OnInvitationReceivedListener {
 
     private static final String TAG = "MatchActivity";
 
@@ -84,6 +87,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
     private String mMatchID;
     private TurnBasedMatch mMatch;
+    private String mInvitationID;
 
     private ImageManager mImageManager;
 
@@ -152,6 +156,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     protected void onStop() {
         if (mOnlineMatch && mGoogleApiClient.isConnected()) {
             Games.TurnBasedMultiplayer.unregisterMatchUpdateListener(mGoogleApiClient);
+            Games.Invitations.unregisterInvitationListener(mGoogleApiClient);
         }
 
         super.onStop();
@@ -221,14 +226,24 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     }
 
     private void processResult(TurnBasedMultiplayer.LoadMatchResult loadMatchResult) {
+        processReceivedResult(loadMatchResult.getStatus(), loadMatchResult.getMatch());
+    }
+
+    private void processResult(TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
+        processReceivedResult(initiateMatchResult.getStatus(), initiateMatchResult.getMatch());
+    }
+
+    private void processReceivedResult(Status status, TurnBasedMatch match) {
         // Check if the status code is not success.
-        Status status = loadMatchResult.getStatus();
         if (!status.isSuccess()) {
-            BaseGameUtils.showAlert(this, status.getStatusMessage());
+            String message = status.getStatusMessage();
+            if (message == null) {
+                message = getString(R.string.unknown_error);
+            }
+            BaseGameUtils.showAlert(this, message);
             return;
         }
 
-        TurnBasedMatch match = loadMatchResult.getMatch();
         mMatchID = match.getMatchId();
 
         processMatch(match);
@@ -453,43 +468,50 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         }
 
         // Process rematch
-        final String rematchID = match.getRematchId();
-        if (rematchID != null) {
-            TextView title = (TextView)findViewById(R.id.resultsTitleTextView);
-            TextView wins = (TextView)findViewById(R.id.winsTextView);
-            TextView rematchOffered = (TextView)findViewById(R.id.rematchTextView);
+        mInvitationID = match.getRematchId();
 
-            title.setVisibility(View.GONE);
-            wins.setVisibility(View.GONE);
-            rematchOffered.setVisibility(View.VISIBLE);
+        // Register for invitations notifications
+        Games.Invitations.registerInvitationListener(mGoogleApiClient, this);
+    }
 
-            // Reset accept button
-            Button accept = (Button)findViewById(R.id.resultsOKButton);
-            accept.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Load match
-                    Games.TurnBasedMultiplayer.loadMatch(mGoogleApiClient, rematchID).
-                            setResultCallback(new ResultCallback<TurnBasedMultiplayer.LoadMatchResult>() {
-                                @Override
-                                public void onResult(TurnBasedMultiplayer.LoadMatchResult loadMatchResult) {
-                                    processResult(loadMatchResult);
-                                }
-                            });
-                }
-            });
+    private void acceptDeclineRematchInvitation() {
+        TextView title = (TextView)findViewById(R.id.resultsTitleTextView);
+        TextView wins = (TextView)findViewById(R.id.winsTextView);
+        TextView rematchOffered = (TextView)findViewById(R.id.rematchTextView);
 
-            // Reset rematch button to behave as 'Decline' rematch
-            Button rematch = (Button)findViewById(R.id.resultsRematchButton);
-            rematch.setVisibility(View.VISIBLE);
-            rematch.setText(getString(R.string.decline));
-            rematch.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mResultsLayout.setVisibility(View.GONE);
-                }
-            });
-        }
+        title.setVisibility(View.GONE);
+        wins.setVisibility(View.GONE);
+        rematchOffered.setVisibility(View.VISIBLE);
+
+        // Reset accept button
+        Button accept = (Button)findViewById(R.id.resultsOKButton);
+        accept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Load match
+                Games.TurnBasedMultiplayer.acceptInvitation(mGoogleApiClient, mInvitationID).
+                        setResultCallback(new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
+                            @Override
+                            public void onResult(TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
+                                processResult(initiateMatchResult);
+                                mInvitationID = null;
+                            }
+                        });
+            }
+        });
+
+        // Reset rematch button to behave as 'Decline' rematch
+        Button rematch = (Button)findViewById(R.id.resultsRematchButton);
+        rematch.setVisibility(View.VISIBLE);
+        rematch.setText(getString(R.string.decline));
+        rematch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Games.TurnBasedMultiplayer.declineInvitation(mGoogleApiClient, mInvitationID);
+                mResultsLayout.setVisibility(View.GONE);
+                mInvitationID = null;
+            }
+        });
     }
 
     private void setupMatch(TurnBasedMatch match) {
@@ -679,7 +701,8 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     }
 
     private void processRematch(TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
-        Status status = initiateMatchResult.getStatus();
+        //Status status = initiateMatchResult.getStatus();
+        /*
         if (status.getStatusCode() == GamesStatusCodes.STATUS_MATCH_ERROR_ALREADY_REMATCHED) {
             String rematchID = mMatch.getRematchId();
 
@@ -693,7 +716,9 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
             return;
         }
+        */
 
+        /*
         if (!status.isSuccess()) {
             BaseGameUtils.showAlert(this, status.getStatusMessage());
             return;
@@ -706,6 +731,9 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         updateUI();
 
         mResultsLayout.setVisibility(View.GONE);
+        */
+
+        processReceivedResult(initiateMatchResult.getStatus(), initiateMatchResult.getMatch());
     }
 
     @Override
@@ -861,6 +889,23 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
             Games.Achievements.increment(mGoogleApiClient, achievementID, 1);
         }
+    }
+
+    @Override
+    public void onInvitationReceived(Invitation invitation) {
+        String invitationID = invitation.getInvitationId();
+
+        if (mInvitationID != null) {
+            if (mInvitationID.equals(invitationID)) {
+                Games.Invitations.unregisterInvitationListener(mGoogleApiClient);
+                acceptDeclineRematchInvitation();
+            }
+        }
+    }
+
+    @Override
+    public void onInvitationRemoved(String s) {
+        // TODO: Notify event
     }
 }
 

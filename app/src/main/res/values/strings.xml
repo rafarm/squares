@@ -31,4 +31,5 @@
     <string name="signin_failure">Unable to sign in.</string>
     <string name="display_achievements">Achievements</string>
     <string name="play_online">Play Online</string>
+    <string name="unknown_error">This action could not be completed.</string>
 </resources>

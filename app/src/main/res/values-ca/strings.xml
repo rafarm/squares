@@ -31,4 +31,5 @@
     <string name="CancellationTitle">Partida Cancelada</string>
     <string name="rematch_offered">Revenja Oferida</string>
     <string name="decline">Declinar</string>
+    <string name="unknown_error">Aquesta acció no ha pogut ser completada.</string>
 </resources>
