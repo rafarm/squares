@@ -179,18 +179,35 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
         if (id == R.id.action_leave_match) { // Player wants to leave match...
             // TODO: Ask player for confirmation...
+            mAlertDialog
+                    .setTitle(getString(R.string.LeaveMatch))
+                    .setMessage(getString(R.string.LeaveMatchMessage))
+                    .setCancelable(false)
 
-            if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
-                moveToNextPlayer();
-                Games.TurnBasedMultiplayer.
-                        leaveMatchDuringTurn(mGoogleApiClient, mMatchID, getNextPlayerID());
+                    .setNegativeButton(getString(R.string.NegativeButton), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // if this button is clicked, just close
+                            // the dialog box and do nothing
+                            dialog.cancel();
+                        }
+                    })
+                    .setPositiveButton(getString(R.string.PositiveButton), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // if this button is clicked, close
+                            // current activity
+                            //finish();
+                            if (mMatch.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
+                                moveToNextPlayer();
+                                Games.TurnBasedMultiplayer.
+                                        leaveMatchDuringTurn(mGoogleApiClient, mMatchID, getNextPlayerID());
 
-            }
-            else {
-                Games.TurnBasedMultiplayer.leaveMatch(mGoogleApiClient, mMatchID);
-            }
-
-            finish();
+                            }
+                            else {
+                                Games.TurnBasedMultiplayer.leaveMatch(mGoogleApiClient, mMatchID);
+                            }
+                            finish();
+                        }
+                    }).show();
             return true;
         }
         else if (id == R.id.action_dismiss_match) { // Player wants to dismiss match...
@@ -743,7 +760,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             soundNotification();
             if (turnBasedMatch.getStatus() == TurnBasedMatch.MATCH_STATUS_CANCELED) {
                 notifyMatchCancellation();
-                finish();
+                //finish();
             }
 
             processMatch(turnBasedMatch);
@@ -763,14 +780,14 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     public void onTurnBasedMatchRemoved(String matchID) {
         if (matchID.equals(mMatchID)) {
             notifyMatchCancellation();
-            finish();
+
         }
     }
 
     private void notifyMatchCancellation() {
         // TODO: Notify the player that this match has been cancelled...
 
-        /*mAlertDialog
+        mAlertDialog
                 .setTitle(getString(R.string.CancellationTitle))
                 .setMessage(getString(R.string.CancellationMessage))
                 .setCancelable(false)
@@ -780,7 +797,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                         // current activity
                         finish();
                     }
-                }).show();*/
+                }).show();
     }
 
     @Override
