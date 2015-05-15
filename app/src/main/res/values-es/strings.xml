@@ -35,4 +35,6 @@
     <string name="other_match_updated">Otra partida actualizada</string>
     <string name="invitation_received">Invitación recibida</string>
     <string name="invitation_removed">Invitación anulada</string>
+    <string name="leave_match">Abandonar partida</string>
+    <string name="leave_match_message">¿Realmente quieres abandonar la partida?</string>
 </resources>

@@ -180,8 +180,8 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         if (id == R.id.action_leave_match) { // Player wants to leave match...
             // TODO: Ask player for confirmation...
             mAlertDialog
-                    .setTitle(getString(R.string.LeaveMatch))
-                    .setMessage(getString(R.string.LeaveMatchMessage))
+                    .setTitle(getString(R.string.leave_match))
+                    .setMessage(getString(R.string.leave_match_message))
                     .setCancelable(false)
 
                     .setNegativeButton(getString(R.string.NegativeButton), new DialogInterface.OnClickListener() {

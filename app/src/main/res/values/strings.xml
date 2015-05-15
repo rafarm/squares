@@ -35,4 +35,6 @@
     <string name="other_match_updated">Another match updated</string>
     <string name="invitation_received">Invitation Received</string>
     <string name="invitation_removed">Invitation Removed</string>
+    <string name="leave_match">Leave Match</string>
+    <string name="leave_match_message">Do you really want to leave the match?</string>
 </resources>
