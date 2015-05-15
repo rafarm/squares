@@ -32,4 +32,5 @@
     <string name="rematch_offered">Revancha Ofrecida</string>
     <string name="decline">Declinar</string>
     <string name="unknown_error">Esta acción no ha podido ser completada.</string>
+    <string name="other_match_updated">Otra partida actualizada</string>
 </resources>

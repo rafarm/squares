@@ -32,4 +32,5 @@
     <string name="display_achievements">Achievements</string>
     <string name="play_online">Play Online</string>
     <string name="unknown_error">This action could not be completed.</string>
+    <string name="other_match_updated">Another match updated</string>
 </resources>

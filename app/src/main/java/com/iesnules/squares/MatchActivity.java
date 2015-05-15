@@ -14,6 +14,7 @@ import android.opengl.Visibility;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -749,6 +750,11 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
         }
         else {
             // TODO: Notify match update
+            String mesg = getString(R.string.other_match_updated);
+
+            Toast toast = Toast.makeText(this, mesg, Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.TOP, 0, 0);
+            toast.show();
         }
     }
 
