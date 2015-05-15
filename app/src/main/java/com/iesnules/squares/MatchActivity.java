@@ -749,13 +749,14 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             processMatch(turnBasedMatch);
         }
         else {
-            // TODO: Notify match update
-            String mesg = getString(R.string.other_match_updated);
-
-            Toast toast = Toast.makeText(this, mesg, Toast.LENGTH_LONG);
-            toast.setGravity(Gravity.TOP, 0, 0);
-            toast.show();
+            toastMessage(getString(R.string.other_match_updated));
         }
+    }
+
+    private void toastMessage(String message) {
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.TOP, 0, 0);
+        toast.show();
     }
 
     @Override
@@ -905,13 +906,17 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
             if (mInvitationID.equals(invitationID)) {
                 Games.Invitations.unregisterInvitationListener(mGoogleApiClient);
                 acceptDeclineRematchInvitation();
+
+                return;
             }
         }
+
+        toastMessage(getString(R.string.invitation_received));
     }
 
     @Override
     public void onInvitationRemoved(String s) {
-        // TODO: Notify event
+        toastMessage(getString(R.string.invitation_removed));
     }
 }
 

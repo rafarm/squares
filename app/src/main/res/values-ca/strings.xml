@@ -33,4 +33,6 @@
     <string name="decline">Declinar</string>
     <string name="unknown_error">Aquesta acció no ha pogut ser completada.</string>
     <string name="other_match_updated">Altra partida actualitzada</string>
+    <string name="invitation_received">Invitació rebuda</string>
+    <string name="invitation_removed">Invitació anul·lada</string>
 </resources>

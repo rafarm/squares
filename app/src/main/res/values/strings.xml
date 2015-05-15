@@ -33,4 +33,6 @@
     <string name="play_online">Play Online</string>
     <string name="unknown_error">This action could not be completed.</string>
     <string name="other_match_updated">Another match updated</string>
+    <string name="invitation_received">Invitation Received</string>
+    <string name="invitation_removed">Invitation Removed</string>
 </resources>
