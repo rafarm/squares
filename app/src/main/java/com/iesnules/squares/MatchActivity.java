@@ -63,7 +63,6 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     // How long to show toasts.
     final static int TOAST_DELAY = Toast.LENGTH_SHORT;
 
-
     private boolean mOnlineMatch;
     private AlertDialog.Builder mAlertDialog;
     private int mNumberOfPlayers;

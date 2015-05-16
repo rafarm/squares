@@ -340,56 +340,51 @@ public class MainActivity extends BaseGameActivity implements
     }
 
     public void onStartNewMatch(View view) {
-        /*
-        mOnlineButton.setEnabled(true);
-        mOnlineOptionsLayout.setVisibility(View.GONE);
-        */
-
-        Intent intent = Games.TurnBasedMultiplayer.getSelectOpponentsIntent(mGoogleApiClient, 1, 3, true);
-        startActivityForResult(intent, RC_SELECT_PLAYERS);
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            Intent intent = Games.TurnBasedMultiplayer.getSelectOpponentsIntent(mGoogleApiClient, 1, 3, true);
+            startActivityForResult(intent, RC_SELECT_PLAYERS);
+        }
     }
 
     public void onQuickMatch(View view) {
-        /*
-        mOnlineButton.setEnabled(true);
-        mOnlineOptionsLayout.setVisibility(View.GONE);
-        */
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            // Show overlay...
+            mOverlayLayout.setVisibility(View.VISIBLE);
 
-        // Show overlay...
-        mOverlayLayout.setVisibility(View.VISIBLE);
-
-        // Get auto-match criteria.
-        Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 1, 0);
+            // Get auto-match criteria.
+            Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 1, 0);
 
 
-        TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
-                .setAutoMatchCriteria(autoMatchCriteria)
-                .build();
+            TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
+                    .setAutoMatchCriteria(autoMatchCriteria)
+                    .build();
 
-        // Create and start the match.
-        Games.TurnBasedMultiplayer
-                .createMatch(mGoogleApiClient, tbmc)
-                .setResultCallback(this);
+            // Create and start the match.
+            Games.TurnBasedMultiplayer
+                    .createMatch(mGoogleApiClient, tbmc)
+                    .setResultCallback(this);
+        }
     }
 
     public void onListAllMatches(View view) {
-        /*
-        mOfflineButton.setEnabled(true);
-        mOptionsLayout.setVisibility(View.GONE);
-        */
-
-        Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(mGoogleApiClient);
-        startActivityForResult(intent, RC_LIST_MATCHES);
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(mGoogleApiClient);
+            startActivityForResult(intent, RC_LIST_MATCHES);
+        }
     }
 
     public void onDisplayLeaderboards(View view) {
-        startActivityForResult(Games.Leaderboards.getAllLeaderboardsIntent(mGoogleApiClient),
-                RC_REQUEST_LEADERBOARDS);
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            startActivityForResult(Games.Leaderboards.getAllLeaderboardsIntent(mGoogleApiClient),
+                    RC_REQUEST_LEADERBOARDS);
+        }
     }
 
     public void onDisplayAchievements(View view) {
-        startActivityForResult(Games.Achievements.getAchievementsIntent(mGoogleApiClient),
-                RC_REQUEST_ACHIEVEMENTS);
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            startActivityForResult(Games.Achievements.getAchievementsIntent(mGoogleApiClient),
+                    RC_REQUEST_ACHIEVEMENTS);
+        }
     }
 
     @Override
