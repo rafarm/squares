@@ -190,7 +190,10 @@ public class MainActivity extends BaseGameActivity implements
         findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
         mOnlineButton.setVisibility(View.GONE);
         mOnlineOptionsLayout.setVisibility(View.GONE);
-        mOfflineOptionsLayout.setVisibility(View.GONE);
+        //mOfflineOptionsLayout.setVisibility(View.GONE);
+        mOnlineModeExpanded = false;
+
+        mOfflineButton.setEnabled(true);
     }
 
     @Override

@@ -15,9 +15,9 @@
    version="1.1"
    inkscape:version="0.91 r13725"
    sodipodi:docname="child_button_pressed.svg"
-   inkscape:export-filename="/Users/rafa/AndroidStudioProjects/squares/app/src/main/res/mipmap-xxhdpi/child_button_pressed.9.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-filename="/Users/rafa/AndroidStudioProjects/squares/app/src/main/res/mipmap-hdpi/child_button_pressed.9.png"
+   inkscape:export-xdpi="33.75"
+   inkscape:export-ydpi="33.75">
   <defs
      id="defs4">
     <filter
@@ -41,9 +41,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="5.79"
-     inkscape:cx="36.681507"
-     inkscape:cy="35.1965"
+     inkscape:zoom="14.28"
+     inkscape:cx="20.673031"
+     inkscape:cy="26.793139"
      inkscape:document-units="px"
      inkscape:current-layer="capa1"
      showgrid="false"
@@ -60,7 +60,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -78,19 +78,37 @@
        style="opacity:0.5;fill:#3ea145;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.14797948px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0;filter:url(#filter6646)"
        transform="matrix(1.393531,0,0,0.94324074,-7.8706194,58.596122)" />
     <rect
+       y="1029.3817"
+       x="16.019505"
+       height="4.4287767"
+       width="7.9609895"
+       id="rect4141"
+       style="fill:#f2f2f2;fill-rule:evenodd;stroke:#000000;stroke-width:0.03901047px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0" />
+    <rect
+       y="1027.4757"
+       x="16.012697"
+       height="1.8737636"
+       width="7.9746037"
+       id="rect4139"
+       style="fill:#3ea145;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.02539614px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0" />
+    <rect
        style="fill:#f2f2f2;fill-rule:evenodd;stroke:#000000;stroke-width:0.05837663px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0"
        id="rect3411-6-3-8-6"
        width="7.9416232"
        height="9.9416237"
        x="16.029188"
-       y="1029.3914" />
+       y="1029.3914"
+       rx="2"
+       ry="2" />
     <rect
        style="fill:#3ea145;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.03690742px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0"
        id="rect3411-0-7-0"
        width="7.9630923"
        height="3.9630926"
        x="16.018454"
-       y="1025.3806" />
+       y="1025.3806"
+       rx="2"
+       ry="2" />
     <path
        transform="translate(-125.08353,1944.8802)"
        sodipodi:type="arc"

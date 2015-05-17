@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   width="80"
+   height="80"
+   viewBox="0 0 80 80"
+   sodipodi:docname="achievements_button.svg"
+   inkscape:export-filename="/Users/rafa/AndroidStudioProjects/Squares/app/src/main/res/mipmap-xxhdpi/achievements_button_default.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <metadata
+     id="metadata8">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1506"
+     inkscape:window-height="852"
+     id="namedview4"
+     showgrid="false"
+     inkscape:zoom="3.2003032"
+     inkscape:cx="-28.889753"
+     inkscape:cy="48.908959"
+     inkscape:window-x="128"
+     inkscape:window-y="107"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" />
+  <g
+     id="g4153"
+     style="fill:#f9f9f9;fill-opacity:1"
+     transform="matrix(1.2491261,0,0,1.2491261,1.8552995,-0.75713594)">
+    <path
+       id="path4140"
+       d="m 25.119141,3.0078125 -2.986329,5.21875 -5.914062,0.054687 -0.453125,5.8281255 -4.816406,3.378905 2.171875,5.386719 -2.371094,5.367188 4.794922,3.123046 0.474609,6.414063 5.865235,-0.185547 3.308593,5.072266 5.291016,-2.480469 5.664063,2.535156 3.396484,-4.822265 5.55664,-0.367188 0.433594,-5.669922 4.789063,-3.605469 -2.142578,-5.765625 2.060547,-5.289062 -5.039063,-3.367188 0.05664,-5.2910147 L 39.029296,7.9355464 36.164061,3.0839839 30.320311,5.6757807 25.11914,3.007812 Z m 5.46875,8.1601565 A 11.637487,11.637487 0 0 1 42.224609,22.804688 11.637487,11.637487 0 0 1 30.587891,34.443359 11.637487,11.637487 0 0 1 18.949219,22.804688 11.637487,11.637487 0 0 1 30.587891,11.167969 Z"
+       style="fill:#f9f9f9;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       inkscape:connector-curvature="0" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4149"
+       d="m 15.036045,53.598352 8.238929,8.341916 6.488157,-18.640577 -4.840371,2.162719 -3.192585,-4.222451 z"
+       style="fill:#f9f9f9;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       sodipodi:nodetypes="cccccc"
+       inkscape:connector-curvature="0"
+       id="path4151"
+       d="m 31.61689,43.196704 4.840371,2.059733 2.677651,-3.913492 7.31205,12.255407 -8.341916,8.650876 z"
+       style="fill:#f9f9f9;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+  </g>
+  <path
+     style="fill:#000000"
+     d=""
+     id="path4138"
+     inkscape:connector-curvature="0" />
+</svg>

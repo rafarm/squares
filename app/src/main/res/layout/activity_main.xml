@@ -155,25 +155,70 @@
                 android:background="@drawable/child_button"
                 android:enabled="true" />
 
-            <Button
-                android:layout_width="200dp"
-                android:layout_height="40dp"
-                android:text="@string/display_leaderboards"
-                android:id="@+id/leaderboardsButton"
-                android:layout_gravity="center"
-                android:onClick="onDisplayLeaderboards"
-                android:background="@drawable/child_button"
-                android:enabled="true" />
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="false"
+                android:layout_alignParentRight="false"
+                android:layout_alignParentEnd="false"
+                android:id="@+id/otherOptionsLayout"
+                android:layout_alignParentTop="false"
+                android:layout_alignParentLeft="false"
+                android:layout_alignWithParentIfMissing="false"
+                android:orientation="horizontal"
+                android:layout_alignParentStart="false"
+                android:gravity="center"
+                android:layout_gravity="center">
 
-            <Button
-                android:layout_width="200dp"
-                android:layout_height="40dp"
-                android:text="@string/display_achievements"
-                android:id="@+id/achievementsButton"
-                android:layout_gravity="center"
-                android:onClick="onDisplayAchievements"
-                android:background="@drawable/child_button"
-                android:enabled="true" />
+                <FrameLayout
+                    android:layout_width="100dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_horizontal">
+
+                    <Button
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:id="@+id/leaderboardsButton"
+                        android:onClick="onDisplayLeaderboards"
+                        android:background="@drawable/child_button"
+                        android:enabled="true" />
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="false"
+                        android:clickable="false"
+                        android:background="@mipmap/leaderboards_button"/>
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="100dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_horizontal">
+
+                    <Button
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:id="@+id/achievementsButton"
+                        android:onClick="onDisplayAchievements"
+                        android:background="@drawable/child_button"
+                        android:enabled="true" />
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="false"
+                        android:clickable="false"
+                        android:background="@mipmap/achievements_button"/>
+
+                </FrameLayout>
+
+
+
+            </LinearLayout>
 
         </LinearLayout>
 
