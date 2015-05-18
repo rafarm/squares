@@ -170,53 +170,24 @@
                 android:gravity="center"
                 android:layout_gravity="center">
 
-                <FrameLayout
-                    android:layout_width="100dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center_horizontal">
-
-                    <Button
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:id="@+id/leaderboardsButton"
-                        android:onClick="onDisplayLeaderboards"
-                        android:background="@drawable/child_button"
-                        android:enabled="true" />
-
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_gravity="center"
-                        android:adjustViewBounds="false"
-                        android:clickable="false"
-                        android:background="@mipmap/leaderboards_button"/>
-
-                </FrameLayout>
-
-                <FrameLayout
-                    android:layout_width="100dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center_horizontal">
-
-                    <Button
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:id="@+id/achievementsButton"
-                        android:onClick="onDisplayAchievements"
-                        android:background="@drawable/child_button"
-                        android:enabled="true" />
-
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_gravity="center"
-                        android:adjustViewBounds="false"
-                        android:clickable="false"
-                        android:background="@mipmap/achievements_button"/>
-
-                </FrameLayout>
-
-
+                <ImageButton
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:id="@+id/leaderboardsButton"
+                    android:onClick="onDisplayLeaderboards"
+                    android:background="@drawable/child_button"
+                    android:enabled="true"
+                    android:baselineAlignBottom="false"
+                    android:src="@mipmap/leaderboards_button"
+                    android:layout_weight="1" />
+                <ImageButton
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:id="@+id/achievementsButton"
+                    android:onClick="onDisplayAchievements"
+                    android:background="@drawable/child_button"
+                    android:enabled="true"
+                    android:src="@mipmap/achievements_button"/>
 
             </LinearLayout>
 

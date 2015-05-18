@@ -5,7 +5,7 @@ android {
         debug {
             keyAlias 'squaresdebugkey'
             keyPassword 'squaresdebug'
-            storeFile file('/Users/rafa/AndroidStudioProjects/squares/squaresdebug.jks')
+            storeFile file('/home/alumne/workspace/squares/squaresdebug.jks')
             storePassword 'squaresdebug'
         }
         release {
