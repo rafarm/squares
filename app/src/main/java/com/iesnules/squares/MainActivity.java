@@ -3,6 +3,7 @@ package com.iesnules.squares;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,36 +37,47 @@ public class MainActivity extends BaseGameActivity implements
     private static int RC_SELECT_PLAYERS = 9002;
     private static int RC_LIST_MATCHES = 9003;
     private static int RC_REQUEST_LEADERBOARDS = 9004;
+    private static int RC_REQUEST_ACHIEVEMENTS = 9005;
 
     public static String NUMBER_OF_PLAYERS = "NumberOfPlayers";
     public static String MATCH_ID = "MatchID";
 
-
+    private static String EXPLICIT_SIGN_OUT = "ExplicitSignOut";
+    private static String SHARED_PREFS = "SharedPreferences";
 
     private boolean mCreatingMatch = false;
-    boolean mExplicitSignOut = false;
+    boolean mExplicitSignOut;
 
-    private LinearLayout mOptionsLayout;
+    private LinearLayout mOfflineOptionsLayout;
+    private LinearLayout mOnlineOptionsLayout;
     private FrameLayout mOverlayLayout;
     private Button mOfflineButton;
-    private Button mNewMatchButton;
-    private Button mListMatchesButton;
-    private Button mQuickMatchButton;
-    private Button mLeaderboardsButton;
+    private Button mOnlineButton;
+
+    private boolean mOfflineModeExpanded = false;
+    private boolean mOnlineModeExpanded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Has user explicitly sign-out of google services?
+        SharedPreferences settings = getSharedPreferences(SHARED_PREFS, 0);
+        mExplicitSignOut = settings.getBoolean(EXPLICIT_SIGN_OUT, false);
+
         setContentView(R.layout.activity_main);
 
-        mOptionsLayout = (LinearLayout)findViewById(R.id.optionsLayout);
+        mOfflineOptionsLayout = (LinearLayout)findViewById(R.id.offlineOptionsLayout);
+        mOnlineOptionsLayout = (LinearLayout)findViewById(R.id.onlineOptionsLayout);
         mOverlayLayout = (FrameLayout)findViewById(R.id.overlayLayout);
         mOfflineButton = (Button)findViewById(R.id.offlineButton);
+        mOnlineButton = (Button)findViewById(R.id.onlineButton);
+        /*
         mNewMatchButton = (Button)findViewById(R.id.newMatchButton);
         mListMatchesButton = (Button)findViewById(R.id.listMatchesButton);
         mQuickMatchButton = (Button)findViewById(R.id.quickMatchButton);
         mLeaderboardsButton = (Button)findViewById(R.id.leaderboardsButton);
+        */
 
         findViewById(R.id.sign_in_button).setOnClickListener(this);
     }
@@ -94,12 +106,28 @@ public class MainActivity extends BaseGameActivity implements
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         decorView.setSystemUiVisibility(uiOptions);
 
-        mOptionsLayout.setVisibility(View.GONE);
+        mOfflineOptionsLayout.setVisibility(View.GONE);
+        mOnlineOptionsLayout.setVisibility(View.GONE);
+        mOfflineModeExpanded = false;
+        mOnlineModeExpanded = false;
         mOfflineButton.setEnabled(true);
+        mOnlineButton.setEnabled(true);
 
         if (!mInSignInFlow && !mCreatingMatch) {
             mOverlayLayout.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Save user option of being signed out of google services
+        SharedPreferences settings = getSharedPreferences(SHARED_PREFS, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean(EXPLICIT_SIGN_OUT, mExplicitSignOut);
+
+        editor.commit();
     }
 
     @Override
@@ -108,11 +136,9 @@ public class MainActivity extends BaseGameActivity implements
 
         // show sign-out button, hide the sign-in button
         findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+        mOnlineButton.setVisibility(View.VISIBLE);
 
-        mNewMatchButton.setVisibility(View.VISIBLE);
-        mQuickMatchButton.setVisibility(View.VISIBLE);
-        mListMatchesButton.setVisibility(View.VISIBLE);
-        mLeaderboardsButton.setVisibility(View.VISIBLE);
+
         mOverlayLayout.setVisibility(View.GONE);
 
         if (bundle != null) {
@@ -129,6 +155,7 @@ public class MainActivity extends BaseGameActivity implements
 
         findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
         mOverlayLayout.setVisibility(View.GONE);
+        mOnlineButton.setVisibility(View.GONE);
     }
 
     @Override
@@ -149,10 +176,9 @@ public class MainActivity extends BaseGameActivity implements
 
         // show sign-in button && hide other buttons
         findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-        mNewMatchButton.setVisibility(View.GONE);
-        mQuickMatchButton.setVisibility(View.GONE);
-        mListMatchesButton.setVisibility(View.GONE);
-        mLeaderboardsButton.setVisibility(View.GONE);
+        mOnlineButton.setVisibility(View.GONE);
+        mOnlineOptionsLayout.setVisibility(View.GONE);
+        mOfflineOptionsLayout.setVisibility(View.GONE);
     }
 
     @Override
@@ -164,10 +190,7 @@ public class MainActivity extends BaseGameActivity implements
             mGoogleApiClient.disconnect();
 
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-            mNewMatchButton.setVisibility(View.GONE);
-            mQuickMatchButton.setVisibility(View.GONE);
-            mListMatchesButton.setVisibility(View.GONE);
-            mLeaderboardsButton.setVisibility(View.GONE);
+            mOnlineButton.setVisibility(View.GONE);
 
             return;
         }
@@ -251,8 +274,39 @@ public class MainActivity extends BaseGameActivity implements
     }
 
     public void onShowOfflineOptions(View view) {
-        mOfflineButton.setEnabled(false);
-        mOptionsLayout.setVisibility(View.VISIBLE);
+        //mOfflineButton.setEnabled(false);
+        //mOnlineButton.setEnabled(true);
+        if (mOfflineModeExpanded) {
+            mOfflineOptionsLayout.setVisibility(View.GONE);
+            mOnlineButton.setEnabled(true);
+            //mOnlineButton.setVisibility(View.VISIBLE);
+        }
+        else {
+            mOfflineOptionsLayout.setVisibility(View.VISIBLE);
+            mOnlineButton.setEnabled(false);
+            //mOnlineOptionsLayout.setVisibility(View.GONE);
+            //mOnlineButton.setVisibility(View.GONE);
+        }
+
+        mOfflineModeExpanded = !mOfflineModeExpanded;
+    }
+
+    public void onShowOnlineOptions(View view) {
+        //mOfflineButton.setEnabled(true);
+        //mOnlineButton.setEnabled(false);
+        if (mOnlineModeExpanded) {
+            mOnlineOptionsLayout.setVisibility(View.GONE);
+            mOfflineButton.setEnabled(true);
+            //mOfflineButton.setVisibility(View.VISIBLE);
+        }
+        else {
+            mOnlineOptionsLayout.setVisibility(View.VISIBLE);
+            mOfflineButton.setEnabled(false);
+            //mOfflineOptionsLayout.setVisibility(View.GONE);
+            //mOfflineButton.setVisibility(View.GONE);
+        }
+
+        mOnlineModeExpanded = !mOnlineModeExpanded;
     }
 
     public void onLaunchMatchActivity(View view) {
@@ -274,16 +328,20 @@ public class MainActivity extends BaseGameActivity implements
     }
 
     public void onStartNewMatch(View view) {
-        mOfflineButton.setEnabled(true);
-        mOptionsLayout.setVisibility(View.GONE);
+        /*
+        mOnlineButton.setEnabled(true);
+        mOnlineOptionsLayout.setVisibility(View.GONE);
+        */
 
         Intent intent = Games.TurnBasedMultiplayer.getSelectOpponentsIntent(mGoogleApiClient, 1, 3, true);
         startActivityForResult(intent, RC_SELECT_PLAYERS);
     }
 
     public void onQuickMatch(View view) {
-        mOfflineButton.setEnabled(true);
-        mOptionsLayout.setVisibility(View.GONE);
+        /*
+        mOnlineButton.setEnabled(true);
+        mOnlineOptionsLayout.setVisibility(View.GONE);
+        */
 
         // Show overlay...
         mOverlayLayout.setVisibility(View.VISIBLE);
@@ -303,8 +361,10 @@ public class MainActivity extends BaseGameActivity implements
     }
 
     public void onListAllMatches(View view) {
+        /*
         mOfflineButton.setEnabled(true);
         mOptionsLayout.setVisibility(View.GONE);
+        */
 
         Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(mGoogleApiClient);
         startActivityForResult(intent, RC_LIST_MATCHES);
@@ -315,6 +375,11 @@ public class MainActivity extends BaseGameActivity implements
                 RC_REQUEST_LEADERBOARDS);
     }
 
+    public void onDisplayAchievements(View view) {
+        startActivityForResult(Games.Achievements.getAchievementsIntent(mGoogleApiClient),
+                RC_REQUEST_ACHIEVEMENTS);
+    }
+
     @Override
     public void onResult(TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
         mCreatingMatch = false;
@@ -322,7 +387,15 @@ public class MainActivity extends BaseGameActivity implements
         // Check if the status code is not success.
         Status status = initiateMatchResult.getStatus();
         if (!status.isSuccess()) {
-            BaseGameUtils.showAlert(this, status.getStatusMessage());
+            String message = status.getStatusMessage();
+            if (message == null) {
+                message = getString(R.string.sign_in_failed);
+            }
+            BaseGameUtils.showAlert(this, message);
+
+            // Hide overlay...
+            mOverlayLayout.setVisibility(View.GONE);
+
             return;
         }
 

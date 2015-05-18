@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Squares</string>
+    <string name="DialogMessage">Eliminar Partida</string>
+    <string name="DialogTitle">Estas segur de llevar aquesta partida?</string>
+    <string name="NegativeButton">No</string>
+    <string name="PositiveButton">Si</string>
+    <string name="action_dismiss_match">Ignorar partida</string>
+    <string name="action_leave_match">Abandonar</string>
+    <string name="action_settings">Configuracio</string>
+    <string name="action_sign_out">Desconectar</string>
+    <string name="display_leaderboards">Tauler de classificacions</string>
+    <string name="four_players">Quatre jugadors</string>
+    <string name="list_all_matches">Totes les partides</string>
+    <string name="new_match">Nova Partida</string>
+    <string name="play_offline">Mode Offline</string>
+    <string name="play_online">Mode Online</string>
+    <string name="player">Jugador</string>
+    <string name="quick_match">Partida rapida</string>
+    <string name="rematch">Revenja</string>
+    <string name="signin_failure">Incapaç d\'iniciar sessio</string>
+    <string name="signin_other_error">Ha hagut un problema</string>
+    <string name="three_players">Tres jugadors</string>
+    <string name="tie">Empat!!!</string>
+    <string name="title_activity_board">BoardActivity</string>
+    <string name="title_activity_match">MachActivity</string>
+    <string name="two_players">Dos jugadors</string>
+    <string name="win">Has guanyat!!!</string>
+    <string name="display_achievements">Assoliments</string>
+</resources>
