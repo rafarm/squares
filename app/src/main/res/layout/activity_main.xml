@@ -92,13 +92,6 @@
 
             </LinearLayout>
 
-            <!-- sign-in button -->
-            <com.google.android.gms.common.SignInButton
-                android:id="@+id/sign_in_button"
-                android:layout_width="230dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center" />
-
             <Button
                 android:layout_width="230dp"
                 android:layout_height="40dp"
@@ -109,89 +102,97 @@
                 android:background="@drawable/parent_button"
                 android:visibility="gone" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="false"
-            android:layout_alignParentRight="false"
-            android:layout_alignParentEnd="false"
-            android:visibility="gone"
-            android:id="@+id/onlineOptionsLayout"
-            android:layout_alignParentTop="false"
-            android:layout_alignParentLeft="false"
-            android:layout_alignWithParentIfMissing="false"
-            android:orientation="vertical"
-            android:layout_alignParentStart="false"
-            android:gravity="center"
-            android:layout_gravity="center">
-
-            <Button
-                android:layout_width="200dp"
-                android:layout_height="40dp"
-                android:text="@string/new_match"
-                android:id="@+id/newMatchButton"
-                android:layout_gravity="center"
-                android:onClick="onStartNewMatch"
-                android:background="@drawable/child_button"
-                android:enabled="true" />
-
-            <Button
-                android:layout_width="200dp"
-                android:layout_height="40dp"
-                android:text="@string/quick_match"
-                android:id="@+id/quickMatchButton"
-                android:layout_gravity="center"
-                android:onClick="onQuickMatch"
-                android:background="@drawable/child_button"
-                android:enabled="true" />
-
-            <Button
-                android:layout_width="200dp"
-                android:layout_height="40dp"
-                android:text="@string/list_all_matches"
-                android:id="@+id/listMatchesButton"
-                android:layout_gravity="center"
-                android:onClick="onListAllMatches"
-                android:background="@drawable/child_button"
-                android:enabled="true" />
-
             <LinearLayout
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="false"
                 android:layout_alignParentRight="false"
                 android:layout_alignParentEnd="false"
-                android:id="@+id/otherOptionsLayout"
+                android:visibility="gone"
+                android:id="@+id/onlineOptionsLayout"
                 android:layout_alignParentTop="false"
                 android:layout_alignParentLeft="false"
                 android:layout_alignWithParentIfMissing="false"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_alignParentStart="false"
                 android:gravity="center"
                 android:layout_gravity="center">
 
-                <ImageButton
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:id="@+id/leaderboardsButton"
-                    android:onClick="onDisplayLeaderboards"
-                    android:background="@drawable/child_button"
-                    android:enabled="true"
-                    android:baselineAlignBottom="false"
-                    android:src="@mipmap/leaderboards_button"
-                    android:layout_weight="1" />
-                <ImageButton
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:id="@+id/achievementsButton"
-                    android:onClick="onDisplayAchievements"
-                    android:background="@drawable/child_button"
-                    android:enabled="true"
-                    android:src="@mipmap/achievements_button"/>
+                    <Button
+                        android:layout_width="200dp"
+                        android:layout_height="40dp"
+                        android:text="@string/new_match"
+                        android:id="@+id/newMatchButton"
+                        android:layout_gravity="center"
+                        android:onClick="onStartNewMatch"
+                        android:background="@drawable/child_button"
+                        android:enabled="true" />
+
+                    <Button
+                        android:layout_width="200dp"
+                        android:layout_height="40dp"
+                        android:text="@string/quick_match"
+                        android:id="@+id/quickMatchButton"
+                        android:layout_gravity="center"
+                        android:onClick="onQuickMatch"
+                        android:background="@drawable/child_button"
+                        android:enabled="true" />
+
+                    <Button
+                        android:layout_width="200dp"
+                        android:layout_height="40dp"
+                        android:text="@string/list_all_matches"
+                        android:id="@+id/listMatchesButton"
+                        android:layout_gravity="center"
+                        android:onClick="onListAllMatches"
+                        android:background="@drawable/child_button"
+                        android:enabled="true" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="false"
+                        android:layout_alignParentRight="false"
+                        android:layout_alignParentEnd="false"
+                        android:id="@+id/otherOptionsLayout"
+                        android:layout_alignParentTop="false"
+                        android:layout_alignParentLeft="false"
+                        android:layout_alignWithParentIfMissing="false"
+                        android:orientation="horizontal"
+                        android:layout_alignParentStart="false"
+                        android:gravity="center"
+                        android:layout_gravity="center">
+
+                            <ImageButton
+                                android:layout_width="100dp"
+                                android:layout_height="40dp"
+                                android:id="@+id/leaderboardsButton"
+                                android:onClick="onDisplayLeaderboards"
+                                android:background="@drawable/child_button"
+                                android:enabled="true"
+                                android:baselineAlignBottom="false"
+                                android:src="@mipmap/leaderboards_button"
+                                android:layout_weight="1" />
+
+                            <ImageButton
+                                android:layout_width="100dp"
+                                android:layout_height="40dp"
+                                android:id="@+id/achievementsButton"
+                                android:onClick="onDisplayAchievements"
+                                android:background="@drawable/child_button"
+                                android:enabled="true"
+                                android:src="@mipmap/achievements_button"/>
+
+                    </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
+            <!-- sign-in button -->
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/sign_in_button"
+                android:layout_width="230dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center" />
 
         </LinearLayout>
 

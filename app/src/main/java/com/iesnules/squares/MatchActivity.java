@@ -486,12 +486,15 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
 
         // Process rematch
         mInvitationID = match.getRematchId();
-
-        // Register for invitations notifications
-        Games.Invitations.registerInvitationListener(mGoogleApiClient, this);
+        if (mInvitationID != null) {
+            // Register for invitations notifications
+            Games.Invitations.registerInvitationListener(mGoogleApiClient, this);
+        }
     }
 
     private void acceptDeclineRematchInvitation() {
+        mResultsLayout.setVisibility(View.VISIBLE);
+
         TextView title = (TextView)findViewById(R.id.resultsTitleTextView);
         TextView wins = (TextView)findViewById(R.id.winsTextView);
         TextView rematchOffered = (TextView)findViewById(R.id.rematchTextView);
@@ -510,6 +513,7 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
                         setResultCallback(new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
                             @Override
                             public void onResult(TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
+                                resetParticipants();
                                 processResult(initiateMatchResult);
                                 mInvitationID = null;
                             }
@@ -718,39 +722,14 @@ public class MatchActivity extends BaseGameActivity implements BoardViewListener
     }
 
     private void processRematch(TurnBasedMultiplayer.InitiateMatchResult initiateMatchResult) {
-        //Status status = initiateMatchResult.getStatus();
-        /*
-        if (status.getStatusCode() == GamesStatusCodes.STATUS_MATCH_ERROR_ALREADY_REMATCHED) {
-            String rematchID = mMatch.getRematchId();
-
-            Games.TurnBasedMultiplayer.loadMatch(mGoogleApiClient, rematchID).
-                    setResultCallback(new ResultCallback<TurnBasedMultiplayer.LoadMatchResult>() {
-                        @Override
-                        public void onResult(TurnBasedMultiplayer.LoadMatchResult loadMatchResult) {
-                            processResult(loadMatchResult);
-                        }
-                    });
-
-            return;
-        }
-        */
-
-        /*
-        if (!status.isSuccess()) {
-            BaseGameUtils.showAlert(this, status.getStatusMessage());
-            return;
-        }
-
-        TurnBasedMatch match = initiateMatchResult.getMatch();
-        mMatchID = match.getMatchId();
-
-        setupMatch(match);
-        updateUI();
-
-        mResultsLayout.setVisibility(View.GONE);
-        */
-
+        resetParticipants();
         processReceivedResult(initiateMatchResult.getStatus(), initiateMatchResult.getMatch());
+    }
+
+    private void resetParticipants() {
+        for (int i = 0; i < mPlayerViews.length; i++) {
+            mPlayerViews[i].setIsParticipant(false);
+        }
     }
 
     @Override

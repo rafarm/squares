@@ -87,7 +87,8 @@
                         android:id="@+id/rematchTextView"
                         android:textSize="40dp"
                         android:textColor="@color/display_background_color"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        android:gravity="center" />
 
                 </LinearLayout>
 

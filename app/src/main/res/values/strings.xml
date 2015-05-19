@@ -7,7 +7,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_board">BoardActivity</string>
     <string name="title_activity_match">MatchActivity</string>
-    <string name="play_offline">Play Offline</string>
+    <string name="play_offline">Offline Match</string>
     <string name="two_players">Two Players</string>
     <string name="three_players">Three Players</string>
     <string name="four_players">Four Players</string>
