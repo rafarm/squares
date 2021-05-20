@@ -25,7 +25,7 @@ What are you waiting for? Come and have fun with your friends!
 
 This application has been developed by students of ICT course of **IES Gilabert de Centelles** (Nules) with the help of professor **Rafa Rubio**. It is therefore an educational non-profit project.
 
-Students who have participated in this project are:
+Students who have participated in this project:
 + George Nikolas Caicedo Pratt
 + Myriam González
 + Jordi Lengua
